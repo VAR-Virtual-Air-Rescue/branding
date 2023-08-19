@@ -2,27 +2,42 @@ Hier findest du alle Elemente der VAR-Corporate Identity (kurz "CI").
 
 Um einen einheitlichen Auftritt zu gewährleisten bitten wir Dich, dir im Style Guide einen Überblick über die wichtigsten Gestaltungselement, Farben und Verwendungsmöglichkeiten unserer Logos und Schriftzüge zu verschaffen.
 
-Die Benennung der Dateien ist immer einheitlich, sodass sich hinter jedem Namen immer dasselbe Logo verbirgt und sich nur die Dateiendung unterscheidet.
+Die Benennung der Dateien ist immer einheitlich, sodass sich hinter jedem Namen immer dasselbe Logo verbirgt und sich nur die Dateiendung unterscheidet. 
+Dieser Ordner ist unterteilt in die Hauptordner:
 
-Hier ein Überblick: [tbc]
-
+**lettering**
+Dem Schriftzug "VIRTUAL AIR RESCUE"
 <div class="center">
-<img src="png_logo/1_Logo.png" alt="1_Logo" width="50"/> 
+<img src="lettering/png files/1_lettering.png" alt="1_lettering" width="50"/> 
 </div>
 
-**1_Logo**
-Das Logo mit VAR-Schriftzug in STRATOS.
-
+**logo**
+Das VAR-Logo ohne "VIRTUAL AIR RESCUE"-Schriftzug darunter.
 <div class="center">
-<img src="png_logo/2_Logo.png" alt="2_Logo" width="50"/> 
+<img src="logo/png files/1_logo.png" alt="1_logo" height="25"/> 
 </div>
 
-**2_Logo**
-Das Logo mit VAR-Schriftzug in IVORY.
-
+**url**
+Die "VIRTUALAIRRESCUE.COM"-URL.
 <div class="center">
-<img src="png_logo/3_Logo.png" alt="3_Logo" width="50"/> 
+<img src="url/png files/url.png" alt="1_url" height="25"/> 
 </div>
 
-**3_Logo**
-Das Logo mit transparentem VAR-Schriftzug.
+die Unterordner
+
+**png files** für .png Dateien
+
+und
+
+**svg files** für .svg Dateien.
+
+Einige Designelemente können abhängig von der Nutzung in unterschiedlichen Farben gestaltet werden:
+
+**1_**
+Designelement in <span style="color:#00113A">**STRATOS**</span>.
+
+**2_**
+Designelement in <span style="color:#fffffc">**IVORY**</span>.
+
+**3_**
+Designelement transparent.
