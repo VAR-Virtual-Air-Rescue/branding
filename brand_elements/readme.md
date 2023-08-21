@@ -6,7 +6,13 @@ Dieser Ordner ist unterteilt in die Hauptordner:
 
 > **lettering** - Der Schriftzug "VIRTUAL AIR RESCUE"
 <div>
-<img src="lettering/png files/2_lettering.png" alt="1_lettering" height="15"/> 
+<img src="lettering/png files/2_lettering.png" alt="2_lettering" height="15"/> 
+<br></br>
+</div>
+
+> **lettering_short** - Der kurze Schriftzug "VAR"
+<div>
+<img src="lettering_short/png files/2_lettering_short.png" alt="2_lettering_short" height="15"/> 
 <br></br>
 </div>
 
@@ -40,3 +46,6 @@ Designelement in <span style="color:#fffffc">**IVORY**</span>.
 
 > **3_**
 Designelement transparent.
+
+> **4_**
+Designelement in **GALLIANO**
