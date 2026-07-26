@@ -10,8 +10,11 @@ Gestaltungseinfall, sondern gemessen: die untere Stuetzhuelle der Zeichnung, als
 genau die Linie, auf der dieser Hubschrauber tatsaechlich aufliegen wuerde.
 Dadurch passen Rumpfunterkante und Balkenoberkante exakt aufeinander.
 """
-import json, math
+import json, math, itertools
 from text2path import text_path
+
+_uid = itertools.count(1)
+def uid(p='u'): return f"{p}{next(_uid)}"
 
 T = json.load(open("traced.json"))
 HELI, HELI_H = T["heli"]["levels"]["mittel"]["d"], T["heli"]["h"]   # 1000 x 318.5
@@ -116,27 +119,36 @@ def _var_points(steps=14):
     _VP = pts
     return pts
 
-def word_max(top, fill, rad=R, margin=5.0, tilt=True):
-    """Wortmarke unter der Kante: so breit wie moeglich, ohne den Rand zu verlassen.
+def word_max(top, fill, rad=R, gap=7.0, over=1.07, tilt=True, cid=None):
+    """Wortmarke unter der Kante.
 
-    Sie wird um denselben Winkel gekippt wie die Kante -- eine waagerechte
-    Wortmarke unter einem schraegen Balken sieht aus wie ein Fehler.
-    Da die Drehung um den Mittelpunkt den Kreis auf sich selbst abbildet, laesst
-    sich die Breite vor der Drehung bestimmen.
+    Sie laeuft absichtlich ueber den Rand hinaus und wird von einem Kreis
+    geschnitten, der konzentrisch zum Zeichen liegt. Dadurch ist die Schnittkante
+    ueberall gleich weit vom Rand entfernt -- eine Optimierung auf den einzelnen
+    weitesten Punkt genuegt nicht, weil dann nur die Ecken den Rand beruehren und
+    alles dazwischen abfaellt.
+
+    `gap`  Abstand der Schnittkante zum Rand. 0 = buendig.
+    `over` wie weit die Buchstaben ueber die Schnittkante hinausragen.
     """
     pts = _var_points()
+    inner = rad - gap
     def worst(w):
-        s = w/1000; h = VAR_H*s
-        ox, oy = C - w/2, top + h/2 - h/2
-        return max(math.hypot(ox+px*s - C, oy+py*s - C) for px, py in pts)
-    lo, hi = 60.0, rad*2.4
-    for _ in range(38):
+        sc = w/1000; h = VAR_H*sc
+        ox, oy = C - w/2, top
+        return max(math.hypot(ox+px*sc - C, oy+py*sc - C) for px, py in pts)
+    lo, hi = 60.0, rad*3.0
+    ziel = inner * over
+    for _ in range(40):
         mid = (lo+hi)/2
-        if worst(mid) <= rad - margin: lo = mid
+        if worst(mid) <= ziel: lo = mid
         else: hi = mid
-    w = lo; s = w/1000; h = VAR_H*s
+    w = lo; sc = w/1000
+    cid = cid or uid("wc")
     body = (f'<g fill="{fill}" transform="translate({C-w/2:.2f},{top:.2f}) '
-            f'scale({s:.5f})"><path d="{VAR}" fill-rule="evenodd"/></g>')
+            f'scale({sc:.5f})"><path d="{VAR}" fill-rule="evenodd"/></g>')
+    body = (f'<defs><clipPath id="{cid}"><circle cx="{C}" cy="{C}" r="{inner:.2f}"/>'
+            f'</clipPath></defs><g clip-path="url(#{cid})">{body}</g>')
     if tilt:
         body = f'<g transform="rotate({ANG:.3f} {C} {C})">{body}</g>'
     return body

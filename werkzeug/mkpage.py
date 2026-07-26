@@ -30,8 +30,22 @@ def wordmark(text, size, fill, tracking=0.045, font="fonts/Uniform Bold.ttf", cl
     return (f'<svg class="{cls}" viewBox="0 -{size*0.78:.1f} {w:.1f} {size*1.05:.1f}" '
             f'fill="{fill}" role="img" aria-label="{text}">{d}</svg>')
 
-def build(tpl_path, out_path):
+def build(tpl_path, out_path, inline_images=False):
+    """inline_images: Fotos als data-URI einbetten (fuer eine Seite ohne Dateiablage)."""
+    import base64, os
     tpl = open(tpl_path, encoding="utf-8").read()
+
+    def img(m):
+        name, alt, cls = (m.group(1).split("|") + ["", ""])[:3]
+        if inline_images:
+            path = os.path.join("img_small", name)
+            if os.path.exists(path):
+                b64 = base64.b64encode(open(path, "rb").read()).decode()
+                return (f'<img class="{cls}" src="data:image/jpeg;base64,{b64}" '
+                        f'alt="{alt}">')
+        return f'<img class="{cls}" src="img/{name}" alt="{alt}" loading="lazy">'
+
+    tpl = re.sub(r'\{\{IMG:([^}]+)\}\}', img, tpl)
 
     def repl(m):
         kind, arg = m.group(1), m.group(2)
@@ -60,4 +74,4 @@ def build(tpl_path, out_path):
           f"tote Refs: {sorted(refs - set(ids)) or 0} | unbalanciert: {bad or 0}")
 
 if __name__ == "__main__":
-    build(sys.argv[1], sys.argv[2])
+    build(sys.argv[1], sys.argv[2], "--inline" in sys.argv)
