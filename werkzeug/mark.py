@@ -84,13 +84,70 @@ def rotor(rr, sw, col, blades=2, blade=0.40, rot=None, cap="round"):
             f'stroke-width="{sw}" stroke-linecap="{cap}" '
             f'stroke-dasharray="{on:.1f} {off:.1f}" transform="rotate({rot:.1f} {C} {C})"/>')
 
+
+# --- Wortmarke: mitgekippt und bis an den Kreisrand ------------------------
+import re as _re
+_VP = None
+def _var_points(steps=14):
+    """Punkte der Wortmarke, Beziers aufgeloest -- fuer die Randberechnung."""
+    global _VP
+    if _VP is not None:
+        return _VP
+    toks = _re.findall(r'[MLCZ]|-?\d+(?:\.\d+)?', VAR)
+    pts = []; i = 0; cur = (0.0, 0.0); start = cur
+    while i < len(toks):
+        c = toks[i]
+        if c == "M":
+            cur = (float(toks[i+1]), float(toks[i+2])); start = cur; pts.append(cur); i += 3
+        elif c == "L":
+            cur = (float(toks[i+1]), float(toks[i+2])); pts.append(cur); i += 3
+        elif c == "C":
+            p1 = (float(toks[i+1]), float(toks[i+2])); p2 = (float(toks[i+3]), float(toks[i+4]))
+            p3 = (float(toks[i+5]), float(toks[i+6]))
+            for k in range(1, steps+1):
+                t = k/steps; u = 1-t
+                pts.append((u*u*u*cur[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],
+                            u*u*u*cur[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]))
+            cur = p3; i += 7
+        elif c == "Z":
+            cur = start; i += 1
+        else:
+            i += 1
+    _VP = pts
+    return pts
+
+def word_max(top, fill, rad=R, margin=5.0, tilt=True):
+    """Wortmarke unter der Kante: so breit wie moeglich, ohne den Rand zu verlassen.
+
+    Sie wird um denselben Winkel gekippt wie die Kante -- eine waagerechte
+    Wortmarke unter einem schraegen Balken sieht aus wie ein Fehler.
+    Da die Drehung um den Mittelpunkt den Kreis auf sich selbst abbildet, laesst
+    sich die Breite vor der Drehung bestimmen.
+    """
+    pts = _var_points()
+    def worst(w):
+        s = w/1000; h = VAR_H*s
+        ox, oy = C - w/2, top + h/2 - h/2
+        return max(math.hypot(ox+px*s - C, oy+py*s - C) for px, py in pts)
+    lo, hi = 60.0, rad*2.4
+    for _ in range(38):
+        mid = (lo+hi)/2
+        if worst(mid) <= rad - margin: lo = mid
+        else: hi = mid
+    w = lo; s = w/1000; h = VAR_H*s
+    body = (f'<g fill="{fill}" transform="translate({C-w/2:.2f},{top:.2f}) '
+            f'scale({s:.5f})"><path d="{VAR}" fill-rule="evenodd"/></g>')
+    if tilt:
+        body = f'<g transform="rotate({ANG:.3f} {C} {C})">{body}</g>'
+    return body
+
 # ---------------------------------------------------------------- Fassungen
 EDGE = 300      # Hoehe der Kante in Bildmitte
 CUT  = 30
 BAR  = 13
 
 def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=None,
-         cid="m", heli_w=418, word_w=228, word_y=398, with_word=True, edge=EDGE,
+         cid="m", heli_w=418, word_top=None, with_word=True, edge=EDGE,
          bar=BAR, cut=CUT):
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + cut, heli_col, cut, bar, bar_col)
     parts = [f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>']
@@ -103,7 +160,8 @@ def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=Non
     parts.append(heli)
     parts.append(barsvg)
     if with_word:
-        parts.append(var_at(word_w, C, word_y, word_col))
+        parts.append(word_max(word_top if word_top is not None else edge + cut + bar + 6,
+                              word_col))
     return svg(disc("".join(parts), cid))
 
 MARKS = {}
@@ -124,12 +182,12 @@ def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + CUT, heli_col, CUT, BAR, bar_col)
     body = f'<circle cx="{C}" cy="{C}" r="{inner_r}" fill="{bg}"/>' + heli + barsvg
     if with_word:
-        body += var_at(word_w, C, word_y, word_col)
+        body += word_max(edge + CUT + BAR + 6, word_col, rad=inner_r)
     return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
 
 # R1  Ring aussen, Heli auf der Kante, Wortmarke darunter
-MARKS["r1_rotor"] = rotor_mark("r1", ring_r=236, sw=19, inner_r=216, heli_w=300,
-                               edge=286, with_word=True, word_w=176, word_y=372)
+MARKS["r1_rotor"] = rotor_mark("r1", ring_r=236, sw=19, inner_r=216, heli_w=292,
+                               edge=274, with_word=True)
 # R2  Zwei Rotorblaetter, kein gefuellter Innenkreis -- offene Fassung
 MARKS["r2_offen"] = rotor_mark("r2", ring_r=238, sw=17, inner_r=222, heli_w=326,
                                edge=300, blades=2, blade=0.44)
