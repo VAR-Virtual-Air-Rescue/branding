@@ -1,0 +1,509 @@
+<title>VAR — Hub und Leitstelle, neu gestaltet</title>
+
+<style>
+:root{
+  --paper:#F2F1EC; --card:#FFF; --line:#D4D2C8; --ink:#0E1526; --muted:#5B6274;
+  --gold-ink:#8F6C04;
+  --navy:#00113A; --bg:#050B1C; --surf:#0A1430; --surf2:#101C3D; --ui-line:#1C2A4E;
+  --gold:#D5A507; --ivory:#FFFFFC; --sig:#2B6EFF; --tx:#E7EAF3; --dim:#8E97AE;
+  --krit:#E5484D; --warn:#E5920A; --ok:#2FA96B;
+  --fh:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --fm:ui-monospace,"Cascadia Mono","SF Mono",Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#080D1A;--card:#0E1526;--line:#212C46;--ink:#E7EAF3;--muted:#8F98AF;
+        --gold-ink:#E7BB2E}
+}
+:root[data-theme="light"]{--paper:#F2F1EC;--card:#FFF;--line:#D4D2C8;--ink:#0E1526;
+  --muted:#5B6274;--gold-ink:#8F6C04}
+:root[data-theme="dark"]{--paper:#080D1A;--card:#0E1526;--line:#212C46;--ink:#E7EAF3;
+  --muted:#8F98AF;--gold-ink:#E7BB2E}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--fh);
+  font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 30px}
+@media(max-width:640px){.wrap{padding:0 16px}}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.022em;line-height:1.12;text-wrap:balance}
+h2{font-size:clamp(26px,3.5vw,38px);margin-bottom:.45em}
+h3{font-size:clamp(17px,2vw,21px)}
+p{margin:0 0 1em;max-width:66ch}
+code{font-family:var(--fm);font-size:.87em;background:rgba(128,128,128,.13);
+  padding:.14em .42em;border-radius:2px}
+.lede{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:60ch;line-height:1.55}
+.kicker{font-family:var(--fm);font-size:11.5px;font-weight:600;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--gold-ink);display:flex;align-items:center;gap:14px;
+  margin-bottom:18px}
+.kicker::after{content:"";flex:1;height:1px;background:var(--line)}
+section{padding:76px 0;border-top:1px solid var(--line)}
+@media(max-width:640px){section{padding:50px 0}}
+.cover{background:var(--navy);color:var(--ivory);padding:78px 0 66px;
+  border-bottom:5px solid var(--gold)}
+.cover .kicker{color:var(--gold)}
+.cover .kicker::after{background:rgba(255,255,252,.2)}
+.cover p{color:rgba(255,255,252,.75)}
+.cover-mark{display:block;width:min(100%,620px);height:auto;margin:4px 0 24px}
+
+.grid{display:grid;gap:22px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:840px){.g3{grid-template-columns:1fr}}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:22px}
+.card h3{margin-bottom:8px}
+.card p{font-size:14.5px;color:var(--muted);margin:0}
+
+/* ---------- Bildschirm-Rahmen ---------- */
+.screen{border:1px solid var(--ui-line);border-radius:5px;overflow:hidden;
+  background:var(--bg);box-shadow:0 24px 60px -30px rgba(0,0,0,.7);margin-top:26px}
+.screen .chrome{background:#08122A;border-bottom:1px solid var(--ui-line);padding:9px 14px;
+  display:flex;align-items:center;gap:8px}
+.screen .dot{width:9px;height:9px;border-radius:50%;background:#26355B}
+.screen .url{margin-left:12px;font-family:var(--fm);font-size:11.5px;color:#5D6A8C}
+.shot{color:var(--tx);font-size:13.5px;line-height:1.5}
+.scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scrollx .inner{min-width:980px}
+
+/* ---------- Anwendungsleiste ---------- */
+.appbar{background:var(--navy);display:flex;align-items:center;gap:22px;padding:0 20px;
+  height:60px;border-bottom:4px solid var(--gold)}
+.appbar .mk{height:34px;width:auto;display:block;flex:0 0 auto}
+.appbar nav{display:flex;gap:4px;margin-left:14px;height:100%}
+.appbar nav a{display:flex;align-items:center;padding:0 15px;font-size:13px;color:#93A0BE;
+  text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-4px;height:100%}
+.appbar nav a.on{color:var(--ivory);border-bottom-color:var(--gold)}
+.appbar .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.pill{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:2px;border:1px solid #27365C;color:#93A0BE;white-space:nowrap}
+.pill.ok{border-color:var(--ok);color:var(--ok)}
+.pill.gold{border-color:var(--gold);color:var(--gold)}
+.pill.krit{border-color:var(--krit);color:var(--krit)}
+.pill.sig{border-color:var(--sig);color:var(--sig)}
+.avatar{width:30px;height:30px;border-radius:50%;background:#1B2A4E;border:1px solid #2A3A63;
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:#A9B5D1;
+  font-family:var(--fm)}
+
+/* ---------- Hub ---------- */
+.hubbody{padding:24px 20px 28px;background:var(--bg)}
+.hubgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:start}
+.box{background:var(--surf);border:1px solid var(--ui-line);border-radius:3px}
+.box .hd{padding:13px 18px;border-bottom:1px solid var(--ui-line);display:flex;
+  align-items:center;gap:12px}
+.box .hd h4{margin:0;font-size:13.5px;font-weight:700;color:var(--ivory);letter-spacing:0}
+.box .hd .more{margin-left:auto;font-family:var(--fm);font-size:10.5px;color:var(--gold);
+  letter-spacing:.1em}
+.box .bd{padding:16px 18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--ui-line)}
+.kpi{background:var(--surf);padding:15px 16px}
+.kpi b{display:block;font-family:var(--fm);font-size:23px;color:var(--gold);
+  font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi span{font-size:10.5px;color:var(--dim);font-family:var(--fm);letter-spacing:.09em;
+  text-transform:uppercase}
+tbl,table{width:100%;border-collapse:collapse;font-size:12.5px}
+.tb th{text-align:left;font-family:var(--fm);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--ui-line);
+  font-weight:600}
+.tb td{padding:10px;border-bottom:1px solid rgba(28,42,78,.6);color:#C3CBDE}
+.tb tr:last-child td{border-bottom:0}
+.tb .mono{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--dim)}
+.tb .gold{color:var(--gold);font-family:var(--fm)}
+.badges{display:flex;gap:7px;flex-wrap:wrap}
+.bdg{width:34px;height:34px;border-radius:50%;border:1px solid var(--ui-line);
+  display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:10px;
+  color:var(--dim);background:var(--surf2)}
+.bdg.on{border-color:var(--gold);color:var(--gold)}
+.track{background:#071129;border:1px solid var(--ui-line);border-radius:2px;height:132px;
+  position:relative;overflow:hidden}
+.track svg{position:absolute;inset:0;width:100%;height:100%}
+.plan{display:grid;grid-template-columns:78px repeat(7,1fr);gap:1px;background:var(--ui-line);
+  font-size:10.5px;font-family:var(--fm)}
+.plan div{background:var(--surf);padding:7px 6px;color:var(--dim);text-align:center}
+.plan .lb{text-align:left;color:#93A0BE}
+.plan .bk{background:#123A2C;color:#5FD3A0}
+.plan .bk2{background:#3A2E12;color:var(--gold)}
+
+/* ---------- Leitstelle ---------- */
+.lst{display:grid;grid-template-columns:250px 1fr 292px;height:520px;background:var(--bg)}
+@media(max-width:900px){.lst{grid-template-columns:210px 1fr}}
+.lstcol{border-right:1px solid var(--ui-line);display:flex;flex-direction:column;min-height:0}
+.lstcol:last-child{border-right:0;border-left:1px solid var(--ui-line)}
+.lsthd{padding:11px 14px;border-bottom:1px solid var(--ui-line);font-family:var(--fm);
+  font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);
+  display:flex;align-items:center;gap:9px}
+.lstbody{overflow:hidden;flex:1;min-height:0}
+.mission{padding:11px 14px;border-bottom:1px solid rgba(28,42,78,.7);border-left:3px solid transparent}
+.mission.on{background:rgba(213,165,7,.07);border-left-color:var(--gold)}
+.mission .kw{font-size:12.5px;font-weight:700;color:var(--ivory)}
+.mission .mt{font-family:var(--fm);font-size:10px;color:var(--dim);letter-spacing:.06em;
+  margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.mission .st{color:var(--sig)}
+.map{position:relative;background:#040A18;min-height:0}
+.map canvas,.map svg{position:absolute;inset:0;width:100%;height:100%}
+.mapui{position:absolute;left:12px;top:12px;display:flex;gap:7px;flex-wrap:wrap;z-index:3}
+.mapui2{position:absolute;left:12px;bottom:12px;right:12px;display:flex;gap:7px;
+  align-items:flex-end;z-index:3}
+.popup{background:rgba(10,20,48,.95);border:1px solid var(--ui-line);border-top:3px solid var(--gold);
+  border-radius:2px;padding:11px 13px;min-width:190px}
+.popup b{display:block;font-size:12.5px;color:var(--ivory)}
+.popup .row{font-family:var(--fm);font-size:10px;color:var(--dim);margin-top:4px;
+  display:flex;justify-content:space-between;gap:14px}
+.popup .row i{font-style:normal;color:#C3CBDE}
+.fms{display:flex;gap:4px;margin-top:9px}
+.fms span{width:21px;height:21px;border:1px solid var(--ui-line);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:10px;
+  color:var(--dim)}
+.fms span.on{background:var(--sig);border-color:var(--sig);color:#fff}
+.radio{padding:11px 14px;border-bottom:1px solid rgba(28,42,78,.7)}
+.radio .who{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ivory)}
+.radio .lvl{height:3px;background:var(--ui-line);border-radius:2px;margin-top:7px;overflow:hidden}
+.radio .lvl i{display:block;height:100%;background:var(--ok)}
+.ptt{margin:12px 14px;background:var(--gold);color:var(--navy);text-align:center;
+  padding:11px;border-radius:2px;font-weight:700;font-size:12.5px;letter-spacing:.02em}
+
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:13px;color:var(--muted)}
+.legend b{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:7px;
+  vertical-align:-1px}
+
+ul.pts{list-style:none;padding:0;margin:0;display:grid;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:3px}
+ul.pts li{background:var(--card);padding:15px 19px;font-size:14.5px}
+ul.pts li b{display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--gold-ink);margin-bottom:3px}
+footer{border-top:1px solid var(--line);padding:32px 0 56px;font-size:13px;color:var(--muted)}
+</style>
+
+<header class="cover">
+  <div class="wrap">
+    <div class="kicker">Oberflächen &#183; Entwurf Juli 2026</div>
+    {{WORD:HUB UND LEITSTELLE|86|#FFFFFC|0.045|fonts/Uniform Bold.ttf|cover-mark}}
+    <p class="lede">Beide Anwendungen laufen heute auf den Standardthemes von daisyUI.
+      Der Funktionsumfang stimmt &#8212; es fehlt die Marke, und es fehlt eine
+      Informationshierarchie, die dem Ernst der Sache entspricht. Hier beides auf dem
+      neuen Farbsystem, mit den Begriffen aus eurem System.</p>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================ Hub ============================ -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Hub &#183; Übersicht</div>
+    <h2>Was ein Mitglied als Erstes sehen sollte</h2>
+    <p>Heute begrüßt der Hub mit Kacheln. Die eigentliche Frage beim Einloggen ist aber
+      eine andere: <em>Läuft gerade was, und bin ich eingeteilt?</em> Deshalb steht oben
+      der Zustand des Systems, dann die eigene Schicht, dann die Historie.</p>
+
+    <div class="screen">
+      <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="url">hub.virtualairrescue.com</span></div>
+      <div class="scrollx"><div class="inner shot">
+        <div class="appbar">
+          {{SVG:lockup_h_neg|mk}}
+          <nav>
+            <a class="on" href="#">Übersicht</a><a href="#">Einsatzhistorie</a>
+            <a href="#">Dienstplan</a><a href="#">Veranstaltungen</a>
+            <a href="#">Tickets</a><a href="#">Wissen</a>
+          </nav>
+          <div class="right">
+            <span class="pill ok">Leitstelle besetzt</span>
+            <span class="pill gold">3 Einsätze</span>
+            <span class="avatar">TR</span>
+          </div>
+        </div>
+
+        <div class="hubbody">
+          <div class="kpis" style="margin-bottom:18px">
+            <div class="kpi"><b>142</b><span>Einsätze geflogen</span></div>
+            <div class="kpi"><b>38</b><span>Einsätze disponiert</span></div>
+            <div class="kpi"><b>91:24</b><span>Stunden als Pilot</span></div>
+            <div class="kpi"><b>Christoph 22</b><span>Deine Station</span></div>
+          </div>
+
+          <div class="hubgrid">
+            <div style="display:grid;gap:18px">
+              <div class="box">
+                <div class="hd"><h4>Läuft gerade</h4>
+                  <span class="pill krit" style="font-size:9.5px">LIVE</span>
+                  <span class="more">LAGEBILD ÖFFNEN &#8250;</span></div>
+                <table class="tb">
+                  <thead><tr><th>Stichwort</th><th>Funkrufname</th><th>Station</th>
+                    <th>Status</th><th>Laufzeit</th></tr></thead>
+                  <tbody>
+                    <tr><td>VU klemmt</td><td class="gold">Christoph 51</td><td>Stuttgart</td>
+                      <td><span class="pill sig" style="font-size:9.5px">3 · Anfahrt</span></td>
+                      <td class="mono">00:12:40</td></tr>
+                    <tr><td>Intensivverlegung</td><td class="gold">Christoph Europa 5</td>
+                      <td>Niebüll</td>
+                      <td><span class="pill sig" style="font-size:9.5px">7 · Transport</span></td>
+                      <td class="mono">00:41:03</td></tr>
+                    <tr><td>Windenrettung</td><td class="gold">Rega 10</td><td>Wilderswil</td>
+                      <td><span class="pill sig" style="font-size:9.5px">4 · Vor Ort</span></td>
+                      <td class="mono">00:06:55</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="box">
+                <div class="hd"><h4>Letzter Einsatz</h4>
+                  <span class="more">EINSATZHISTORIE &#8250;</span></div>
+                <div class="bd">
+                  <div class="track">{{SVG:_track}}</div>
+                  <table class="tb" style="margin-top:12px">
+                    <tbody>
+                      <tr><td style="width:28%;color:var(--dim)">Stichwort</td>
+                        <td>Verkehrsunfall &#183; Person eingeklemmt</td>
+                        <td style="width:22%;color:var(--dim)">Ausrückzeit</td>
+                        <td class="mono">01:48</td></tr>
+                      <tr><td style="color:var(--dim)">Strecke</td><td class="mono">64,2 NM</td>
+                        <td style="color:var(--dim)">Einsatzdauer</td>
+                        <td class="mono">00:52:11</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;gap:18px">
+              <div class="box">
+                <div class="hd"><h4>Dein Dienstplan</h4><span class="more">BUCHEN &#8250;</span></div>
+                <div class="plan">
+                  <div class="lb">&nbsp;</div><div>Mo</div><div>Di</div><div>Mi</div>
+                  <div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+                  <div class="lb">C 22</div><div></div><div class="bk">18&#8211;22</div>
+                  <div></div><div></div><div class="bk">19&#8211;23</div><div></div><div></div>
+                  <div class="lb">LST 01</div><div></div><div></div><div></div>
+                  <div class="bk2">20&#8211;23</div><div></div><div></div><div></div>
+                  <div class="lb">LST 02</div><div></div><div></div><div></div><div></div>
+                  <div></div><div class="bk2">14&#8211;18</div><div></div>
+                </div>
+                <div class="bd" style="padding-top:12px">
+                  <div style="font-size:11.5px;color:var(--dim);font-family:var(--fm)">
+                    <span style="color:#5FD3A0">&#9632;</span> Pilot &nbsp;
+                    <span style="color:var(--gold)">&#9632;</span> Leitstelle</div>
+                </div>
+              </div>
+
+              <div class="box">
+                <div class="hd"><h4>Ausbildungsstand</h4></div>
+                <div class="bd">
+                  <div class="badges">
+                    <span class="bdg on">P1</span><span class="bdg on">P2</span>
+                    <span class="bdg on">P3</span><span class="bdg on">D1</span>
+                    <span class="bdg">D2</span><span class="bdg">D3</span>
+                    <span class="bdg on">DAY1</span>
+                  </div>
+                  <div style="margin-top:13px;font-size:12px;color:var(--dim)">
+                    Nächster Schritt: <span style="color:var(--gold)">D2 &#183;
+                    Stichwortkatalog</span> &#8212; Kurs offen im Bereich Veranstaltungen.</div>
+                </div>
+              </div>
+
+              <div class="box">
+                <div class="hd"><h4>Deine Tickets</h4><span class="more">ALLE &#8250;</span></div>
+                <table class="tb">
+                  <tbody>
+                    <tr><td>Client bricht bei X-Plane ab</td>
+                      <td><span class="pill" style="font-size:9.5px">In Arbeit</span></td></tr>
+                    <tr><td>Station Kassel fehlt im Auswahlfeld</td>
+                      <td><span class="pill ok" style="font-size:9.5px">Gelöst</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="grid g3" style="margin-top:30px">
+      <div class="card"><h3>Was neu ist</h3>
+        <p>Der Systemzustand steht in der Kopfzeile: ist die Leitstelle besetzt, laufen
+          Einsätze. Das beantwortet die erste Frage jedes Mitglieds vor dem ersten
+          Klick.</p></div>
+      <div class="card"><h3>Der Flugweg</h3>
+        <p>Die Positionsdaten werden längst aufgezeichnet und in der Leitstelle
+          angezeigt &#8212; nur nie dem Piloten zurückgegeben. Hier liegen sie im
+          Einsatz&#8203;protokoll, mit Strecke, Ausrückzeit und Dauer.</p></div>
+      <div class="card"><h3>Dienstplan statt Liste</h3>
+        <p>Aus der Buchungsfunktion wird eine Wochenansicht. Man sieht die eigenen
+          Schichten und die Lücken &#8212; und bucht dort, wo eine ist.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ Leitstelle ============================ -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Leitstelle v2 &#183; Lagebild</div>
+    <h2>Drei Spalten, eine Aufgabe</h2>
+    <p>Links die Einsätze, in der Mitte die Karte, rechts der Funk. Alles, was nicht
+      Disposition ist, verschwindet in die Kopfzeile. Die Statusfarben sind bewusst nicht
+      Gold &#8212; Gold gehört der Marke, Blau dem laufenden Einsatz.</p>
+
+    <div class="screen">
+      <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="url">ops.virtualairrescue.com</span></div>
+      <div class="scrollx"><div class="inner shot">
+        <div class="appbar">
+          {{SVG:lockup_h_neg|mk}}
+          <nav><a class="on" href="#">Lagebild</a><a href="#">Einsätze</a>
+            <a href="#">Stationen</a><a href="#">Protokoll</a></nav>
+          <div class="right">
+            <span class="pill gold">LST 01</span>
+            <span class="pill ok">Funk verbunden</span>
+            <span class="pill">7 Luftfahrzeuge</span>
+            <span class="avatar">MB</span>
+          </div>
+        </div>
+
+        <div class="lst">
+          <div class="lstcol">
+            <div class="lsthd">Einsätze &#183; 3 offen
+              <span class="pill gold" style="margin-left:auto;font-size:9px">+ NEU</span></div>
+            <div class="lstbody">
+              <div class="mission on">
+                <div class="kw">VU klemmt</div>
+                <div class="mt"><span>PRIMÄR</span><span class="st">STATUS 3</span>
+                  <span>00:12:40</span></div>
+                <div class="mt"><span>Christoph 51 &#183; Stuttgart</span></div>
+              </div>
+              <div class="mission">
+                <div class="kw">Intensivverlegung</div>
+                <div class="mt"><span>SEKUNDÄR</span><span class="st">STATUS 7</span>
+                  <span>00:41:03</span></div>
+                <div class="mt"><span>Christoph Europa 5 &#183; Niebüll</span></div>
+              </div>
+              <div class="mission">
+                <div class="kw">Windenrettung</div>
+                <div class="mt"><span>PRIMÄR</span><span class="st">STATUS 4</span>
+                  <span>00:06:55</span></div>
+                <div class="mt"><span>Rega 10 &#183; Wilderswil</span></div>
+              </div>
+              <div class="lsthd" style="border-top:1px solid var(--ui-line)">
+                Frei &#183; 4 Luftfahrzeuge</div>
+              <div class="mission"><div class="kw" style="font-size:12px">Christoph 22</div>
+                <div class="mt"><span>ULM</span><span style="color:var(--ok)">STATUS 2</span>
+                  <span>WINDE &#183; NVG</span></div></div>
+              <div class="mission"><div class="kw" style="font-size:12px">Christophorus 1</div>
+                <div class="mt"><span>WIEN</span><span style="color:var(--ok)">STATUS 2</span>
+                  <span>24 H</span></div></div>
+            </div>
+          </div>
+
+          <div class="map">
+            {{SVG:_lage}}
+            <div class="mapui">
+              <span class="pill">OpenStreetMap Dark</span>
+              <span class="pill sig">Niederschlag DWD</span>
+              <span class="pill">Reichweitenringe</span>
+            </div>
+            <div class="mapui2">
+              <div class="popup">
+                <b>Christoph 51</b>
+                <div class="row">Muster <i>H145 &#183; D-HDRF</i></div>
+                <div class="row">Höhe <i>1 200 ft</i></div>
+                <div class="row">Speed <i>124 kt</i></div>
+                <div class="row">Ziel <i>Einsatzstelle B27</i></div>
+                <div class="fms">
+                  <span>1</span><span>2</span><span class="on">3</span><span>4</span>
+                  <span>7</span><span>8</span></div>
+              </div>
+              <div style="margin-left:auto;display:flex;gap:7px">
+                <span class="pill">Messen</span><span class="pill">Stichwort setzen</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lstcol">
+            <div class="lsthd">Funk &#183; Kanal LST 01</div>
+            <div class="lstbody">
+              <div class="radio"><div class="who">
+                <span style="width:7px;height:7px;border-radius:50%;background:var(--ok);
+                  display:inline-block"></span>Christoph 51 &#183; Marco</div>
+                <div class="lvl"><i style="width:72%"></i></div></div>
+              <div class="radio"><div class="who">
+                <span style="width:7px;height:7px;border-radius:50%;background:#2A3A63;
+                  display:inline-block"></span>Rega 10 &#183; Sandra</div>
+                <div class="lvl"><i style="width:0"></i></div></div>
+              <div class="radio"><div class="who">
+                <span style="width:7px;height:7px;border-radius:50%;background:#2A3A63;
+                  display:inline-block"></span>LST 02 &#183; Jonas</div>
+                <div class="lvl"><i style="width:0"></i></div></div>
+              <div class="ptt">SPRECHTASTE &#183; LEERTASTE</div>
+              <div class="lsthd" style="border-top:1px solid var(--ui-line)">Protokoll</div>
+              <div style="padding:11px 14px;font-family:var(--fm);font-size:10.5px;
+                color:var(--dim);line-height:1.9">
+                <div><span style="color:var(--gold)">18:42:11</span> Alarm &#8250; C51</div>
+                <div><span style="color:var(--gold)">18:43:59</span> Status 3</div>
+                <div><span style="color:var(--gold)">18:44:02</span> Objekt gesetzt</div>
+                <div><span style="color:var(--gold)">18:52:40</span> Status 4</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="legend">
+      <span><b style="background:var(--gold)"></b>Marke und Hervorhebung</span>
+      <span><b style="background:var(--sig)"></b>Einsatz läuft &#183; Status 3, 4, 7</span>
+      <span><b style="background:var(--ok)"></b>Einsatzbereit &#183; Status 1, 2</span>
+      <span><b style="background:var(--warn)"></b>Überfällig</span>
+      <span><b style="background:var(--krit)"></b>Störung, Abbruch</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ Entscheidungen ============================ -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Warum so</div>
+    <h2>Die Entscheidungen dahinter</h2>
+    <div class="grid g2" style="margin-top:26px;align-items:start">
+      <ul class="pts">
+        <li><b>Gold ist reserviert</b>Es markiert die Marke, den aktiven Reiter und
+          Hervorhebungen &#8212; nie einen Einsatzstatus. Sonst konkurriert die Marke mit
+          der Bedienung, und in einer Leitstelle gewinnt immer die Bedienung.</li>
+        <li><b>Ein Blau, nicht drei</b>Persian Blue und Dodger Blue lagen bei
+          1,65&#8202;:&#8202;1 zueinander. Übrig bleibt <code>#2B6EFF</code> als
+          Signalfarbe, weil es gegen Stratos 4,19&#8202;:&#8202;1 erreicht.</li>
+        <li><b>Die Kante als Reiter</b>Der aktive Navigationspunkt trägt dieselbe goldene
+          Kante wie das Logo. Das ist kein Ornament, sondern dasselbe Element in einer
+          anderen Größe.</li>
+        <li><b>Monospace für Daten</b>Zeiten, Höhen, Geschwindigkeiten und Kennungen
+          laufen in Festbreite mit <code>tabular-nums</code>, damit Spalten stehen und
+          Zahlen beim Aktualisieren nicht springen.</li>
+        <li><b>Status als Zahl und Farbe</b>Die FMS-Ziffer bleibt sichtbar, die Farbe
+          kommt dazu. Wer farbenblind ist, liest weiter die Zahl.</li>
+      </ul>
+      <div style="display:grid;gap:22px">
+        <div class="card">
+          <h3>Was das technisch heißt</h3>
+          <p style="margin-top:8px">Die Farben kommen aus einer gemeinsamen
+            <code>tokens.css</code> in <code>packages/shared-components/</code>. Damit
+            gilt eine Änderung sofort in Hub und Leitstelle. Die daisyUI-Themes
+            <code>dark</code> und <code>nord</code> entfallen, ebenso das verirrte
+            <code>rescuetrack: #46b7a3</code> aus der Tailwind-Config.</p>
+        </div>
+        <div class="card">
+          <h3>Was bleibt</h3>
+          <p style="margin-top:8px">Der Funktionsumfang. Kartenlayer, Reichweitenringe,
+            Marker-Cluster, Entfernungsmessung, LiveKit-Funk, Stichwortkatalog,
+            Einsatzprotokoll &#8212; alles vorhanden und alles gut. Was sich ändert, ist
+            Anordnung, Farbe und Typografie.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Entwurf auf Basis von <code>apps/hub</code> und <code>apps/dispatch</code> im
+    var-monorepo. Alle Begriffe, Statusgruppen, Rollen und Abzeichen stammen aus dem
+    bestehenden Datenmodell. Zahlen sind Beispiele.
+  </div>
+</footer>
