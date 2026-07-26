@@ -140,6 +140,46 @@ td.r{font-family:var(--fm);font-variant-numeric:tabular-nums;text-align:right;wh
 .pbsizes .it svg{width:100%;height:100%;display:block}
 .pbsizes .it span{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.08em;
   color:rgba(255,255,252,.55);margin-top:9px}
+
+/* ---------------- Reel-Baukasten ---------------- */
+.bk{display:grid;grid-template-columns:1fr 340px;gap:0;border:1px solid var(--line);
+  border-top:4px solid var(--gold);background:var(--card)}
+@media(max-width:960px){.bk{grid-template-columns:1fr}}
+.bk .arbeit{padding:28px 30px}
+.bk .vorschau{background:var(--navy);padding:26px;display:flex;flex-direction:column;
+  align-items:center;gap:16px;border-left:1px solid var(--line)}
+@media(max-width:960px){.bk .vorschau{border-left:0;border-top:1px solid var(--line)}}
+.bk canvas{width:100%;max-width:264px;height:auto;background:#0B1020;border-radius:2px;
+  box-shadow:0 12px 30px -14px rgba(0,0,0,.8)}
+.bk .felder{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+@media(max-width:560px){.bk .felder{grid-template-columns:1fr}}
+.bk label{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.bk input[type=text]{width:100%;background:var(--sunk);border:1px solid var(--line);
+  border-radius:2px;padding:9px 11px;color:var(--ink);font-family:inherit;font-size:14px}
+.bk input[type=text]:focus{outline:2px solid var(--gold);outline-offset:1px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){.slots{grid-template-columns:repeat(2,1fr)}}
+.slot{border:1px dashed var(--line);border-radius:2px;padding:12px;cursor:pointer;
+  transition:border-color .15s,background .15s;position:relative;overflow:hidden}
+.slot:hover{border-color:var(--gold);background:var(--sunk)}
+.slot.voll{border-style:solid;border-color:var(--gold)}
+.slot.aktiv{box-shadow:inset 0 0 0 2px var(--gold)}
+.slot .nr{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:var(--gold)}
+.slot .nm{font-size:13px;font-weight:700;margin:3px 0 2px}
+.slot .st{font-family:var(--fm);font-size:10.5px;color:var(--muted)}
+.slot .mini{position:absolute;inset:0;object-fit:cover;width:100%;height:100%;opacity:.26}
+.slot input[type=file]{display:none}
+.bk .knoepfe{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.bk button{background:var(--gold);color:#00113A;border:0;border-radius:2px;
+  padding:11px 20px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.bk button.leer{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.bk button:disabled{opacity:.45;cursor:default}
+.bk .hinw{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.5}
+.bk .zeitleiste{display:flex;gap:5px;margin-top:16px}
+.bk .zeitleiste i{height:3px;flex:1;background:var(--line);border-radius:2px}
+.bk .zeitleiste i.an{background:var(--gold)}
+
 /* Tagebuch */
 .tbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
 .tbcard{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--card)}
@@ -835,6 +875,64 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
   </div>
 </section>
 
+
+<!-- ===================================================== Reel-Baukasten -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Werkzeug</div>
+    <h2>Der Reel-Baukasten</h2>
+    <p>Sechs Fenster f&#252;r Bilder oder Videos, oben die Kopfdaten &#8212; heraus
+      kommt entweder ein Story-Bild je Schritt oder ein fertiges Reel. Alles
+      passiert im Browser: <strong>keine Datei verl&#228;sst diesen Rechner.</strong></p>
+
+    <div class="bk" style="margin-top:28px">
+      <div class="arbeit">
+        <div class="felder">
+          <div><label for="bk-ruf">Funkrufname</label>
+            <input type="text" id="bk-ruf" value="Christoph 51"></div>
+          <div><label for="bk-stw">Stichwort</label>
+            <input type="text" id="bk-stw" value="VU klemmt &#183; B27"></div>
+          <div><label for="bk-sta">Station</label>
+            <input type="text" id="bk-sta" value="Stuttgart"></div>
+          <div><label for="bk-zeit">Startzeit (UTC)</label>
+            <input type="text" id="bk-zeit" value="18:42"></div>
+        </div>
+
+        <label>Die sechs Schritte &#8212; anklicken und Datei w&#228;hlen</label>
+        <div class="slots" id="bk-slots"></div>
+        <div class="zeitleiste" id="bk-zeit-leiste"></div>
+
+        <div class="knoepfe">
+          <button type="button" id="bk-png">Story-Bild sichern</button>
+          <button type="button" id="bk-alle" class="leer">Alle sechs sichern</button>
+          <button type="button" id="bk-reel" class="leer">Reel aufzeichnen</button>
+        </div>
+        <div class="hinw" id="bk-status">Noch kein Material geladen. Ohne Datei zeigt
+          das Fenster den Platzhalter &#8212; das Overlay steht trotzdem.</div>
+      </div>
+
+      <div class="vorschau">
+        <canvas id="bk-canvas" width="1080" height="1920"></canvas>
+        <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;
+          color:rgba(255,255,252,.5);text-align:center">1080 &#215; 1920 &#183; 9:16</div>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:26px">
+      <div class="card"><h4>Was herauskommt</h4><p class="small" style="margin:6px 0 0">
+        Story-Bilder als PNG in voller Aufl&#246;sung, das Reel als WebM. Beides
+        l&#228;dt direkt herunter, ohne Zwischenstation.</p></div>
+      <div class="card"><h4>Videos</h4><p class="small" style="margin:6px 0 0">
+        Ein Videofenster spielt beim Aufzeichnen ab. Standbilder bekommen eine
+        langsame Fahrt, damit das Reel nicht steht.</p></div>
+      <div class="card" style="border-color:var(--gold)"><h4>F&#252;r die Endfassung</h4>
+        <p class="small" style="margin:6px 0 0">Hier zeichnet die Systemschrift, weil
+        Uniform nicht mitgeliefert wird. In der eingebauten Fassung im Hub geh&#246;rt
+        die echte Schrift eingebunden.</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================================================== 11 Sichere Zonen -->
 <section>
   <div class="wrap">
@@ -979,3 +1077,238 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
     Kontrastwerte nach WCAG 2.1.
   </div>
 </footer>
+
+<script>
+(function(){
+  var cv = document.getElementById('bk-canvas');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+  var W = 1080, H = 1920, FUSS = 470;
+  var GOLD = '#D5A507', IVORY = '#FFFFFC', NAVY = '#00113A';
+  var FMS = { '1':'rgb(10,134,25)', '2':'rgb(10,134,25)', '3':'rgb(140,10,10)',
+              '4':'rgb(140,10,10)', '7':'rgb(140,10,10)', '8':'rgb(186,105,0)' };
+
+  var SCHRITTE = [
+    { st:'3', t:'ALARMIERUNG',   u:'stichwort', min:0  },
+    { st:'3', t:'AUSR\u00dcCKEN', u:'abflug',   min:2  },
+    { st:'4', t:'ANKOMMEN',      u:'vorort',    min:11 },
+    { st:'7', t:'ABFLUG KLINIK', u:'patient',   min:29 },
+    { st:'8', t:'ANKUNFT KLINIK',u:'klinik',    min:44 },
+    { st:'1', t:'EINSATZKLAR',   u:'frei',      min:56 }
+  ];
+
+  var badge = new Image();
+  badge.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PGRlZnM+PGNsaXBQYXRoIGlkPSJuMSI+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIyNTYiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyBjbGlwLXBhdGg9InVybCgjbjEpIj48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjI1NiIgZmlsbD0iIzAwMTEzQSIvPjxnIGZpbGw9IiNENUE1MDciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ3LjAwLDIwNy43Mikgc2NhbGUoMC40MTgwMCkiPjxwYXRoIGQ9Ik0zNS43IDMwNS4yN0MyNy44NiAyOTcuOTkgMjAgMjkwLjY3IDE4LjIzIDI4OS4wMkMxMi45NCAyODQuMDcgNy4yNiAyNzcuNzYgMi41OSAyNzEuNjNDMS4zIDI2OS45NCAxLjMgMjY5Ljk0IDAuNjcgMjU5LjY3QzAuMDQgMjQ5LjQgMC4wNCAyNDkuNCAzLjIxIDI0My40M0MxNy44NSAyMTUuOTMgMjUuMzEgMTk4LjI2IDI2LjkgMTg3LjMzQzI3LjQ1IDE4My41OCAyNi42NSAxODQuMzYgMzQuMjUgMTgwLjEzQzM5LjkyIDE3Ni45NyAzOS45MSAxNzYuOTggMzkuOTEgMTc1LjQ5QzM5LjkxIDE3My44NSAzOS4wMiAxNzIuNjEgMzcuODMgMTcyLjZDMzcuMTEgMTcyLjYgMzcuODEgMTc1LjIyIDMxLjY5IDE0OS44MUMyNi42NCAxMjguODcgMjYuMTEgMTI2LjIgMjYuNjcgMTI0LjE1QzI3LjEyIDEyMi40OSAzMi42MiAxMTkuMzcgNDEuMTMgMTE1Ljk1QzQ2LjUzIDExMy43OCA0Ny40OSAxMTMuMyA0OC41OCAxMTIuMjZDNTAuNjcgMTEwLjI2IDU4Ljk3IDEwOC42OSA3MS4yNCAxMDcuOTlDNzcuMTkgMTA3LjY0IDc0Ljk4IDEwNC44MSA4OS4yOSAxMzEuMTVDOTYuMTUgMTQzLjc5IDEwNS43MyAxNjEuMjkgMTEwLjU3IDE3MC4wNEMxMTUuNDEgMTc4Ljc5IDEyMC43NSAxODguNjIgMTIyLjQ0IDE5MS44OEMxMjkuNDggMjA1LjUyIDEzNC4yMyAyMTMuMjEgMTM2LjI5IDIxNC4zNEMxMzkuNzIgMjE2LjIyIDE3MC4xOCAyMTIuODMgMjI5LjIzIDIwNC4wMUMyNTAuMDIgMjAwLjkxIDMwNi43NSAxOTAuODggMzMwLjIzIDE4Ni4xN0MzMzIuNjYgMTg1LjY4IDMzMi42NiAxODUuNjggMzMzLjU0IDE4My4xMkMzMzguNSAxNjguNjMgMzUwLjEgMTUxLjMgMzYwLjE3IDE0My4zMkMzNzIuOCAxMzMuMyAzOTcuMTMgMTIxLjM0IDQxNC40MSAxMTYuNjNDNDM1Ljg0IDExMC43OSA0NDQuNjYgMTA5LjE3IDQ2NC44MSAxMDcuMzRDNDc5LjgxIDEwNS45OCA1MTEuNzYgMTAyLjYyIDUxMi4wNSAxMDIuMzhDNTEyLjA4IDEwMi4zNiA1MTEuNjUgOTkuNDkgNTExLjEgOTYuMDFDNTEwLjEgODkuNjggNTEwLjEgODkuNjggNTA2Ljg3IDg4LjU4QzUwMi42NSA4Ny4xMyA1MDEgODYuMjYgNDk5LjQ1IDg0LjY3QzQ5OC4xOCA4My4zNyA0OTguMTggODMuMzcgNDg3Ljg4IDgzLjc1QzQ1OS4wNSA4NC44MiA0NTEuMDggODUuNzMgNDQxLjkgODkuMDFDNDM1LjQgOTEuMzMgNDM1LjQ1IDkxLjMxIDQyOC44IDkxLjk3QzM2Mi44MSA5OC40NSAyMTQuMTIgMTI1LjExIDEyNi4yMSAxNDYuMjFDMTExLjEzIDE0OS44MyAxMDkuOTEgMTQ5LjgyIDEwOS4zNSAxNDYuMDlDMTA4LjYyIDE0MS4xOCAxMTAuOTYgMTQwLjA0IDEzMC43IDEzNS42OEMxOTkuNzggMTIwLjQzIDI2Mi44MiAxMDcuNCAyOTQuNjMgMTAxLjgxQzMzNi45OCA5NC4zNiA0MzEuNDEgODEuMjIgNDUyLjU0IDc5Ljg0QzQ1NS4xMyA3OS42NyA0NjIuMDUgNzkuMTggNDY3LjkxIDc4Ljc1QzQ3My43NyA3OC4zMyA0ODAuNzQgNzcuOTEgNDgzLjQxIDc3LjgyQzQ5Ni4wMiA3Ny40MSA0OTUuNzYgNzcuNDQgNDk1LjU1IDc2LjQ5QzQ5NS40NCA3Ni4wMyA0OTUuMjggNzQuMDggNDk1LjE4IDcyLjE3QzQ5NS4wMSA2OC42OSA0OTUuMDEgNjguNjkgNDkzLjc1IDY4LjM4QzQ5My4wNiA2OC4yIDQ5MS4yNCA2Ny4zNCA0ODkuNzEgNjYuNDdDNDgyLjQgNjIuMzIgNDgyLjg3IDYyLjQ4IDQ3NS4wNSA2MS4yM0M0NjEuNjkgNTkuMDkgNDU0LjE3IDU3LjQxIDQ0OS44MiA1NS41OUM0NDguNDIgNTUgNDQ0LjkxIDUzLjQ3IDQ0Mi4wMiA1Mi4xOUM0MzEuNjEgNDcuNTcgNDE4LjI4IDQyLjY2IDM5Mi44IDM0LjA4QzM2NC44NyAyNC42NyAzMzkuNTkgMTcuNSAzMTEuNzYgMTEuMDlDMjk5Ljk1IDguMzcgMjk5Ljk5IDguMzggMjkwLjIxIDYuNkMyNzkuMzggNC42MyAyNzQuMDQgMy4zNiAyNzQuNTUgMi44N0MyNzUuMTQgMi4zIDI4OS43MyAwLjY1IDI5Ny44OCAwLjIzQzMxMS4xNiAtMC40NiAzMTEuNTUgLTAuNCAzNDEuMTUgNi43NEMzODkuNyAxOC40NiA0MDIuMTUgMjIuMDQgNDM3Ljk3IDM0LjU4QzQ2Mi45OSA0My4zMyA0NzIuMDIgNDcuMDUgNDg2LjUyIDU0LjU1QzQ4OS43IDU2LjIgNDk0LjEzIDU4LjQ3IDQ5Ni4zNiA1OS41OUM0OTguNTggNjAuNzIgNTAwLjc0IDYxLjg2IDUwMS4xNCA2Mi4xM0M1MDEuODcgNjIuNjIgNTAxLjg5IDYyLjYyIDUwNC44MiA2MS4zOEM1MTkuNCA1NS4yMyA1MjkuNDMgNTUuMDMgNTQwLjc5IDYwLjY5QzU0Ni4zNSA2My40NiA1NDguMTcgNjQuNzggNTQ4Ljk4IDY2LjZDNTQ5LjU4IDY3Ljk3IDU1NS4zMSA2Ny45NCA1NzUuOTIgNjYuNDVDNTk4LjM5IDY0LjgzIDU5OC4zOSA2NC44MyA2MDcuMzQgNjIuMjlDNjE0LjI5IDYwLjMyIDYxNC4xNCA2MC4zMyA2MzkuNTYgNTguNzlDNzAzLjQxIDU0LjkzIDc1Ni4yNiA1My4xMyA4MDYuMzYgNTMuMTNDODU4LjEyIDUzLjEzIDk3Ny41NCA1NS4wOSA5OTYuODIgNTYuMjZDMTAwMC40MyA1Ni40OCAxMDAxLjE3IDU4LjE0IDk5OC43MSA2MC40OUM5OTUuMjkgNjMuNzYgOTkxLjQzIDYzLjk0IDk0OC43MyA2Mi44NUM4NzMuMDggNjAuOTEgODU2LjA4IDYwLjgzIDc4OC45NyA2Mi4xN0M3MjIuMjIgNjMuNSA2OTQuNjcgNjQuOCA2MjAuMDEgNzAuMTFDNjEzLjg2IDcwLjU1IDYwNyA3MC45OCA2MDQuNzcgNzEuMDdDNTkxLjg5IDcxLjU5IDU3My41IDczLjM1IDU2Ny40NyA3NC42NEM1NjEuOTcgNzUuODIgNTYxLjMyIDc1LjkgNTU2LjM2IDc2LjA0QzU1MS4xMSA3Ni4xOSA1NTEuMTEgNzYuMTkgNTUwLjk0IDc4Ljc1QzU1MC44NCA4MC4xNiA1NTAuNTcgODEuNzcgNTUwLjM0IDgyLjMzQzU1MC4wMSA4My4xMSA1NDkuOTkgODMuMzggNTUwLjI0IDgzLjQ3QzU1MC40MiA4My41MyA1NTMuNDIgODQuNTUgNTU2LjkgODUuNzJDNTYwLjM5IDg2LjkgNTY2LjI1IDg4Ljk2IDU2OS45MyA5MC4zMkM1NzMuNjEgOTEuNjcgNTc2Ljc0IDkyLjc3IDU3Ni44OSA5Mi43N0M1ODAuMTQgOTIuNzcgNjE0LjcgMTExLjc5IDYyNS44MSAxMTkuNjlDNjMwLjkzIDEyMy4zNCA2MzAuOTMgMTIzLjM0IDYzNi44NyAxMjQuNzVDNjcyLjAyIDEzMy4xMiA2ODkuOTUgMTM5LjM4IDcwMS4yOSAxNDcuMjRDNzA1LjE4IDE0OS45MyA3MDUuMTggMTQ5LjkzIDcyMC4yNCAxNTUuMzFDNzUyLjk1IDE2Ni45OCA3NjUuMzUgMTczLjM1IDc5MC45OSAxOTEuNjZDNzk5LjUgMTk3LjczIDgxNi42NyAyMTQuOTcgODE5LjY0IDIyMC40MkM4MjMuNDIgMjI3LjM2IDgyMC43NSAyMzcuMjEgODE0LjQyIDIzOS42M0M4MTEuOSAyNDAuNTkgODEyLjI2IDI0MC4yIDgwNC4yNSAyNTAuNjFDNzk1LjQ2IDI2Mi4wMiA3ODAuNiAyNzYuMjQgNzc2Ljg3IDI3Ni44MkM3NzUuNjYgMjc3IDM3My41MyAyOTkuOTQgMzczLjI1IDI5OS44NEMzNzEuODcgMjk5LjMzIDM1OS4zMiAyODQuMzQgMzU1LjQ2IDI3OC41OUMzNDQuNjYgMjYyLjUxIDMzOC43NSAyNTIuMTYgMzM0LjM5IDI0MS42OUMzMzIuMjEgMjM2LjQ1IDMzMC4zNiAyMzIuMSAzMzAuMjggMjMyLjAyQzMyOS45NyAyMzEuNzEgMjEzLjY4IDI0OS43MyAxODcuOTcgMjU0LjA4QzE2NC4wOCAyNTguMTIgMTYzLjEzIDI1OC4zNSAxNTguNSAyNjEuNDNDMTUxLjU0IDI2Ni4wNiAxNDYuNzMgMjcwLjQ0IDEyOS4xMSAyODguMThDOTguNzMgMzE4Ljc3IDEwNS4wMyAzMTUuMjkgNzcuMjUgMzE2Ljg1QzYzLjkxIDMxNy42MSA1Mi4zMSAzMTguMjkgNTEuNDggMzE4LjM3QzQ5Ljk2IDMxOC41MiA0OS45NiAzMTguNTIgMzUuNyAzMDUuMjdaTTY1LjE2IDI5NC4zNUM4My43MyAyOTEuMTIgOTcuNTEgMjczLjM5IDEwMC45MSAyNDguMzhDMTAxLjM4IDI0NC45NyAxMDEuMzcgMjMwLjE3IDEwMC45IDIyNkM5OS41NiAyMTMuOTkgOTguOCAyMTEuNjEgOTQuMDIgMjA0LjU1Qzc2LjY0IDE3OC44MyA0MC40MyAxOTQuOTIgMzEuMTggMjMyLjQ3QzIyLjIgMjY4LjkxIDM4LjcgMjk4Ljk2IDY1LjE2IDI5NC4zNVpNNDI2LjUxIDIzOC40MkM1MDguODIgMjI4Ljc2IDU4NS40NyAyMjMuMTQgNjUyLjY0IDIyMS44MUM2OTIuMjQgMjIxLjAzIDY5MC41NiAyMjIuNDggNjc3LjcxIDIwMC4xMUM2NTYuMDggMTYyLjQzIDY1My44NiAxNjAuODIgNjI2Ljc1IDE2My4xNEM1NTcuNzMgMTY5LjAyIDQ5NS45NCAxNzkuMzQgNDI3Ljg2IDE5Ni4zNkM0MDguNzggMjAxLjEzIDQwNi43IDIwMS45MSA0MDQuNTYgMjA1LjEzQzQwMS44NCAyMDkuMjUgNDAyLjMxIDIxMC40NyA0MTIuNzkgMjI2LjI3QzQyMS41NCAyMzkuNDUgNDIxLjA5IDIzOS4wNSA0MjYuNTEgMjM4LjQyWk03NzEuMzQgMjI0LjEyQzc4MC40NyAyMjEuMyA3ODkuNzYgMjA2Ljg4IDc4Ni45NiAxOTkuODZDNzgzLjMxIDE5MC43IDc2NC4xNiAxNzQuNjIgNzQ4LjM4IDE2Ny40OEM3NDEuNjQgMTY0LjQzIDcxOC42MyAxNTUuOTcgNzA3LjY0IDE1Mi41MUM2ODcuNzQgMTQ2LjIzIDY1MS4xMiAxNDMuNTkgNjQzLjM0IDE0Ny44OEM2NDAuNjMgMTQ5LjM3IDY0Mi40MyAxNTAuNzQgNjQ5Ljk2IDE1Mi45MUM2NjIuMyAxNTYuNDcgNjcwLjU2IDE2My44NyA2NzkuMDMgMTc4Ljk4QzY4Ny4yMyAxOTMuNiA2OTkuMjkgMjEyLjg5IDcwMi4xNiAyMTUuOTlDNzA3LjEgMjIxLjMyIDcwNy42NiAyMjEuNDcgNzI3LjU5IDIyMi42MkM3NjQuNzEgMjI0Ljc2IDc2OC44MSAyMjQuOSA3NzEuMzQgMjI0LjEyWk01OTEuMTUgMTE0LjI0QzU5MS4xNSAxMTQuMDggNTg4IDExMi4xMSA1ODQuODIgMTEwLjI4QzU3OC4zIDEwNi41NSA1NTYuMzUgOTYuMzQgNTQ1LjA3IDkxLjhDNTQzLjA4IDkxIDU0MC44MiA4OS45NyA1NDAuMDMgODkuNTJDNTM3LjgyIDg4LjI2IDUzNS4xOSA4OC43NCA1MzQuOTYgOTAuNDRDNTM0LjcyIDkyLjIyIDUzNC4xNCAxMDEuOTIgNTM0LjI3IDEwMi4wNEM1MzQuMzMgMTAyLjA5IDU0MS41NSAxMDMuNjcgNTUwLjMgMTA1LjU1QzU1OS4wNSAxMDcuNDMgNTcxLjYxIDExMC4xNyA1NzguMjEgMTExLjYzQzU4OS44IDExNC4xOSA1OTEuMTUgMTE0LjQ3IDU5MS4xNSAxMTQuMjRaIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjU2LDMzMCkgcm90YXRlKC0zLjI3NSkiPjxyZWN0IHg9Ii02MTQuNCIgeT0iMCIgd2lkdGg9IjEyMjguOCIgaGVpZ2h0PSIxMyIgZmlsbD0iI0ZGRkZGQyIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMy4yNzUgMjU2IDI1NikiPjxkZWZzPjxjbGlwUGF0aCBpZD0id2MxIj48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjI0OS4wMCIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCN3YzEpIj48ZyBmaWxsPSIjRkZGRkZDIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg4NS44MiwzNDkuMDApIHNjYWxlKDAuMzQwMzcpIj48cGF0aCBkPSJNMjg5Ljc0IDQ3OS42OUMyNDkuMSA0NjIuODIgMjExLjAyIDQ0MS45MiAxNzQuODIgNDE2LjY0QzE2Ny4yNSA0MTEuMzQgMTY3LjI1IDQxMS4zNCAxNjYuMzcgNDA5LjIzQzE2Mi45MyA0MDAuOTMgMC4xOCAxLjUxIDAuMDcgMS4xMUMtMC4wNiAwLjYyIDIuODQgMC41OSA1OC4wMSAwLjU5TDExNi4wOSAwLjU5TDE4NS4wNiAxNzAuMDNDMjIyLjk5IDI2My4yMiAyNTQuMSAzMzkuNTEgMjU0LjE5IDMzOS41NkMyNTQuMjggMzM5LjYxIDI4NS40IDI2My4zNyAzMjMuMzQgMTcwLjEyQzM4NC4yOCAyMC4zOSAzOTIuNDEgMC41OSAzOTIuOTYgMC41OUMzOTMuMjkgMC41OSAzOTMuNyAwLjQ2IDM5My44NyAwLjI5QzM5NC4wNiAwLjEgNDEzLjU3IDAuMDIgNDUxLjc5IDAuMDdMNTA5LjQyIDAuMTVMNTQ0Ljc2IDg2Ljg1QzU2NC4yIDEzNC41MyA2MDguMzEgMjQyLjc1IDY0Mi43OCAzMjcuMzRDNjc3LjI2IDQxMS45MiA3MDUuNTIgNDgxLjIzIDcwNS41OSA0ODEuMzVDNzA1LjY3IDQ4MS40NyA2NzkuNTQgNDgxLjU3IDY0Ny41NCA0ODEuNTdMNTg5LjM1IDQ4MS41N0w1NzMuOTcgNDQzLjc1TDU1OC41OCA0MDUuOTNMNDcxLjU3IDQwNS44NUM0MjMuNzEgNDA1LjgxIDM4NC41NSA0MDUuNjggMzg0LjU0IDQwNS41NkMzODQuNTQgNDA1LjQ0IDM5Mi4zOSAzODUuNzQgNDAyIDM2MS43OEw0MTkuNDUgMzE4LjIzTDQ3MS4yIDMxOC40MUM1MTUuNyAzMTguNTYgNTIyLjkzIDMxOC41MyA1MjIuNzkgMzE4LjE3QzUyMi43IDMxNy45NCA1MDYuNjcgMjc4Ljc0IDQ4Ny4xNyAyMzEuMDVDNDY3LjY3IDE4My4zNyA0NTEuNTkgMTQ0LjAyIDQ1MS40MyAxNDMuNjJDNDUxLjE4IDE0Mi45NyA0NTAuODMgMTQzLjY2IDQ0OC40OSAxNDkuNTFDNDQzLjk1IDE2MC44NyA0MDEuMDIgMjY2LjY5IDM4OC4zOCAyOTcuN0MzODEuNzcgMzEzLjkyIDM2OC4yNSAzNDcuMSAzNTguMzUgMzcxLjQyQzM0OC40NSAzOTUuNzUgMzM0LjI2IDQzMC41OSAzMjYuODEgNDQ4Ljg0TDMxMy4yNiA0ODIuMDFMMzA0LjQ1IDQ4Mi4wOEMyOTUuNjQgNDgyLjE0IDI5NS42NCA0ODIuMTQgMjg5Ljc0IDQ3OS42OVpNODE2LjcxIDM3NS41Nkw3ODEuMzMgMzI1LjI4TDc0My4wNyAzMjUuMjdMNzA0LjgxIDMyNS4yN0w3MDQuNzMgMzczLjg0TDcwNC42NiA0MjIuNDFMNjUzLjI3IDI5Ni4zNEw2MDEuODkgMTcwLjI3TDYwMS44OSA4NS4yOEw2MDEuODkgMC4yOUw3MTQuNzYgMC4zQzgzMy44MyAwLjMgODMyLjIxIDAuMjkgODQ0IDEuNkM5MjguOTUgMTEuMDcgOTg5Ljc1IDY2LjQ0IDk5OC43OSAxNDIuNThDMTAwNy44NyAyMTkuMDMgOTY1LjIxIDI4Ny4yOCA4OTIuNDQgMzEyLjc4Qzg5MS41OCAzMTMuMDggODkwLjg5IDMxMy40MyA4OTAuODkgMzEzLjU2Qzg5MC44OSAzMTMuNjkgODk5LjI1IDMyNS42OCA5MDkuNDggMzQwLjIxQzkyNS4zMyAzNjIuNzIgOTI4LjAxIDM2Ni42OCA5MjcuNjkgMzY3LjA3QzkyNS4xNSAzNzAuMTQgOTAwLjE4IDM5MS4xIDg4Ny41IDQwMC44MkM4NzYuMjcgNDA5LjQyIDg1NC4zOCA0MjQuOTcgODUyLjQ2IDQyNS43Qzg1Mi4yNCA0MjUuNzkgODM4LjM3IDQwNi4zNSA4MTYuNzEgMzc1LjU2Wk04MTQuOTUgMjMwLjZDODY0LjAxIDIyNy42OSA4OTQuOTIgMjAwIDg5My40NCAxNjAuMjhDODkyLjEzIDEyNS4xNSA4NjUuNTMgMTAwLjczIDgyMi45MSA5NS41NkM4MTYuMzkgOTQuNzcgODA5LjM1IDk0LjY3IDc1OC4yNiA5NC42N0w3MDQuODEgOTQuNjZMNzA0LjgxIDE2Mi43OEw3MDQuODEgMjMwLjkxTDc1Ny4zNyAyMzAuOUM3ODkuMjIgMjMwLjkgODExLjkxIDIzMC43OCA4MTQuOTUgMjMwLjZaIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PC9nPjwvZz48L2c+PC9zdmc+';
+
+  var medien = SCHRITTE.map(function(){ return null; });
+  var aktiv = 0, aufnahme = false;
+
+  function feld(id){ return (document.getElementById(id) || {}).value || ''; }
+
+  function untertext(i){
+    var s = SCHRITTE[i];
+    if (s.u === 'stichwort') return feld('bk-stw');
+    if (s.u === 'abflug')    return 'ABFLUG STATION ' + feld('bk-sta').toUpperCase();
+    if (s.u === 'vorort')    return 'LANDUNG AM EINSATZORT';
+    if (s.u === 'patient')   return 'PATIENT AN BORD';
+    if (s.u === 'klinik')    return 'AM TRANSPORTZIEL';
+    return 'FREI \u00dcBER FUNK';
+  }
+
+  function uhrzeit(i){
+    var z = feld('bk-zeit').split(':');
+    var m = (parseInt(z[0],10)||18) * 60 + (parseInt(z[1],10)||42) + SCHRITTE[i].min;
+    var hh = Math.floor(m/60) % 24, mm = m % 60;
+    return (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+  }
+
+  function deckend(el, zoom){
+    zoom = zoom || 1;
+    var iw = el.videoWidth || el.naturalWidth, ih = el.videoHeight || el.naturalHeight;
+    if (!iw || !ih) return false;
+    var r = Math.max(W/iw, H/ih) * zoom;
+    var w = iw*r, h = ih*r;
+    ctx.drawImage(el, (W-w)/2, (H-h)/2, w, h);
+    return true;
+  }
+
+  function zeichne(i, zoom){
+    var s = SCHRITTE[i], col = FMS[s.st];
+    ctx.clearRect(0,0,W,H);
+    var m = medien[i];
+    var ok = m ? deckend(m.el, zoom) : false;
+    if (!ok){
+      ctx.fillStyle = '#141C31'; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = '#1B2540';
+      for (var x=0; x<W; x+=52) ctx.fillRect(x,0,26,H);
+      ctx.fillStyle = 'rgba(255,255,252,.45)';
+      ctx.font = '600 34px ui-monospace, Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('FOTO ODER VIDEO', W/2, H*0.34);
+    }
+    // Abdunklung unten
+    var g = ctx.createLinearGradient(0, H-FUSS-260, 0, H);
+    g.addColorStop(0,'rgba(0,8,28,0)'); g.addColorStop(1,'rgba(0,8,28,.93)');
+    ctx.fillStyle = g; ctx.fillRect(0, H-FUSS-260, W, FUSS+260);
+
+    // Kopfzeile
+    if (badge.complete && badge.naturalWidth) ctx.drawImage(badge, 56, 210, 104, 104);
+    ctx.textAlign = 'left'; ctx.fillStyle = IVORY;
+    ctx.font = '600 26px ui-monospace, Consolas, monospace';
+    ctx.fillText('VIRTUAL AIR RESCUE', 176, 280);
+    ctx.fillStyle = GOLD; ctx.font = '600 22px ui-monospace, Consolas, monospace';
+    ctx.fillText('EINSATZ-TAGEBUCH \u00b7 ' + feld('bk-ruf').toUpperCase(), 176, 314);
+
+    // Fortschrittsleiste
+    var y0 = H - FUSS - 46, seg = (W-112)/(SCHRITTE.length-1);
+    ctx.fillStyle = 'rgba(255,255,252,.22)'; ctx.fillRect(56, y0-1, W-112, 2);
+    for (var k=0;k<SCHRITTE.length;k++){
+      var px = 56 + seg*k, an = k===i, fertig = k<i;
+      ctx.beginPath(); ctx.arc(px, y0, an?9:5, 0, 6.2832);
+      ctx.fillStyle = an ? col : (fertig ? GOLD : 'rgba(255,255,252,.28)');
+      ctx.fill();
+      if (an){ ctx.beginPath(); ctx.arc(px,y0,16,0,6.2832);
+        ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.stroke(); }
+    }
+
+    // Statuskachel
+    var ky = H - FUSS + 34;
+    ctx.fillStyle = col; ctx.fillRect(56, ky, 112, 112);
+    ctx.fillStyle = IVORY; ctx.textAlign = 'center';
+    ctx.font = '800 68px system-ui, sans-serif';
+    ctx.fillText(s.st, 112, ky+82);
+    ctx.font = '600 18px ui-monospace, Consolas, monospace';
+    ctx.globalAlpha = .6; ctx.fillText('STATUS', 112, ky+136); ctx.globalAlpha = 1;
+
+    // Titel
+    ctx.textAlign = 'left'; ctx.fillStyle = GOLD;
+    ctx.font = '600 24px ui-monospace, Consolas, monospace';
+    ctx.fillText('SCHRITT ' + (i+1) + ' VON ' + SCHRITTE.length, 200, ky+34);
+    ctx.fillStyle = IVORY; ctx.font = '800 76px system-ui, sans-serif';
+    ctx.fillText(s.t, 200, ky+112);
+    ctx.fillStyle = GOLD; ctx.fillRect(200, ky+142, 150, 5);
+    ctx.fillStyle = IVORY; ctx.globalAlpha = .85;
+    ctx.font = '600 28px system-ui, sans-serif';
+    ctx.fillText(untertext(i).toUpperCase(), 200, ky+196);
+    ctx.globalAlpha = 1;
+
+    // Uhrzeit
+    ctx.textAlign = 'right';
+    ctx.font = '700 44px ui-monospace, Consolas, monospace';
+    ctx.fillText(uhrzeit(i), W-56, ky+82);
+    ctx.globalAlpha = .5; ctx.font = '600 18px ui-monospace, Consolas, monospace';
+    ctx.fillText('UTC', W-56, ky+112); ctx.globalAlpha = 1;
+
+    ctx.fillStyle = GOLD; ctx.fillRect(0, H-8, W, 8);
+  }
+
+  // ---------- Fenster aufbauen ----------
+  var slots = document.getElementById('bk-slots');
+  var leiste = document.getElementById('bk-zeit-leiste');
+  SCHRITTE.forEach(function(s, i){
+    var d = document.createElement('div');
+    d.className = 'slot' + (i===0 ? ' aktiv' : '');
+    d.innerHTML = '<span class="nr">SCHRITT ' + (i+1) + '</span>' +
+      '<div class="nm">' + s.t + '</div>' +
+      '<div class="st">Status ' + s.st + '</div>' +
+      '<input type="file" accept="image/*,video/*">';
+    var inp = d.querySelector('input');
+    d.addEventListener('click', function(e){
+      aktiv = i; markiere();
+      if (e.target !== inp) inp.click();
+    });
+    inp.addEventListener('change', function(){
+      var f = inp.files[0]; if (!f) return;
+      var url = URL.createObjectURL(f);
+      var video = f.type.indexOf('video') === 0;
+      var el = document.createElement(video ? 'video' : 'img');
+      if (video){ el.muted = true; el.loop = true; el.playsInline = true; }
+      el.onloadeddata = el.onload = function(){
+        medien[i] = { el: el, video: video };
+        var alt = d.querySelector('.mini'); if (alt) alt.remove();
+        if (!video){ var mini = el.cloneNode(); mini.className = 'mini'; d.appendChild(mini); }
+        d.classList.add('voll');
+        aktiv = i; markiere(); zeichne(aktiv, 1);
+        melde(zaehle() + ' von 6 Fenstern gef\u00fcllt.');
+      };
+      el.src = url;
+      if (video) el.load();
+    });
+    slots.appendChild(d);
+    var b = document.createElement('i'); leiste.appendChild(b);
+  });
+
+  function zaehle(){ return medien.filter(Boolean).length; }
+  function melde(t){ document.getElementById('bk-status').textContent = t; }
+  function markiere(){
+    [].forEach.call(slots.children, function(el,k){ el.classList.toggle('aktiv', k===aktiv); });
+    [].forEach.call(leiste.children, function(el,k){ el.classList.toggle('an', k===aktiv); });
+  }
+
+  ['bk-ruf','bk-stw','bk-sta','bk-zeit'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function(){ zeichne(aktiv, 1); });
+  });
+
+  function sichere(i){
+    zeichne(i, 1);
+    cv.toBlob(function(b){
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = 'VAR_tagebuch_' + (i+1) + '_' + SCHRITTE[i].t.toLowerCase() + '.png';
+      a.click();
+    }, 'image/png');
+  }
+
+  document.getElementById('bk-png').addEventListener('click', function(){
+    sichere(aktiv); melde('Story-Bild f\u00fcr Schritt ' + (aktiv+1) + ' gesichert.');
+  });
+  document.getElementById('bk-alle').addEventListener('click', function(){
+    SCHRITTE.forEach(function(_, i){ setTimeout(function(){ sichere(i); }, i*420); });
+    melde('Sechs Story-Bilder werden gesichert.');
+  });
+
+  // ---------- Reel aufzeichnen ----------
+  document.getElementById('bk-reel').addEventListener('click', function(){
+    if (aufnahme) return;
+    if (!window.MediaRecorder || !cv.captureStream){
+      melde('Dieser Browser kann kein Reel aufzeichnen. Story-Bilder gehen trotzdem.');
+      return;
+    }
+    aufnahme = true;
+    var strom = cv.captureStream(30), teile = [];
+    var typ = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ? 'video/webm;codecs=vp9' : 'video/webm';
+    var rec = new MediaRecorder(strom, { mimeType: typ, videoBitsPerSecond: 6000000 });
+    rec.ondataavailable = function(e){ if (e.data.size) teile.push(e.data); };
+    rec.onstop = function(){
+      var b = new Blob(teile, { type: 'video/webm' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = 'VAR_einsatz-tagebuch.webm';
+      a.click();
+      aufnahme = false;
+      melde('Reel fertig \u2014 ' + Math.round(b.size/1024/1024*10)/10 + ' MB, 24 Sekunden.');
+    };
+
+    var pro = 4000, i = 0, t0 = performance.now();
+    medien.forEach(function(m){ if (m && m.video){ m.el.currentTime = 0; m.el.play(); } });
+    rec.start();
+    melde('Zeichnet auf \u2026');
+
+    (function tick(){
+      var t = performance.now() - t0;
+      i = Math.min(SCHRITTE.length-1, Math.floor(t / pro));
+      var lokal = (t % pro) / pro;
+      zeichne(i, 1 + lokal * 0.06);          // langsame Fahrt ins Bild
+      aktiv = i; markiere();
+      if (t < pro * SCHRITTE.length) requestAnimationFrame(tick);
+      else { rec.stop(); medien.forEach(function(m){ if (m && m.video) m.el.pause(); }); }
+    })();
+  });
+
+  badge.onload = function(){ zeichne(0, 1); };
+  zeichne(0, 1);
+})();
+</script>
+
