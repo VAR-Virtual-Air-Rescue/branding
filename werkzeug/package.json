@@ -1,0 +1,9 @@
+{
+  "name": "virtual-brand-system-asset-export",
+  "private": true,
+  "description": "Rasterizer fuer die Icon-Exporte. Nur Werkzeug, kein Teil der Marke.",
+  "type": "module",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}
