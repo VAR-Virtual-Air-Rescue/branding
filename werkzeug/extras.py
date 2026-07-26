@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Herleitungs- und Falschanwendungsgrafiken fuers Brandbook."""
 import json, os
-from mark import (MARKS, STRATOS, GALLIANO, IVORY, heli_at, var_at, svg, disc,
-                  S, C, R, EDGE, CUT, BAR, _inner)
+from mark import (MARKS, STRATOS, GALLIANO, IVORY, var_at, svg, disc, _heli,
+                  heli_on_edge, S, C, R, EDGE, CUT, BAR, _inner, ANG)
 
 E = {}
 
@@ -16,14 +16,14 @@ bldg = (f'<rect x="52" y="316" width="408" height="196" fill="#2B3340"/>'
         f'<rect x="52" y="300" width="408" height="18" fill="#3E4855"/>')
 win = "".join(f'<rect x="{78+ (i%6)*62}" y="{352+(i//6)*54}" width="34" height="30" '
               f'fill="#5D6C7C" opacity="{.55 if i%3 else .8}"/>' for i in range(12))
-E["_evo_foto"] = svg(sky + bldg + win + heli_at(300, 258, 302, "#C43A32"))
+E["_evo_foto"] = svg(sky + bldg + win + _heli(300, 108, 206, "#C43A32"))
 
 # ---------------------------------------------------------------- 02 Entwurf
 # Der erste Entwurf: Silhouette steht auf einem Band und wird unten angeschnitten.
 band_y, band_h = 300, 62
 E["_evo_entwurf"] = svg(
     f'<rect width="{S}" height="{S}" fill="#E9E7E2"/>'
-    + heli_at(400, 250, band_y + 34, "#1D3A8A")
+    + _heli(400, 50, band_y - 94, "#1D3A8A")
     + f'<rect x="18" y="{band_y}" width="{S-36}" height="{band_h}" fill="#B9BDC2"/>'
     + f'<g transform="translate(40,{band_y+42})">'
     + _inner(svg("")).join([""])  # Platzhalter, Text folgt als Pfade unten
@@ -34,7 +34,7 @@ from text2path import text_path
 t, tw_ = text_path("VIRTUAL AIR RESCUE", "fonts/Uniform Bold.ttf", 30, 0.05)
 E["_evo_entwurf"] = svg(
     f'<rect width="{S}" height="{S}" fill="#E9E7E2"/>'
-    + heli_at(400, 250, band_y + 34, "#1D3A8A")
+    + _heli(400, 50, band_y - 94, "#1D3A8A")
     + f'<rect x="18" y="{band_y}" width="{S-36}" height="{band_h}" fill="#B9BDC2"/>'
     + f'<g fill="#1D3A8A" transform="translate({(S-tw_)/2:.1f},{band_y+42})">{t}</g>')
 
@@ -45,16 +45,14 @@ E["_evo_heute"] = svg(disc(
     f'<rect x="0" y="0" width="{S}" height="{HOR}" fill="{STRATOS}"/>'
     f'<rect x="0" y="{HOR}" width="{S}" height="{S-HOR}" fill="{PERSIAN}"/>'
     f'<rect x="0" y="{HOR-11}" width="{S}" height="16" fill="{DODGER}"/>'
-    + heli_at(430, 256, 212, GALLIANO) + var_at(330, 256, 385, STRATOS), "ev3"))
+    + _heli(430, 41, 75, GALLIANO) + var_at(330, 256, 385, STRATOS), "ev3"))
 
 # ---------------------------------------------------------------- Falschanwendung
 def base(cid, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, bg=STRATOS,
-         heli_w=418, cut=CUT, edge=EDGE):
-    return disc(
-        f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
-        + heli_at(heli_w, C, edge + cut, heli_col)
-        + f'<rect x="0" y="{edge}" width="{S}" height="{BAR}" fill="{bar_col}"/>'
-        + var_at(232, C, 392, word_col), cid)
+         heli_w=418, edge=300, cut=CUT):
+    heli, barsvg, _ = heli_on_edge(heli_w, C, edge + cut, heli_col, cut, BAR, bar_col)
+    return disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
+                + heli + barsvg + var_at(228, C, 398, word_col), cid)
 
 # Verzerrt
 E["_dont_stretch"] = svg(f'<g transform="translate(0,64) scale(1,0.75)">{base("d1")}</g>')
@@ -64,7 +62,8 @@ E["_dont_color"] = svg(base("d2", heli_col="#E5484D", bar_col="#3ECF8E",
                             word_col="#B36BFF", bg="#2A1A4A"))
 
 # Heli schwebt -- der Bezug zur Kante ist weg
-E["_dont_float"] = svg(base("d3", cut=-52))
+# Heli loest sich von der Kante -- der Bezug, um den es geht, ist weg
+E["_dont_float"] = svg(base("d3", cut=-60))
 
 # Gedreht
 E["_dont_rotate"] = svg(f'<g transform="rotate(-14 {C} {C})">{base("d4")}</g>')
