@@ -1,0 +1,925 @@
+<title>VAR Brandbook</title>
+
+<style>
+:root{
+  --paper:#F2F1EC; --card:#FFFFFF; --sunk:#E6E5DE; --line:#D4D2C8;
+  --ink:#0E1526; --dim:#59607200; --muted:#5B6274;
+  --gold:#D5A507; --gold-ink:#8F6C04; --navy:#00113A; --ivory:#FFFFFC;
+  --sig:#2B6EFF; --crit:#B03A32; --ok:#2C7350;
+  --fh:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --fm:ui-monospace,"Cascadia Mono","SF Mono",Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#080D1A; --card:#0E1526; --sunk:#121B30; --line:#212C46;
+        --ink:#E7EAF3; --muted:#8F98AF; --gold-ink:#E7BB2E;
+        --crit:#E5786D; --ok:#4EB783;}
+}
+:root[data-theme="light"]{--paper:#F2F1EC;--card:#FFFFFF;--sunk:#E6E5DE;--line:#D4D2C8;
+  --ink:#0E1526;--muted:#5B6274;--gold-ink:#8F6C04;--crit:#B03A32;--ok:#2C7350;}
+:root[data-theme="dark"]{--paper:#080D1A;--card:#0E1526;--sunk:#121B30;--line:#212C46;
+  --ink:#E7EAF3;--muted:#8F98AF;--gold-ink:#E7BB2E;--crit:#E5786D;--ok:#4EB783;}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--fh);
+  font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 30px}
+@media(max-width:640px){.wrap{padding:0 18px}}
+h1,h2,h3,h4{margin:0;text-wrap:balance;font-weight:800;letter-spacing:-.022em;line-height:1.12}
+h2{font-size:clamp(27px,3.6vw,40px);margin-bottom:.42em}
+h3{font-size:clamp(17px,2vw,21px);letter-spacing:-.012em}
+h4{font-size:14px;letter-spacing:.01em}
+p{margin:0 0 1em;max-width:66ch}
+code{font-family:var(--fm);font-size:.87em;background:var(--sunk);padding:.14em .42em;
+  border-radius:2px;word-break:break-word}
+.lede{font-size:clamp(17px,2vw,20.5px);color:var(--muted);max-width:60ch;line-height:1.54}
+.small{font-size:14px;color:var(--muted)}
+
+.kicker{font-family:var(--fm);font-size:11.5px;font-weight:600;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--gold-ink);display:flex;align-items:center;
+  gap:14px;margin-bottom:18px}
+.kicker::after{content:"";flex:1;height:1px;background:var(--line)}
+.num{font-family:var(--fm);font-variant-numeric:tabular-nums}
+
+section{padding:78px 0;border-top:1px solid var(--line)}
+@media(max-width:640px){section{padding:54px 0}}
+
+/* Deckblatt */
+.cover{background:var(--navy);color:var(--ivory);padding:0;border:0;position:relative;
+  overflow:hidden}
+.cover .inner{padding:86px 0 74px;position:relative;z-index:2}
+.cover .kicker{color:var(--gold)}
+.cover .kicker::after{background:rgba(255,255,252,.22)}
+.cover-mark{display:block;width:min(100%,700px);height:auto;margin:6px 0 26px}
+.cover p{color:rgba(255,255,252,.76)}
+.cover .edge{position:absolute;left:0;right:0;bottom:0;height:9px;background:var(--gold)}
+.cover .ghost{position:absolute;right:-90px;top:-40px;width:520px;opacity:.06;z-index:1}
+@media(max-width:900px){.cover .ghost{display:none}}
+
+.grid{display:grid;gap:22px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:24px}
+
+/* Marken-Kacheln */
+.tile{border:1px solid var(--line);border-radius:3px;background:var(--card);overflow:hidden}
+.tile .stage{aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:16%}
+.tile .stage.navy{background:var(--navy);border-color:var(--navy)}
+.tile .stage.gold{background:var(--gold)}
+.tile .stage.ivory{background:#FFFFFC}
+.tile .stage svg{width:100%;height:auto;display:block}
+.tile .cap{padding:11px 14px;border-top:1px solid var(--line);font-family:var(--fm);
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* Herleitung */
+.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:end}
+@media(max-width:820px){.steps4{grid-template-columns:repeat(2,1fr)}}
+.step{text-align:center}
+.step .box{background:var(--sunk);border:1px solid var(--line);border-radius:3px;
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:14%}
+.step .box.navy{background:var(--navy)}
+.step .box svg{width:100%;height:auto}
+.step b{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold-ink);margin:11px 0 3px}
+.step span{font-size:13.5px;color:var(--muted);display:block;line-height:1.45}
+
+/* Farben */
+.sw{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--card)}
+.sw .chip{height:110px;position:relative}
+.sw .chip b{position:absolute;left:14px;bottom:10px;font-family:var(--fm);font-size:11px;
+  letter-spacing:.08em}
+.sw .meta{padding:13px 15px}
+.sw .nm{font-weight:700;font-size:14.5px}
+.sw .hx{font-family:var(--fm);font-size:12px;color:var(--muted)}
+.sw .rl{font-size:13px;color:var(--muted);margin-top:7px;line-height:1.45}
+
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap}
+td.r{font-family:var(--fm);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--card)}
+.scroll table{min-width:620px}
+.scroll tr:last-child td{border-bottom:0}
+
+/* Typo-Probe */
+.type-spec{background:var(--navy);border-radius:3px;padding:34px;overflow:hidden}
+.type-spec svg{display:block;height:auto;margin-bottom:18px}
+.type-row{display:flex;align-items:baseline;gap:22px;border-bottom:1px solid rgba(255,255,252,.12);
+  padding:14px 0}
+.type-row:last-child{border-bottom:0}
+.type-row .lbl{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,252,.5);min-width:118px;flex:0 0 118px}
+/* Schriftproben in Originalgroesse: Hoehe fuehrt, Breite folgt. */
+.type-row svg{margin:0;width:auto;max-width:100%;flex:0 1 auto}
+.type-row svg.ts-46{height:46px} .type-row svg.ts-26{height:26px}
+.type-row svg.ts-24{height:24px} .type-row svg.ts-22{height:22px}
+.type-row svg.ts-15{height:15px}
+@media(max-width:700px){
+  .type-row{flex-direction:column;gap:8px;align-items:flex-start}
+  .type-row .lbl{flex:none}
+}
+
+
+/* Profilbilder */
+.pbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:20px}
+.pb{text-align:center}
+.pb .rund{aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--sunk)}
+.pb .rund svg{width:100%;height:100%;display:block}
+.pb b{display:block;font-size:13.5px;margin-top:10px;font-weight:700}
+.pb span{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin-top:2px}
+.pbsizes{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;padding:28px;
+  background:var(--navy);border-radius:3px}
+.pbsizes .it{text-align:center}
+.pbsizes .it .rund{border-radius:50%;overflow:hidden;margin:0 auto}
+.pbsizes .it svg{width:100%;height:100%;display:block}
+.pbsizes .it span{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.08em;
+  color:rgba(255,255,252,.55);margin-top:9px}
+/* Tagebuch */
+.tbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.tbcard{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--card)}
+.tbcard .art svg{width:100%;height:auto;display:block}
+.tbcard .cap{padding:12px 14px;border-top:1px solid var(--line)}
+.tbcard .cap b{display:block;font-size:13.5px}
+.tbcard .cap span{font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;
+  color:var(--muted);display:block;margin-top:3px}
+.stchip{display:inline-block;width:20px;height:20px;border-radius:2px;color:#fff;
+  font-family:var(--fm);font-size:11px;line-height:20px;text-align:center;font-weight:700;
+  vertical-align:-4px;margin-right:7px}
+
+/* Vorlagen */
+.tpl{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--card)}
+.tpl .art{background:var(--sunk);display:block}
+.tpl .art svg{width:100%;height:auto;display:block}
+.tpl .cap{padding:14px 16px;border-top:1px solid var(--line)}
+.tpl .cap b{display:block;font-size:14.5px;font-weight:700}
+.tpl .cap span{font-size:12.5px;color:var(--muted);display:block;margin-top:2px}
+.tpl .cap .dim{font-family:var(--fm);font-size:11px;letter-spacing:.08em;color:var(--gold-ink);
+  display:block;margin-top:5px}
+.tplgrid{display:grid;gap:24px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.tplgrid.wide{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}
+
+/* Do / Don't */
+.dd{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.dd .item .box{aspect-ratio:1;border:1px solid var(--line);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;padding:15%;background:var(--navy);
+  position:relative;overflow:hidden}
+.dd .item .box svg{width:100%;height:auto}
+.dd .item p{margin:9px 0 0;font-size:13px;color:var(--muted);max-width:none}
+.dd .item .tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:600}
+.no .tag{color:var(--crit)} .yes .tag{color:var(--ok)}
+.no .box{border-color:var(--crit)}
+.no .box::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent 0 11px,rgba(176,58,50,.18) 11px 13px)}
+
+/* Schutzraum */
+.clearance{background:var(--navy);border-radius:3px;padding:76px 60px 52px;
+  display:flex;justify-content:center}
+.clearance .box{position:relative;width:min(100%,300px)}
+.clearance .box>svg{width:100%;height:auto;display:block;position:relative;z-index:2}
+.clearance .halo{position:absolute;inset:-22%;border:2px dashed rgba(213,165,7,.55);
+  border-radius:3px;z-index:1}
+.clearance .hint{position:absolute;left:50%;top:-22%;transform:translate(-50%,-130%);
+  font-family:var(--fm);font-size:11px;letter-spacing:.1em;color:var(--gold);white-space:nowrap}
+
+ul.rules{list-style:none;padding:0;margin:0;display:grid;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:3px}
+ul.rules li{background:var(--card);padding:16px 20px;font-size:14.5px}
+ul.rules li b{display:block;font-size:13px;font-family:var(--fm);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold-ink);margin-bottom:3px}
+
+pre{background:var(--navy);color:#DCE3F2;border-radius:3px;padding:22px;overflow-x:auto;
+  font-family:var(--fm);font-size:12.5px;line-height:1.62;margin:0}
+pre .c{color:#7C88A6} pre .k{color:#E7BB2E}
+
+footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color:var(--muted)}
+</style>
+
+<header class="cover">
+  <div class="ghost">{{SVG:n4_signet}}</div>
+  <div class="wrap inner">
+    <div class="kicker">Brandbook &#183; Fassung 2.0 &#183; Juli 2026</div>
+    {{WORD:VIRTUAL AIR RESCUE|100|#FFFFFC|0.045|fonts/Uniform Bold.ttf|cover-mark}}
+    <p class="lede">Das Zeichen kommt von einem Dachlandeplatz. Ein Hubschrauber steht
+      auf der Kante &#8212; nicht darüber, nicht daneben. Diese Kante ist ab jetzt das
+      Element, das alles zusammenhält: Logo, Beitrag, Video, Oberfläche.</p>
+  </div>
+  <div class="edge"></div>
+</header>
+
+<main>
+
+<!-- ===================================================== 1 Herleitung -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Woher das Zeichen kommt</div>
+    <h2>Die Kante war von Anfang an die Idee</h2>
+    <p>Am Anfang stand ein Foto: ein Rettungshubschrauber auf dem Dach einer Klinik. Der
+      erste Entwurf übersetzte das in eine Silhouette, die auf einem Band steht und von
+      ihm angeschnitten wird. In den späteren Fassungen ging genau das verloren &#8212; im
+      heutigen Logo schwebt der Hubschrauber über einer Linie, statt auf ihr zu stehen.
+      Die neue Fassung holt das zurück &#8212; und zwar mit der Neigung, die die Zeichnung selbst vorgibt: die untere Stützhülle des Hubschraubers liegt bei &#8722;3,27&#176;. Genau um diesen Winkel ist die Kante gekippt, dadurch passen Rumpfunterkante und Balkenoberkante exakt aufeinander.</p>
+
+    <div class="steps4" style="margin-top:34px">
+      <div class="step">
+        <div class="box navy"><img src="data:image/jpeg;base64,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" alt="Rettungshubschrauber auf dem Dach einer Klinik" style="width:100%;height:auto;display:block"></div>
+        <b>01 &#183; Foto</b><span>Hubschrauber auf dem Klinikdach</span>
+      </div>
+      <div class="step">
+        <div class="box navy">{{SVG:_evo_entwurf}}</div>
+        <b>02 &#183; Entwurf</b><span>Silhouette auf dem Band, unten angeschnitten</span>
+      </div>
+      <div class="step">
+        <div class="box navy">{{SVG:_evo_heute}}</div>
+        <b>03 &#183; Heute</b><span>Der Bezug zur Kante ist weg, er schwebt</span>
+      </div>
+      <div class="step">
+        <div class="box navy">{{SVG:n1_kante}}</div>
+        <b>04 &#183; Neu</b><span>Er steht wieder auf &#8212; Kante um &#8722;3,27&#176; gekippt</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 2 Bausatz -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Der Bausatz</div>
+    <h2>Eine Hauptfassung, vier Ableitungen</h2>
+    <p>Die Hauptfassung gilt überall, wo Platz für sie ist. Alles andere leitet sich
+      daraus ab und wird nur eingesetzt, wenn die Hauptfassung nicht funktioniert.</p>
+
+    <div class="grid g4" style="margin-top:30px">
+      <div class="tile"><div class="stage navy">{{SVG:n1_kante}}</div>
+        <div class="cap">Hauptfassung</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:n4_signet}}</div>
+        <div class="cap">Signet &#183; ohne Wortmarke</div></div>
+      <div class="tile"><div class="stage ivory">{{SVG:n1_hell}}</div>
+        <div class="cap">auf hellem Grund</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:n1_mono_negativ}}</div>
+        <div class="cap">einfarbig negativ</div></div>
+      <div class="tile"><div class="stage ivory">{{SVG:n1_mono_positiv}}</div>
+        <div class="cap">einfarbig positiv</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:n2_ivory}}</div>
+        <div class="cap">Zweitfassung &#183; heller Heli</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:n3_zweifeld}}</div>
+        <div class="cap">Zweifeld &#183; Merch, Events</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:icon_monogramm}}</div>
+        <div class="cap">App-Icon &#183; unter 32 px</div></div>
+    </div>
+
+
+    <h3 style="margin:44px 0 8px">F&#252;nf Rotorfassungen zur Auswahl</h3>
+    <p>Der Rotorkreis war der Vorschlag, der am besten ankam. Hier f&#252;nf Auslegungen
+      &#8212; alle mit derselben gekippten Kante, damit sie sich mit der Hauptfassung
+      vertragen.</p>
+    <div class="grid g4" style="margin-top:22px">
+      <div class="tile"><div class="stage navy">{{SVG:r1_rotor}}</div>
+        <div class="cap">R1 &#183; Ring mit Wortmarke</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:r2_offen}}</div>
+        <div class="cap">R2 &#183; zwei Bl&#228;tter, offen</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:r3_dreiblatt}}</div>
+        <div class="cap">R3 &#183; drei Bl&#228;tter</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:r4_bogen}}</div>
+        <div class="cap">R4 &#183; Blattschlag als Bogen</div></div>
+      <div class="tile"><div class="stage navy">{{SVG:r5_ivory_ring}}</div>
+        <div class="cap">R5 &#183; Ring in Ivory</div></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:34px">
+      <div class="card" style="background:#FFFFFC;border-color:var(--line)">
+        {{SVG:lockup_h|lk}}
+        <p class="small" style="margin:18px 0 0">Waagerechte Sperrung &#8212; Kopfzeilen,
+          Briefbogen, Präsentationen, Partnerlisten.</p>
+      </div>
+      <div class="card" style="background:var(--navy);border-color:var(--navy)">
+        {{SVG:lockup_h_neg|lk}}
+        <p class="small" style="margin:18px 0 0;color:rgba(255,255,252,.6)">Negativfassung
+          &#8212; Leitstelle, Hub, Discord, Video.</p>
+      </div>
+    </div>
+    <style>.lk{width:100%;height:auto;display:block}</style>
+  </div>
+</section>
+
+<!-- ===================================================== 3 Schutzraum -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Schutzraum und Größen</div>
+    <h2>Wie viel Luft das Zeichen braucht</h2>
+    <div class="grid g2" style="margin-top:28px;align-items:start">
+      <div class="clearance">
+        <div class="box">
+          <div class="halo"></div>
+          <div class="hint">Schutzraum = 1/4 Durchmesser</div>
+          {{SVG:n1_kante}}
+        </div>
+      </div>
+      <div>
+        <ul class="rules">
+          <li><b>Schutzraum</b>Rundherum bleibt ein Viertel des Durchmessers frei. Nichts
+            reicht hinein &#8212; kein Text, keine Bildkante, kein zweites Logo.</li>
+          <li><b>Mindestgröße digital</b>Hauptfassung ab 96 px. Signet ab 40 px.
+            Darunter gilt ausschließlich das App-Icon.</li>
+          <li><b>Mindestgröße Druck</b>Hauptfassung ab 22 mm Durchmesser. Bei Stickerei
+            ab 45 mm, sonst schließt der Schnitt an der Kante zu.</li>
+          <li><b>Untergrund</b>Auf Fotos nur über ruhigen, dunklen Flächen oder auf der
+            Absenderleiste. Nie direkt auf unruhigem Bild.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 4 Falschanwendung -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Falschanwendung</div>
+    <h2>Was das Zeichen kaputt macht</h2>
+    <div class="dd" style="margin-top:28px">
+      <div class="item yes"><div class="box">{{SVG:n1_kante}}</div>
+        <span class="tag">So</span><p>Hauptfassung, unveränderte Farben.</p></div>
+      <div class="item no"><div class="box">{{SVG:_dont_stretch}}</div>
+        <span class="tag">Nicht</span><p>Verzerren oder unproportional skalieren.</p></div>
+      <div class="item no"><div class="box">{{SVG:_dont_color}}</div>
+        <span class="tag">Nicht</span><p>Fremde Farben einsetzen.</p></div>
+      <div class="item no"><div class="box">{{SVG:_dont_float}}</div>
+        <span class="tag">Nicht</span><p>Den Hubschrauber von der Kante lösen.</p></div>
+      <div class="item no"><div class="box">{{SVG:_dont_rotate}}</div>
+        <span class="tag">Nicht</span><p>Drehen oder kippen.</p></div>
+      <div class="item no"><div class="box">{{SVG:_dont_shadow}}</div>
+        <span class="tag">Nicht</span><p>Effekte, Schatten oder Verläufe hinzufügen.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 5 Farbe -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Farbe</div>
+    <h2>Drei Markenfarben. Mehr nicht.</h2>
+    <p>Die alte Palette führte sechs Töne, davon zwei Paare, die das Auge nicht trennen
+      kann. Was bleibt, sind drei Farben mit klaren Rollen &#8212; und ein Blau, das
+      ausschließlich in der Oberfläche arbeitet und nie im Logo auftaucht.</p>
+
+    <div class="grid g4" style="margin:30px 0 20px">
+      <div class="sw"><div class="chip" style="background:#00113A"><b style="color:#FFFFFC">80&#8201;%</b></div>
+        <div class="meta"><div class="nm">Stratos</div><div class="hx">#00113A</div>
+        <div class="rl">Die Grundfläche. Trägt fast jede Anwendung.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#D5A507"><b style="color:#00113A">15&#8201;%</b></div>
+        <div class="meta"><div class="nm">Galliano</div><div class="hx">#D5A507</div>
+        <div class="rl">Die Kante, der Hubschrauber, Hervorhebungen. Nie flächig als Hintergrund für Text.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFFFFC;box-shadow:inset 0 0 0 1px var(--line)"><b style="color:#00113A">5&#8201;%</b></div>
+        <div class="meta"><div class="nm">Ivory</div><div class="hx">#FFFFFC</div>
+        <div class="rl">Schrift auf dunkel, Negativfassung, Papier.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2B6EFF"><b style="color:#FFFFFC">UI</b></div>
+        <div class="meta"><div class="nm">Signalblau</div><div class="hx">#2B6EFF</div>
+        <div class="rl">Nur Oberfläche: Links, Fokus, aktive Zustände. Nie im Logo.</div></div></div>
+    </div>
+
+    <h3 style="margin:38px 0 14px">Statusfarben der Leitstelle</h3>
+    <p>Diese Töne gehören nicht zur Marke, sondern zur Bedienung. Sie sind bewusst von
+      Gold getrennt, damit ein Einsatzstatus nie mit einer Markenfläche verwechselt wird.</p>
+    <div class="grid g4" style="margin-top:20px">
+      <div class="sw"><div class="chip" style="background:#E5484D;height:80px"></div>
+        <div class="meta"><div class="nm">Kritisch</div><div class="hx">#E5484D</div>
+        <div class="rl">Störung, abgebrochener Einsatz</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E5920A;height:80px"></div>
+        <div class="meta"><div class="nm">Achtung</div><div class="hx">#E5920A</div>
+        <div class="rl">Wartet, überfällig</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2FA96B;height:80px"></div>
+        <div class="meta"><div class="nm">Einsatzbereit</div><div class="hx">#2FA96B</div>
+        <div class="rl">Status 1 und 2</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2B6EFF;height:80px"></div>
+        <div class="meta"><div class="nm">Im Einsatz</div><div class="hx">#2B6EFF</div>
+        <div class="rl">Status 3, 4 und 7</div></div></div>
+    </div>
+
+    <h3 style="margin:38px 0 14px">Was zusammen darf</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Kombination</th><th>Kontrast</th><th>Erlaubt für</th></tr></thead>
+      <tbody>
+        <tr><td>Ivory auf Stratos</td><td class="r">18,37&#8202;:&#8202;1</td><td>Fließtext, Überschriften, alles</td></tr>
+        <tr><td>Galliano auf Stratos</td><td class="r">8,07&#8202;:&#8202;1</td><td>Fließtext, Kante, Hervorhebung</td></tr>
+        <tr><td>Stratos auf Galliano</td><td class="r">8,07&#8202;:&#8202;1</td><td>Fließtext auf goldener Fläche</td></tr>
+        <tr><td>Signalblau auf Stratos</td><td class="r">4,19&#8202;:&#8202;1</td><td>Links, große Schrift, Bedienelemente</td></tr>
+        <tr><td>Galliano auf Ivory</td><td class="r">2,27&#8202;:&#8202;1</td><td>nur Flächen und Linien, <strong>keine Schrift</strong></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ===================================================== 6 Typografie -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Typografie</div>
+    <h2>Uniform, in Versalien, mit Luft</h2>
+    <p>Uniform ist gesetzt. Überschriften und Auszeichnungen laufen in Versalien mit
+      offener Laufweite &#8212; das ist der Ton, den Behörden- und Rettungsdienstkommunikation
+      trägt. Fließtext darf gemischt laufen, sonst wird es unlesbar.</p>
+
+    <div class="type-spec" style="margin-top:28px">
+      <div class="type-row"><span class="lbl">Black &#183; Schlagzeile</span>
+        {{WORD:EINSATZ LÄUFT|46|#FFFFFC|0.01|fonts/Uniform Black.ttf|ts-46}}</div>
+      <div class="type-row"><span class="lbl">Bold &#183; Auszeichnung</span>
+        {{WORD:PRIMÄREINSATZ · STATUS 3|26|#D5A507|0.14|fonts/Uniform Bold.ttf|ts-26}}</div>
+      <div class="type-row"><span class="lbl">Medium &#183; Zwischenzeile</span>
+        {{WORD:Christoph 51 · Station Stuttgart|24|#FFFFFC|0.02|fonts/Uniform Medium.ttf|ts-24}}</div>
+      <div class="type-row"><span class="lbl">Regular &#183; Fließtext</span>
+        {{WORD:Die Crew rückt binnen zwei Minuten aus.|22|#FFFFFC|0.01|fonts/Uniform.ttf|ts-22}}</div>
+      <div class="type-row"><span class="lbl">Bold &#183; Kleinlabel</span>
+        {{WORD:VIRTUALAIRRESCUE.COM|15|#FFFFFC|0.18|fonts/Uniform Bold.ttf|ts-15}}</div>
+    </div>
+
+    <div class="grid g3" style="margin-top:26px">
+      <div class="card"><h4>Laufweite</h4><p class="small" style="margin:6px 0 0">
+        Versalien ab 40&#8239;px: 1&#8201;%. Auszeichnungen 14&#8201;%. Kleinlabels 16&#8211;18&#8201;%.
+        Je kleiner, desto weiter.</p></div>
+      <div class="card"><h4>Zeilenabstand</h4><p class="small" style="margin:6px 0 0">
+        Schlagzeilen 1,0&#8211;1,05. Fließtext 1,5. Nie enger als die Versalhöhe.</p></div>
+      <div class="card"><h4>Ausrichtung</h4><p class="small" style="margin:6px 0 0">
+        Linksbündig, Flattersatz. Zentriert nur im senkrechten Lockup und auf
+        Veranstaltungsgrafiken.</p></div>
+    </div>
+    <p class="small" style="margin-top:18px">Ersatzschrift, wenn Uniform nicht verfügbar
+      ist (E-Mail, Fremdsysteme): <code>Inter</code>, sonst <code>system-ui</code>.
+      Nie Arial in Versalien &#8212; das kippt den Ton sofort.</p>
+  </div>
+</section>
+
+<!-- ===================================================== 7 Die Kante -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Das durchgehende Element</div>
+    <h2>Die Kante trägt jede Anwendung</h2>
+    <p>Im Zeichen steht der Hubschrauber auf ihr. In jeder Vorlage kommt sie wieder: als
+      goldene Linie über der Absenderleiste, als Trennung zwischen Bild und Text, als
+      Oberkante eines Banners, als aktiver Reiter in der Oberfläche. Wer eine neue Vorlage
+      baut, fängt mit der Kante an.</p>
+    <div class="grid g3" style="margin-top:28px">
+      <div class="card"><h4>Stärke</h4><p class="small" style="margin:6px 0 0">
+        0,5&#8201;% bis 1,2&#8201;% der kürzeren Kantenlänge. Nie unter 3&#8239;px, nie über 14&#8239;px.</p></div>
+      <div class="card"><h4>Farbe</h4><p class="small" style="margin:6px 0 0">
+        Galliano auf Stratos. Ivory, wenn der Hubschrauber gold ist und beide sich
+        berühren. Nie zwei Kanten in zwei Farben.</p></div>
+      <div class="card"><h4>Lage</h4><p class="small" style="margin:6px 0 0">
+        Immer waagerecht, immer randabfallend. Sie ist eine Kante, kein Rahmen und
+        kein Unterstrich.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 8 Social -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Vorlagen &#183; Soziale Netzwerke</div>
+    <h2>Acht Formate für den Alltag</h2>
+    <p>Jede Vorlage endet mit der Absenderleiste: Kante, Marke, Adresse, optional das
+      Rubrikwort. Damit ist jeder Beitrag auch dann als VAR erkennbar, wenn er ohne
+      Kontext geteilt wird.</p>
+
+    <div class="tplgrid" style="margin-top:30px">
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:ig_4x5_foto}}</div>
+        <figcaption class="cap"><b>Bildbeitrag hoch</b>
+          <span>Der Standard. Nimmt im Feed die meiste Fläche ein.</span>
+          <span class="dim">1080 &#215; 1350 &#183; 4:5</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:ig_1x1_foto}}</div>
+        <figcaption class="cap"><b>Bildbeitrag quadratisch</b>
+          <span>Für Facebook und alles, was quadratisch beschnitten wird.</span>
+          <span class="dim">1080 &#215; 1080 &#183; 1:1</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:fb_1x1_vierbild}}</div>
+        <figcaption class="cap"><b>Vierbild</b>
+          <span>Rückblick auf einen Flugabend oder eine Veranstaltung.</span>
+          <span class="dim">1080 &#215; 1080 &#183; 4 Fotos</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:einsatzmeldung_1x1}}</div>
+        <figcaption class="cap"><b>Einsatzmeldung</b>
+          <span>Ohne Foto. Zieht die Felder direkt aus der Leitstelle: Stichwort,
+            Funkrufname, Station, Status.</span>
+          <span class="dim">1080 &#215; 1080 &#183; datengetrieben</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:statement_4x5}}</div>
+        <figcaption class="cap"><b>Zitat</b>
+          <span>Stimmen aus der Community. Ohne Bild, damit die Aussage trägt.</span>
+          <span class="dim">1080 &#215; 1350 &#183; 4:5</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:vergleich_1x1}}</div>
+        <figcaption class="cap"><b>Vorher &#183; Nachher</b>
+          <span>Für Entwicklungsstände, neue Funktionen, Leitstelle v1 gegen v2.</span>
+          <span class="dim">1080 &#215; 1080 &#183; zweigeteilt</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:story_9x16}}</div>
+        <figcaption class="cap"><b>Story</b>
+          <span>Obere 250&#8239;px und untere 340&#8239;px bleiben frei &#8212; dort liegt die Bedienung.</span>
+          <span class="dim">1080 &#215; 1920 &#183; 9:16</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:reel_titel_9x16}}</div>
+        <figcaption class="cap"><b>Reel-Titelkarte</b>
+          <span>Erstes Bild einer Serie. Die Kante trennt Video von Titel.</span>
+          <span class="dim">1080 &#215; 1920 &#183; 9:16</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 9 Veranstaltung -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Vorlagen &#183; Veranstaltung und Discord</div>
+    <h2>Ankündigen, ohne zu schreien</h2>
+    <div class="tplgrid wide" style="margin-top:30px">
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:veranstaltung_4x5}}</div>
+        <figcaption class="cap"><b>Veranstaltungsgrafik</b>
+          <span>Vier Zeilen: wann, wo, wer, Anmeldung. Mehr passt nicht und mehr
+            braucht es nicht.</span>
+          <span class="dim">1080 &#215; 1350 &#183; auch als 1:1 beschneidbar</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:discord_event_800x320}}</div>
+        <figcaption class="cap"><b>Discord-Event-Banner</b>
+          <span>Das Format, das Discord über geplanten Terminen zeigt. Kante oben und
+            unten, damit es sich vom dunklen Discord-Grau absetzt.</span>
+          <span class="dim">800 &#215; 320 &#183; 5:2</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 10 Video -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Vorlagen &#183; Video</div>
+    <h2>YouTube, TikTok, Stream</h2>
+    <p>Überlagerungen bleiben am Rand. Die Mitte gehört dem Flug &#8212; das ist der Grund,
+      warum jemand zuschaut.</p>
+    <div class="tplgrid wide" style="margin-top:30px">
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:yt_thumb_1280x720}}</div>
+        <figcaption class="cap"><b>YouTube-Vorschaubild</b>
+          <span>Zwei Zeilen, die zweite in Gold. Lesbar auch als Briefmarke im Handyfeed.</span>
+          <span class="dim">1280 &#215; 720</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:overlay_lowerthird_1920x1080}}</div>
+        <figcaption class="cap"><b>Namenseinblendung</b>
+          <span>Name, Funktion, Station. Goldene Kante oben und links.</span>
+          <span class="dim">1920 &#215; 1080 &#183; Einblendung unten links</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:overlay_live_1920x1080}}</div>
+        <figcaption class="cap"><b>Live-Überlagerung</b>
+          <span>Kachel oben links, Statusstreifen unten. Beide Felder lassen sich aus
+            der Leitstelle füllen.</span>
+          <span class="dim">1920 &#215; 1080 &#183; Stream</span></figcaption></figure>
+      <figure class="tpl" style="margin:0"><div class="art">{{SVG:tiktok_9x16}}</div>
+        <figcaption class="cap"><b>TikTok &#183; Shorts</b>
+          <span>Rechts 320&#8239;px und unten 520&#8239;px bleiben frei &#8212; dort liegen
+            Bedienelemente und Bildunterschrift.</span>
+          <span class="dim">1080 &#215; 1920 &#183; 9:16</span></figcaption></figure>
+      <figure class="tpl" style="margin:0;grid-column:1/-1">
+        <div class="art">{{SVG:yt_kanalbild_2560x1440}}</div>
+        <figcaption class="cap"><b>YouTube-Kanalbild</b>
+          <span>Alles Wichtige liegt im sicheren Bereich von 1546 &#215; 423&#8239;px in der
+            Mitte &#8212; nur der wird auf dem Handy gezeigt.</span>
+          <span class="dim">2560 &#215; 1440</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================================================== Profilbilder -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Profilbilder</div>
+    <h2>Ein Bild, sechs Plattformen, beliebig viele Anl&#228;sse</h2>
+    <p>Jede Plattform beschneidet rund und zeigt klein. Deshalb gilt &#252;berall
+      dieselbe Fassung: das App-Icon, nicht die Hauptfassung. Der Hubschrauber ist
+      3,1&#8202;:&#8202;1 breit und im runden Beschnitt schon unter 100&#8239;px kaum
+      noch zu erkennen.</p>
+
+    <div class="pbsizes" style="margin-top:28px">
+      <div class="it"><div class="rund" style="width:170px;height:170px">{{SVG:pb_standard}}</div>
+        <span>DISCORD &#183; 512</span></div>
+      <div class="it"><div class="rund" style="width:110px;height:110px">{{SVG:pb_standard}}</div>
+        <span>YOUTUBE &#183; 800</span></div>
+      <div class="it"><div class="rund" style="width:86px;height:86px">{{SVG:pb_standard}}</div>
+        <span>INSTAGRAM &#183; 320</span></div>
+      <div class="it"><div class="rund" style="width:64px;height:64px">{{SVG:pb_standard}}</div>
+        <span>FACEBOOK &#183; 170</span></div>
+      <div class="it"><div class="rund" style="width:48px;height:48px">{{SVG:pb_standard}}</div>
+        <span>X &#183; 400</span></div>
+      <div class="it"><div class="rund" style="width:34px;height:34px">{{SVG:pb_standard}}</div>
+        <span>TIKTOK &#183; 200</span></div>
+    </div>
+    <p class="small" style="margin-top:14px">Immer quadratisch hochladen, nie
+      vorbeschneiden &#8212; jede Plattform schneidet selbst, und zwar unterschiedlich
+      stark. Als PNG mit deckendem Hintergrund, damit Discord keine graue Fl&#228;che
+      darunterlegt.</p>
+
+    <h3 style="margin:46px 0 12px">Sondereditionen</h3>
+    <p>Der Grundsatz ist streng: <strong>das Zeichen bleibt unangetastet.</strong>
+      Ver&#228;ndert wird ausschlie&#223;lich das <strong>untere Feld</strong> unter der Kante &#8212; und bei Bedarf bekommt das obere Feld ein Muster. Genau so funktionieren eure bisherigen Fassungen schon; die Regel ist nur nie aufgeschrieben worden. Der Hubschrauber bleibt in jeder Edition Gold.</p>
+    <div class="pbgrid" style="margin-top:26px">
+      <div class="pb"><div class="rund">{{SVG:pb_standard}}</div>
+        <b>Grundfassung</b><span>ganzj&#228;hrig</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_pride}}</div>
+        <b>Pride</b><span>Juni</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_einheit}}</div>
+        <b>Tag der Einheit</b><span>3. Oktober</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_at}}</div>
+        <b>Nationalfeiertag AT</b><span>26. Oktober</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_ch}}</div>
+        <b>Bundesfeier CH</b><span>1. August</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_halloween}}</div>
+        <b>Halloween</b><span>31. Oktober</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_weihnachten}}</div>
+        <b>Weihnachten</b><span>Dezember</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_nacht}}</div>
+        <b>24-Stunden-Event</b><span>anlassbezogen</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_gold}}</div>
+        <b>Invers</b><span>Jubil&#228;en</span></div>
+      <div class="pb"><div class="rund">{{SVG:pb_vorlage}}</div>
+        <b>Leere Vorlage</b><span>f&#252;r den Generator</span></div>
+    </div>
+
+    <h3 style="margin:46px 0 12px">Der Generator</h3>
+    <p>Alle Editionen entstehen aus <em>einer</em> Datei. Sie enth&#228;lt eine leere
+      Gruppe <code>#hintergrund</code> unter dem Zeichen und einen Ring dar&#252;ber
+      &#8212; wer eine neue Edition braucht, ersetzt genau diese beiden Stellen. Kein
+      Neuzeichnen, kein Verschieben, keine zweite Wortmarke.</p>
+    <div class="grid g2" style="margin-top:22px">
+<pre><span class="c">&lt;!-- VAR_profilbild.svg --&gt;</span>
+&lt;svg viewBox="0 0 512 512"&gt;
+  &lt;clipPath id="rund"&gt;&lt;circle cx="256" cy="256" r="256"/&gt;&lt;/clipPath&gt;
+  &lt;g clip-path="url(#rund)"&gt;
+    <span class="k">&lt;g id="hintergrund"&gt;</span>
+      <span class="c">&lt;!-- hier austauschen --&gt;</span>
+    <span class="k">&lt;/g&gt;</span>
+    &lt;g id="zeichen"&gt;<span class="c">&lt;!-- unveraendert --&gt;</span>&lt;/g&gt;
+  &lt;/g&gt;
+  <span class="k">&lt;g id="feld-unten"&gt;</span><span class="c">&lt;!-- Anlassfarbe --&gt;</span><span class="k">&lt;/g&gt;</span>
+&lt;/svg&gt;</pre>
+      <div>
+        <ul class="rules">
+          <li><b>Streifen kippen mit</b>Alle Streifen im unteren Feld laufen parallel zur Kante, also mit &#8722;3,27&#176;. Ein waagerechter Streifen unter einer schr&#228;gen Kante ergibt zwei widersprechende Winkel.</li>
+          <li><b>Was nie ver&#228;ndert wird</b>Hubschrauber, Kante, Wortmarke, deren
+            Lage und der Kippwinkel. Wer das anfasst, macht eine neue Marke, keine
+            Edition.</li>
+          <li><b>Hintergrund</b>Fl&#228;che, Verlauf oder Muster &#8212; aber dunkel
+            genug, dass Ivory und Gold darauf stehen. Faustregel: nicht heller als
+            Stratos plus ein Viertel.</li>
+          <li><b>Laufzeit</b>Editionen laufen h&#246;chstens zwei Wochen um den Anlass,
+            dann zur&#252;ck zur Grundfassung. Sonst verliert die Ausnahme ihre
+            Wirkung.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin:46px 0 12px">Animierte Fassungen</h3>
+    <p>Discord und einige andere Plattformen zeigen animierte Profilbilder. Dieselbe
+      Datei, dieselbe Regel &#8212; bewegt wird nur der Hintergrund oder der Ring.</p>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="card"><h4>Pride</h4><p class="small" style="margin:6px 0 0">
+        Die Regenbogenstreifen wandern einmal in 6&#8239;s um eine Streifenh&#246;he nach oben. Kein Blinken, keine Farbwechsel &#8212; die Reihenfolge bleibt.</p></div>
+      <div class="card"><h4>Weihnachten</h4><p class="small" style="margin:6px 0 0">
+        Schnee f&#228;llt langsam von oben nach unten, 12&#8239;s Schleife. Der
+        Hubschrauber bleibt still stehen.</p></div>
+      <div class="card"><h4>Halloween</h4><p class="small" style="margin:6px 0 0">
+        Der orange Schein hinter der Kante pulsiert leicht, 4&#8239;s. Reduziert,
+        nicht flackernd.</p></div>
+      <div class="card"><h4>24-Stunden-Event</h4><p class="small" style="margin:6px 0 0">
+        Sternenfeld zieht sehr langsam, dazu ein blauer Schimmer, der einmal &#252;ber die Kante l&#228;uft &#8212; wie ein Blaulicht, das vorbeizieht.</p></div>
+      <div class="card"><h4>Technisch</h4><p class="small" style="margin:6px 0 0">
+        APNG bei 512&#8239;px, 20&#8239;fps, unter 8&#8239;MB. GIF nur als
+        R&#252;ckfallebene &#8212; es bildet die Goldt&#246;ne nicht sauber ab.</p></div>
+      <div class="card" style="border-color:var(--gold)"><h4>Die eine Grenze</h4>
+        <p class="small" style="margin:6px 0 0">Nie den Rotor drehen lassen. Das
+        Zeichen ist ein <em>stehender</em> Hubschrauber auf einer Kante &#8212; ein
+        drehender Rotor macht daraus einen Flug und widerspricht der Idee.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== Reel-Overlays -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Bewegtbild</div>
+    <h2>Das Einsatz-Tagebuch</h2>
+    <p>Ein Einsatz hat einen festen Ablauf, und dieser Ablauf ist die Geschichte.
+      Sechs Schritte, sechs Fenster f&#252;r Foto oder Video, dazwischen nichts zu
+      entscheiden. Wer ein Reel bauen will, f&#252;llt sechs Kacheln &#8212; das
+      Overlay ergibt sich von selbst.</p>
+
+    <div class="grid g2" style="margin:28px 0 30px">
+      <div class="card">
+        <h3 style="margin-bottom:10px">Die sechs Schritte</h3>
+        <table style="font-size:14px">
+          <tbody>
+            <tr><td><span class="stchip" style="background:rgb(140,10,10)">3</span>
+              <strong>Alarmierung</strong></td><td>Der Melder geht, Stichwort erscheint</td></tr>
+            <tr><td><span class="stchip" style="background:rgb(140,10,10)">3</span>
+              <strong>Ausr&#252;cken</strong></td><td>Abflug von der Station</td></tr>
+            <tr><td><span class="stchip" style="background:rgb(140,10,10)">4</span>
+              <strong>Ankommen</strong></td><td>Landung am Einsatzort</td></tr>
+            <tr><td><span class="stchip" style="background:rgb(140,10,10)">7</span>
+              <strong>Abflug zur Klinik</strong></td><td>Patient an Bord</td></tr>
+            <tr><td><span class="stchip" style="background:rgb(186,105,0)">8</span>
+              <strong>Ankunft Klinik</strong></td><td>Am Transportziel eingetroffen</td></tr>
+            <tr><td><span class="stchip" style="background:rgb(10,134,25)">1</span>
+              <strong>Einsatzklar</strong></td><td>Frei &#252;ber Funk, R&#252;ckflug</td></tr>
+          </tbody>
+        </table>
+        <p class="small" style="margin:14px 0 0">Ziffern und Farben stammen
+          unver&#228;ndert aus <code>FMS_STATUS_COLORS</code> der Leitstelle. Das Reel
+          spricht damit dieselbe Sprache wie das Lagebild.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:14px">Wie daraus ein Reel wird</h3>
+        <ul class="rules" style="border:0">
+          <li><b>Sechs Fenster f&#252;llen</b>Je Schritt ein Hochformat-Clip von 3 bis
+            5&#8239;s oder ein Standbild. Fehlt einer, f&#228;llt der Schritt aus der
+            Leiste heraus.</li>
+          <li><b>Kopfdaten einmal eingeben</b>Funkrufname, Stichwort, Station,
+            Uhrzeiten. Der Rest ist Vorlage.</li>
+          <li><b>&#220;berg&#228;nge</b>Harter Schnitt, kein Wischen. Die
+            Fortschrittsleiste r&#252;ckt in 0,4&#8239;s weiter, die Statuskachel
+            wechselt mit einem kurzen Puls in der neuen Farbe.</li>
+          <li><b>L&#228;nge</b>24 bis 36&#8239;s. Dar&#252;ber springen die Leute ab,
+            darunter tr&#228;gt der Ablauf nicht.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tbgrid">
+      <figure class="tbcard" style="margin:0"><div class="art">{{SVG:tb_1_alarmierung}}</div>
+        <figcaption class="cap"><b>1 &#183; Alarmierung</b><span>STATUS 3</span></figcaption></figure>
+      <figure class="tbcard" style="margin:0"><div class="art">{{SVG:tb_2_ausruecken}}</div>
+        <figcaption class="cap"><b>2 &#183; Ausr&#252;cken</b><span>STATUS 3</span></figcaption></figure>
+      <figure class="tbcard" style="margin:0"><div class="art">{{SVG:tb_3_ankommen}}</div>
+        <figcaption class="cap"><b>3 &#183; Ankommen</b><span>STATUS 4</span></figcaption></figure>
+      <figure class="tbcard" style="margin:0"><div class="art">{{SVG:tb_4_abflug_klinik}}</div>
+        <figcaption class="cap"><b>4 &#183; Abflug Klinik</b><span>STATUS 7</span></figcaption></figure>
+      <figure class="tbcard" style="margin:0"><div class="art">{{SVG:tb_5_ankunft_klinik}}</div>
+        <figcaption class="cap"><b>5 &#183; Ankunft Klinik</b><span>STATUS 8</span></figcaption></figure>
+      <figure class="tbcard" style="margin:0"><div class="art">{{SVG:tb_6_einsatzklar}}</div>
+        <figcaption class="cap"><b>6 &#183; Einsatzklar</b><span>STATUS 1</span></figcaption></figure>
+      <figure class="tbcard" style="margin:0;border-color:var(--gold)">
+        <div class="art">{{SVG:tb_leer}}</div>
+        <figcaption class="cap"><b>Leeres Fenster</b>
+          <span>SO SIEHT DIE VORLAGE AUS</span></figcaption></figure>
+    </div>
+
+    <h3 style="margin:46px 0 12px">Dieselbe Leiste, andere Anl&#228;sse</h3>
+    <p>Das Ger&#252;st funktioniert auch ohne Einsatz. Nur Anzahl und Beschriftung der
+      Schritte &#228;ndern sich, Aufbau und Ma&#223;e bleiben.</p>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="card"><h4>Veranstaltung</h4><p class="small" style="margin:6px 0 0">
+        Briefing &#8250; Start &#8250; Streckenabschnitt &#8250; Ziel &#8250;
+        Gruppenbild. Die Statuskachel wird zur Etappennummer, die Farbe bleibt
+        Gold.</p></div>
+      <div class="card"><h4>Ausbildung</h4><p class="small" style="margin:6px 0 0">
+        Ein Schritt je Lerneinheit. Die Fortschrittsleiste zeigt, wie weit der Kurs
+        ist &#8212; das tr&#228;gt &#252;ber mehrere Beitr&#228;ge hinweg.</p></div>
+      <div class="card"><h4>Normale Story</h4><p class="small" style="margin:6px 0 0">
+        Nur Kopfzeile und Absenderkante, keine Leiste. Alles andere geh&#246;rt dem
+        Bild.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 11 Sichere Zonen -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Spickzettel</div>
+    <h2>Maße und sichere Bereiche</h2>
+    <div class="scroll" style="margin-top:26px"><table>
+      <thead><tr><th>Anwendung</th><th>Maß</th><th>Freihalten</th><th>Absender</th></tr></thead>
+      <tbody>
+        <tr><td>Instagram Beitrag hoch</td><td class="r">1080 &#215; 1350</td><td>&#8212;</td><td>Absenderleiste 190&#8239;px</td></tr>
+        <tr><td>Instagram &#183; Facebook quadratisch</td><td class="r">1080 &#215; 1080</td><td>&#8212;</td><td>Absenderleiste 150&#8211;170&#8239;px</td></tr>
+        <tr><td>Story</td><td class="r">1080 &#215; 1920</td><td>oben 250, unten 340</td><td>Marke oben links</td></tr>
+        <tr><td>Reel &#183; TikTok &#183; Shorts</td><td class="r">1080 &#215; 1920</td><td>rechts 320, unten 520</td><td>Marke oben links</td></tr>
+        <tr><td>Discord-Event</td><td class="r">800 &#215; 320</td><td>&#8212;</td><td>Marke links</td></tr>
+        <tr><td>Discord-Servericon</td><td class="r">512 &#215; 512</td><td>rund beschnitten</td><td>App-Icon</td></tr>
+        <tr><td>YouTube-Vorschaubild</td><td class="r">1280 &#215; 720</td><td>rechts unten 120 &#215; 60 (Dauer)</td><td>Marke unten links</td></tr>
+        <tr><td>YouTube-Kanalbild</td><td class="r">2560 &#215; 1440</td><td>sicher: 1546 &#215; 423 mittig</td><td>Lockup mittig</td></tr>
+        <tr><td>Video-Überlagerung</td><td class="r">1920 &#215; 1080</td><td>Mitte 60&#8201;% frei</td><td>Eckmarke oben rechts</td></tr>
+        <tr><td>Favicon</td><td class="r">32 &#183; 16</td><td>&#8212;</td><td>nur App-Icon</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ===================================================== 12 Sprache -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Sprache</div>
+    <h2>Wie VAR klingt</h2>
+    <div class="grid g2" style="margin-top:26px">
+      <div>
+        <ul class="rules">
+          <li><b>Fachlich, nicht fachsimpelnd</b>Funkrufname, Stichwort, Status &#8212; die
+            richtigen Begriffe, aber beim ersten Auftreten erklärt.</li>
+          <li><b>Keine Dramatik</b>Wir bilden Rettungsdienst nach. Keine Schlagworte wie
+            &#8222;Todesfahrt&#8220; oder &#8222;Drama&#8220;. Der Ernst der Sache trägt sich selbst.</li>
+          <li><b>Aktiv und konkret</b>&#8222;Die Crew rückt binnen zwei Minuten aus&#8220;
+            statt &#8222;Es erfolgt eine zeitnahe Alarmierung&#8220;.</li>
+          <li><b>Kein echter Patientenbezug</b>Keine erfundenen Verletzungsbilder mit
+            Personenbezug, keine Bilder, die reale Einsätze nachstellen könnten.</li>
+          <li><b>Immer dazusagen: virtuell</b>In jeder Außendarstellung muss erkennbar
+            bleiben, dass es sich um eine Simulation handelt.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--ok)">So</h4>
+        <p style="margin:6px 0 20px">&#8222;Christoph 22 fliegt eine Verlegung nach Kassel.
+          Start bei Sonnenaufgang, 38 Minuten Flugzeit.&#8220;</p>
+        <h4 style="color:var(--crit)">Nicht so</h4>
+        <p style="margin:6px 0 0">&#8222;DRAMATISCHER RETTUNGSEINSATZ! Christoph 22 im
+          Wettlauf gegen die Zeit &#128293;&#8220;</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== 13 Tokens -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Für die Entwicklung</div>
+    <h2>Die Marke als Token</h2>
+    <p>Farben gehören nicht nur in dieses Dokument, sondern ins Monorepo. Solange sie
+      dort fehlen, laufen Hub und Leitstelle auf den Standardthemes von daisyUI &#8212; und
+      einzelne Töne wie <code>rescuetrack: #46b7a3</code> wandern in die Tailwind-Config,
+      ohne je in einem Style Guide gestanden zu haben.</p>
+<pre><span class="c">/* packages/shared-components/tokens.css */</span>
+<span class="k">:root</span> {
+  <span class="c">/* Marke */</span>
+  --var-stratos:      #00113A;
+  --var-galliano:     #D5A507;
+  --var-ivory:        #FFFFFC;
+  --var-signal:       #2B6EFF;
+
+  <span class="c">/* Flächen, abgeleitet von Stratos */</span>
+  --var-bg:           #050B1C;
+  --var-surface:      #0B1631;
+  --var-surface-2:    #12203F;
+  --var-line:         #1E2E52;
+
+  <span class="c">/* Schrift */</span>
+  --var-text:         #E7EAF3;
+  --var-text-dim:     #8E97AE;
+
+  <span class="c">/* Einsatzstatus -- getrennt von der Marke */</span>
+  --var-status-krit:  #E5484D;
+  --var-status-warn:  #E5920A;
+  --var-status-bereit:#2FA96B;
+  --var-status-aktiv: #2B6EFF;
+
+  <span class="c">/* Die Kante */</span>
+  --var-kante:        var(--var-galliano);
+  --var-kante-stark:  6px;
+  --var-kante-fein:   3px;
+
+  --var-radius:       3px;
+  --var-font:         "Uniform", Inter, system-ui, sans-serif;
+}</pre>
+    <p class="small" style="margin-top:16px">Die Datei gehört nach
+      <code>packages/shared-components/</code> und wird von <code>apps/hub</code> und
+      <code>apps/dispatch</code> importiert. Damit gilt eine Änderung sofort in beiden
+      Anwendungen.</p>
+  </div>
+</section>
+
+<!-- ===================================================== 14 Dateien -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Ablage</div>
+    <h2>Benennung und Ablage</h2>
+    <div class="grid g2" style="margin-top:26px">
+      <div>
+        <ul class="rules">
+          <li><b>Schema</b><code>VAR_&lt;element&gt;_&lt;fassung&gt;_&lt;format&gt;.&lt;typ&gt;</code>
+            &#8212; zum Beispiel <code>VAR_logo_negativ_512.png</code>.</li>
+          <li><b>SVG ist der Master</b>Jede PNG wird aus dem SVG erzeugt, nie umgekehrt.
+            Kein Raster in einer SVG-Datei.</li>
+          <li><b>Schriftzüge in Pfaden</b>Ausgelieferte Dateien enthalten keine
+            Textelemente, damit sie ohne installierte Uniform stimmen.</li>
+          <li><b>Ein Ort</b>Das <code>branding</code>-Repository ist die Quelle. Wer eine
+            Datei woanders findet, prüft sie dort gegen.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Was mitgeliefert wird</h4>
+        <p class="small" style="margin:8px 0 0">
+          <code>logo/</code> Hauptfassung, Signet, hell, negativ, einfarbig<br>
+          <code>lockup/</code> waagerecht und senkrecht, je positiv und negativ<br>
+          <code>icon/</code> App-Icon in zwei Farbfassungen<br>
+          <code>vorlagen/</code> alle 15 Formate dieses Dokuments<br>
+          <code>png/</code> 512 &#183; 256 &#183; 128 &#183; 64 &#183; 32 &#183; 16
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    VAR Brandbook, Fassung 2.0 &#8212; Juli 2026. Alle Zeichnungen sind echte Vektoren,
+    aus dem bestehenden Logo nachgezogen. Schriftzüge in Uniform, in Pfade umgewandelt.
+    Kontrastwerte nach WCAG 2.1.
+  </div>
+</footer>

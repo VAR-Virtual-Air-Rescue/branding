@@ -1,105 +1,131 @@
 # -*- coding: utf-8 -*-
 """Profilbilder: Grundfassung und Sondereditionen.
 
-Regel: das Zeichen bleibt unangetastet. Veraendert wird ausschliesslich der
-Hintergrund und optional ein Ring. Damit bleibt die Marke in jeder Edition
-dieselbe und der Generator braucht nur eine Datei auszutauschen.
+Die Regel stammt aus den bestehenden Fassungen (1_Logo_Pride.png,
+3_Logo_XMAS.png in S:\\06_VAR): der Hubschrauber bleibt immer Gold, veraendert
+wird das **untere Feld** unter der Kante -- und bei Bedarf bekommt das obere
+Feld ein Muster. Die Wortmarke nimmt die Farbe, die auf dem unteren Feld traegt.
+
+Weil die Kante um -3,27 Grad gekippt ist, laufen auch die Streifen im unteren
+Feld parallel dazu. Sonst entsteht ein zweiter, widersprechender Winkel.
 """
-import math, os
-from mark import (MARKS, STRATOS, GALLIANO, IVORY, C, R, S, ANG, svg, disc,
-                  heli_on_edge, word_max, var_at, uid, EDGE, CUT, BAR)
+import os
+from mark import (STRATOS, GALLIANO, IVORY, C, R, S, ANG, svg, disc,
+                  heli_on_edge, word_max, uid, EDGE, CUT, BAR)
 
-def kern(bg=None, heli=GALLIANO, bar=IVORY, wort=IVORY, cid=None):
-    """Das Zeichen ohne eigenen Hintergrund -- fuer Editionen."""
-    h, b, _ = heli_on_edge(418, C, EDGE + CUT, heli, CUT, BAR, bar)
-    body = h + b + word_max(EDGE + CUT + BAR + 6, wort)
-    return (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>' if bg else "") + body
+KANTE_Y = EDGE + CUT
 
-def edition(hintergrund, ring=None, ringw=26, cid=None, heli=GALLIANO,
-            bar=IVORY, wort=IVORY):
-    """Sonderedition: eigener Hintergrund, Zeichen unveraendert darueber."""
+def feld(inhalt):
+    """Inhalt ins untere Feld -- gedreht wie die Kante, randabfallend."""
+    return (f'<g transform="rotate({ANG:.3f} {C} {C})">'
+            f'<g transform="translate(0,{KANTE_Y})">{inhalt}</g></g>')
+
+def streifen(farben):
+    h = (S - KANTE_Y + 110) / len(farben)
+    return "".join(f'<rect x="{-S}" y="{i*h:.2f}" width="{S*3}" height="{h+0.6:.2f}" '
+                   f'fill="{c}"/>' for i, c in enumerate(farben))
+
+def flaeche(farbe):
+    return f'<rect x="{-S}" y="0" width="{S*3}" height="{S*2}" fill="{farbe}"/>'
+
+def oben(inhalt):
+    """Muster ins obere Feld -- an der Kante abgeschnitten."""
+    cid = uid("o")
+    return (f'<defs><clipPath id="{cid}">'
+            f'<rect x="{-S}" y="{-S}" width="{S*3}" height="{S+KANTE_Y}" '
+            f'transform="rotate({ANG:.3f} {C} {C})"/>'
+            f'</clipPath></defs><g clip-path="url(#{cid})">{inhalt}</g>')
+
+def edition(unten, bar=IVORY, wort=IVORY, obenmuster="", bg=STRATOS, cid=None):
     cid = cid or uid("e")
-    inner_r = R - (ringw if ring else 0)
-    parts = [f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>']
-    if ring:
-        parts.append(ring)
-    sub = uid("s")
-    parts.append(f'<defs><clipPath id="{sub}"><circle cx="{C}" cy="{C}" '
-                 f'r="{inner_r}"/></clipPath></defs><g clip-path="url(#{sub})">'
-                 f'{hintergrund}{kern(heli=heli, bar=bar, wort=wort)}</g>')
-    return svg(disc("".join(parts), cid))
+    heli, barsvg, _ = heli_on_edge(418, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
+    body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
+            + (oben(obenmuster) if obenmuster else "")
+            + feld(unten) + heli + barsvg
+            + word_max(KANTE_Y + BAR + 6, wort))
+    return svg(disc(body, cid))
 
-def streifen(farben, winkel=0, deckkraft=1.0):
-    n = len(farben); h = S / n
-    inner = "".join(f'<rect x="{-S}" y="{i*h:.1f}" width="{S*3}" height="{h+1:.1f}" '
-                    f'fill="{c}"/>' for i, c in enumerate(farben))
-    return (f'<g opacity="{deckkraft}" transform="rotate({winkel} {C} {C})">'
-            f'{inner}</g>')
-
-def ringstreifen(farben, ringw=26):
-    """Farbring aussen -- die zurueckhaltende Variante."""
-    rr = R - ringw/2
-    U = 2*math.pi*rr
-    seg = U/len(farben)
+# ---------------------------------------------------------------- Muster
+def muster(elemente, n=30, seed=7):
+    import random
+    r = random.Random(seed)
     out = []
-    for i, c in enumerate(farben):
-        out.append(f'<circle cx="{C}" cy="{C}" r="{rr:.2f}" fill="none" stroke="{c}" '
-                   f'stroke-width="{ringw}" stroke-dasharray="{seg:.2f} {U-seg:.2f}" '
-                   f'stroke-dashoffset="{-i*seg:.2f}" transform="rotate(-90 {C} {C})"/>')
+    for _ in range(n):
+        x, y = r.uniform(-20, S + 20), r.uniform(-20, KANTE_Y + 20)
+        sc = r.uniform(0.7, 1.35)
+        rot = r.uniform(-25, 25)
+        out.append(f'<g transform="translate({x:.0f},{y:.0f}) scale({sc:.2f}) '
+                   f'rotate({rot:.0f})" opacity="{r.uniform(.55,.95):.2f}">'
+                   f'{r.choice(elemente)}</g>')
     return "".join(out)
+
+GESCHENK = ('<rect x="-11" y="-9" width="22" height="18" fill="#E8C9A0"/>'
+            '<rect x="-2.5" y="-9" width="5" height="18" fill="#C0392B"/>'
+            '<rect x="-11" y="-1.5" width="22" height="4" fill="#C0392B"/>')
+KERZE    = ('<rect x="-4" y="-8" width="8" height="18" fill="#E8C9A0"/>'
+            '<rect x="-4" y="-8" width="8" height="18" fill="#C0392B" opacity=".45"/>'
+            '<path d="M0,-14 q4,4 0,6 q-4,-2 0,-6" fill="#F5D76E"/>')
+BEEREN   = ('<circle cx="-6" cy="0" r="4" fill="#FFFFFC"/>'
+            '<circle cx="3" cy="-4" r="4" fill="#FFFFFC"/>'
+            '<circle cx="4" cy="5" r="4" fill="#FFFFFC"/>')
+BLATT    = '<path d="M0,-10 q9,10 0,20 q-9,-10 0,-20" fill="#2E6B4F"/>'
+KUERBIS  = ('<ellipse cx="0" cy="0" rx="11" ry="9" fill="#E5720A"/>'
+            '<rect x="-1.5" y="-13" width="3" height="5" fill="#2E6B4F"/>'
+            '<path d="M-5,-2 l3,4 l-3,0 z M5,-2 l-3,4 l3,0 z" fill="#1A0E22"/>')
+FLEDER   = ('<path d="M-12,0 q6,-7 6,2 q6,-9 12,0 q-6,4 -12,1 q-6,3 -6,-3 z" '
+            'fill="#1A0E22"/>')
+STERN    = '<circle r="1.8" fill="#FFFFFC"/>'
 
 PRIDE = ["#E40303", "#FF8C00", "#FFED00", "#008026", "#004DFF", "#750787"]
 DE    = ["#000000", "#DD0000", "#FFCE00"]
 AT    = ["#ED2939", "#FFFFFF", "#ED2939"]
-CH_R  = "#DA291C"
+
+def _gold():
+    """Invers: goldene Flaeche, Zeichen in Stratos."""
+    h, b, _ = heli_on_edge(418, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
+    return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
+                    + h + b + word_max(KANTE_Y + BAR + 6, STRATOS), uid("g")))
 
 E = {}
-# Grundfassung
-E["pb_standard"] = svg(disc(kern(bg=STRATOS), uid("p")))
-E["pb_gold"]     = svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
-                            + kern(heli=STRATOS, bar=STRATOS, wort=STRATOS), uid("p")))
+E["pb_standard"] = edition(flaeche(STRATOS), IVORY, IVORY)
+E["pb_gold"]     = _gold()
 
-# Sondereditionen -- Ringvariante
-E["pb_pride"]    = edition("", ringstreifen(PRIDE))
-E["pb_einheit"]  = edition("", ringstreifen(DE))
-E["pb_at"]       = edition("", ringstreifen(AT))
-E["pb_ch"]       = edition("", ringstreifen([CH_R]))
-# Schweiz zusaetzlich mit Kreuz im Ring
-E["pb_ch"] = E["pb_ch"].replace("</svg>",
-    f'<g transform="translate({C},{R*0.115:.0f})"><rect x="-5" y="-14" width="10" '
-    f'height="28" fill="#FFF"/><rect x="-14" y="-5" width="28" height="10" fill="#FFF"/>'
-    f'</g></svg>')
+# Pride -- Regenbogen unten, Wortmarke in Stratos, genau wie in eurer Fassung
+E["pb_pride"] = edition(streifen(PRIDE), "#2B6EFF", STRATOS)
 
-# Halloween: Kuerbisorange als Flaeche, Zeichen bleibt
-E["pb_halloween"] = edition(
-    f'<circle cx="{C}" cy="{C}" r="{R}" fill="#1A0E22"/>'
-    f'<circle cx="{C}" cy="{S*0.30:.0f}" r="{R*0.78:.0f}" fill="#E5720A" opacity=".22"/>',
-    ringstreifen(["#E5720A", "#1A0E22"], 22), 22, heli="#F08A1E")
-
-# Weihnachten: Schnee ueber der Kante
-schnee = "".join(
-    f'<circle cx="{40+((i*97)%432)}" cy="{30+((i*53)%250)}" r="{2+(i%3)}" '
-    f'fill="#FFFFFC" opacity="{.35+.12*(i%4)}"/>' for i in range(46))
+# Weihnachten -- Muster oben, rotes Feld unten
 E["pb_weihnachten"] = edition(
-    f'<circle cx="{C}" cy="{C}" r="{R}" fill="#071633"/>{schnee}',
-    ringstreifen(["#1E7A3C", "#C0392B"], 24), 24)
+    flaeche("#C0392B"), "#F08A80", IVORY,
+    obenmuster=muster([GESCHENK, KERZE, BEEREN, BLATT], 30, 4), bg="#0E2E2B")
 
-# Nachtdienst / 24-Stunden-Event
+# Halloween -- Kuerbisse oben, oranges Feld unten
+E["pb_halloween"] = edition(
+    flaeche("#E5720A"), "#1A0E22", "#1A0E22",
+    obenmuster=muster([KUERBIS, FLEDER], 20, 9), bg="#1A0E22")
+
+# Nationalfeiertage
+E["pb_einheit"] = edition(streifen(DE), IVORY, IVORY)
+E["pb_at"]      = edition(streifen(AT), IVORY, STRATOS)
+KREUZ = (f'<g transform="translate({C},150)">'
+         f'<rect x="-15" y="-48" width="30" height="96" fill="#DA291C"/>'
+         f'<rect x="-48" y="-15" width="96" height="30" fill="#DA291C"/></g>')
+E["pb_ch"] = edition(flaeche("#DA291C"), IVORY, IVORY, obenmuster=KREUZ)
+
+# 24-Stunden-Event
 E["pb_nacht"] = edition(
-    f'<circle cx="{C}" cy="{C}" r="{R}" fill="#04091A"/>'
-    + "".join(f'<circle cx="{28+((i*131)%456)}" cy="{22+((i*71)%230)}" r="1.6" '
-              f'fill="#FFFFFC" opacity="{.3+.1*(i%5)}"/>' for i in range(38)),
-    ringstreifen(["#2B6EFF", "#04091A"], 22), 22)
+    flaeche("#0A1836"), "#2B6EFF", IVORY,
+    obenmuster=muster([STERN], 70, 11), bg="#04091A")
 
 # Leere Vorlage fuer den Generator
-E["pb_vorlage"] = svg(
-    f'<defs><clipPath id="pbclip"><circle cx="{C}" cy="{C}" r="{R}"/></clipPath></defs>'
-    f'<g clip-path="url(#pbclip)">'
-    f'<rect width="{S}" height="{S}" fill="#141C31"/>'
-    + "".join(f'<rect x="{i*32}" y="0" width="16" height="{S}" fill="#1C2740"/>'
-              for i in range(16))
-    + f'<g id="hintergrund"><!-- hier kommt der Austausch hinein --></g>'
-    + kern() + '</g>')
+_h, _b, _ = heli_on_edge(418, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
+E["pb_vorlage"] = svg(disc(
+    f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
+    + oben('<g id="muster-oben"></g>')
+    + feld('<g id="feld-unten">'
+           + f'<rect x="{-S}" y="0" width="{S*3}" height="{S*2}" fill="#141C31"/>'
+           + "".join(f'<rect x="{i*44-S}" y="0" width="22" height="{S*2}" fill="#1C2740"/>'
+                     for i in range(24)) + '</g>')
+    + _h + _b + word_max(KANTE_Y + BAR + 6, IVORY), uid("v")))
 
 if __name__ == "__main__":
     os.makedirs("neu", exist_ok=True)
