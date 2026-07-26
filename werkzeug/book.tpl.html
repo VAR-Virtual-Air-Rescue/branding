@@ -621,7 +621,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <div class="pb"><div class="rund">{{SVG:pb_at}}</div>
         <b>Nationalfeiertag AT</b><span>26. Oktober</span></div>
       <div class="pb"><div class="rund">{{SVG:pb_ch}}</div>
-        <b>Bundesfeier CH</b><span>1. August</span></div>
+        <b>Bundesfeier CH</b><span>Matterhorn mit Flagge</span></div>
       <div class="pb"><div class="rund">{{SVG:pb_halloween}}</div>
         <b>Halloween</b><span>Icon wird zum K&#252;rbis</span></div>
       <div class="pb"><div class="rund">{{SVG:pb_weihnachten}}</div>
@@ -659,6 +659,11 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
 &lt;/svg&gt;</pre>
       <div>
         <ul class="rules">
+          <li><b>Bewegung braucht eine eigene Gruppe</b>Ein
+            <code>animateTransform</code> ohne <code>additive="sum"</code> ersetzt das
+            <code>transform</code> des Elements, statt es zu erg&#228;nzen. Position
+            geh&#246;rt deshalb in die &#228;u&#223;ere Gruppe, die Bewegung in eine
+            innere.</li>
           <li><b>Streifen kippen mit</b>Alle Streifen im unteren Feld laufen parallel zur Kante, also mit &#8722;3,27&#176;. Ein waagerechter Streifen unter einer schr&#228;gen Kante ergibt zwei widersprechende Winkel.</li>
           <li><b>Was nie ver&#228;ndert wird</b>Hubschrauber, Kante, Wortmarke, deren
             Lage und der Kippwinkel. Wer das anfasst, macht eine neue Marke, keine
@@ -720,7 +725,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         Schnee f&#228;llt langsam von oben nach unten, 12&#8239;s Schleife. Der
         Hubschrauber bleibt still stehen.</p></div>
       <div class="card"><h4>Halloween</h4><p class="small" style="margin:6px 0 0">
-        Der glimmende Kern pulsiert in 3,2&#8239;s, die Spinne schwingt in 4,5&#8239;s an ihrem Faden. Netze und F&#228;den bleiben still &#8212; sonst wird es unruhig.</p></div>
+        Die Spinne h&#228;ngt gut 70&#8239;px gro&#223; im Bild und schwingt in 3,4&#8239;s, dazu f&#228;hrt sie in 5,1&#8239;s am Faden auf und ab. Zwei Flederm&#228;use fliegen mit schlagenden Fl&#252;geln durch, der Glimmkern pulsiert in 2,4&#8239;s. Netze und F&#228;den bleiben still.</p></div>
       <div class="card"><h4>Jahreswechsel</h4><p class="small" style="margin:6px 0 0">
         Eine Schleife von 6&#8239;s: die Rakete steigt von der Kante auf, explodiert
         bei einem Drittel der H&#246;he, danach steht die Jahreszahl aus Funken.
