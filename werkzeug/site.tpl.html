@@ -790,6 +790,10 @@ footer .mk{height:52px;width:auto;display:block;margin-bottom:16px}
       opt: ['3', '6', '7', '1'], ok: 2,
       hilf: 'Status\u00a07 hei\u00dft: Patient aufgenommen, einsatzgebunden im Transport. Am Transportziel folgt dann die\u00a08, nach der \u00dcbergabe die\u00a01.' }
   ];
+  /* eigene Kopie: FMS wird erst weiter unten im Lagebild zugewiesen */
+  var G_FARBE = { '1': 'rgb(10,134,25)', '2': 'rgb(10,134,25)',
+    '3': 'rgb(140,10,10)', '4': 'rgb(140,10,10)', '5': 'rgb(231,77,22)',
+    '6': 'rgb(85,85,85)', '7': 'rgb(140,10,10)', '8': 'rgb(186,105,0)' };
   var gIdx = 0;
   var gEl = document.getElementById('gate');
   if (gEl) {
@@ -812,7 +816,7 @@ footer .mk{height:52px;width:auto;display:block;margin-bottom:16px}
         var b = document.createElement('button');
         b.type = 'button'; b.className = 'opt';
         b.innerHTML = '<span class="zi" style="background:' +
-          (FMS[nr] || '#3B4560') + '">' + nr + '</span>Status ' + nr;
+          (G_FARBE[nr] || '#3B4560') + '">' + nr + '</span>Status ' + nr;
         b.addEventListener('click', function () { antwort(b, k, f); });
         gO.appendChild(b);
       });
