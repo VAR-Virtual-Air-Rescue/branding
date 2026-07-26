@@ -54,7 +54,7 @@ def _patches(w, h, seed=3):
         cx, cy = r.uniform(0, w), r.uniform(0, h)
         rx, ry = r.uniform(w * .05, w * .16), r.uniform(h * .06, h * .18)
         out.append(f'<ellipse cx="{cx:.0f}" cy="{cy:.0f}" rx="{rx:.0f}" ry="{ry:.0f}" '
-                   f'fill="{LAND2}" opacity=".8"/>')
+                   f'fill="{LAND2}" opacity=".38"/>')
     for _ in range(3):
         x, y = r.uniform(0, w), r.uniform(0, h)
         d = f"M{x:.0f},{y:.0f}"
