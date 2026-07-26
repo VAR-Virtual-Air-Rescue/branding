@@ -699,7 +699,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <div class="pb"><div class="rund">{{SVG:pb_silvester}}</div>
         <b>Jahreswechsel</b><span>Bild</span></div>
       <div class="pb"><div class="rund">{{SVG:pb_silvester_anim}}</div>
-        <b>Jahreswechsel</b><span>Rakete steigt, explodiert, Jahreszahl</span></div>
+        <b>Jahreswechsel</b><span>Rakete, Explosion, Jahreszahl aus Funken</span></div>
       <div class="pb"><div class="rund">{{SVG:pb_nacht}}</div>
         <b>24-Stunden-Event</b><span>Bild</span></div>
       <div class="pb"><div class="rund">{{SVG:pb_nacht_anim}}</div>
@@ -721,11 +721,20 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         Hubschrauber bleibt still stehen.</p></div>
       <div class="card"><h4>Halloween</h4><p class="small" style="margin:6px 0 0">
         Der glimmende Kern pulsiert in 3,2&#8239;s, die Spinne schwingt in 4,5&#8239;s an ihrem Faden. Netze und F&#228;den bleiben still &#8212; sonst wird es unruhig.</p></div>
+      <div class="card"><h4>Jahreswechsel</h4><p class="small" style="margin:6px 0 0">
+        Eine Schleife von 6&#8239;s: die Rakete steigt von der Kante auf, explodiert
+        bei einem Drittel der H&#246;he, danach steht die Jahreszahl aus Funken.
+        Eine zweite, kleinere Rakete z&#252;ndet versetzt daneben.</p></div>
       <div class="card"><h4>24-Stunden-Event</h4><p class="small" style="margin:6px 0 0">
         Das Sternenbild wandert in 48&#8239;s einmal komplett durch &#8212; doppelt gelegt, damit die Schleife nahtlos ist. Dazu l&#228;uft alle 3,4&#8239;s ein blauer Schimmer &#252;ber die Kante.</p></div>
       <div class="card"><h4>Technisch</h4><p class="small" style="margin:6px 0 0">
         APNG bei 512&#8239;px, 20&#8239;fps, unter 8&#8239;MB. GIF nur als
-        R&#252;ckfallebene &#8212; es bildet die Goldt&#246;ne nicht sauber ab.</p></div>
+        R&#252;ckfallebene &#8212; es bildet die Goldt&#246;ne nicht sauber ab.
+        Jede Bewegung l&#228;uft in einer einzigen Schleife mit
+        <code>repeatCount="indefinite"</code>; Zeitpunkte werden &#252;ber
+        <code>keyTimes</code> gesetzt, nicht &#252;ber mehrere
+        <code>begin</code>-Marken. Sonst spielt die Animation nur einmal und
+        friert danach ein.</p></div>
       <div class="card" style="border-color:var(--gold)"><h4>Die eine Grenze</h4>
         <p class="small" style="margin:6px 0 0">Nie den Rotor drehen lassen. Das
         Zeichen ist ein <em>stehender</em> Hubschrauber auf einer Kante &#8212; ein
