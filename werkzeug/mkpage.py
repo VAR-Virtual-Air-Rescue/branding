@@ -7,8 +7,11 @@
 import re, os, sys
 from text2path import text_path
 
+# Neben den erzeugten Verzeichnissen auch die beiden Ablagen lesen, die im Git
+# liegen: `quellen/` fuer handgezeichnete Platzhalter, `../karte/` fuer das
+# Lagebild. Ohne sie liess sich web/index.html nicht mehr bauen.
 STORE = {}
-for d in ("neu", "tpl"):
+for d in ("quellen", "../karte", "neu", "tpl"):
     if os.path.isdir(d):
         for f in os.listdir(d):
             if f.endswith(".svg"):

@@ -51,7 +51,7 @@ def oben(inhalt):
 
 def edition(unten, bar=IVORY, wort=IVORY, obenmuster="", bg=STRATOS, cid=None):
     cid = cid or uid("e")
-    heli, barsvg, _ = heli_on_edge(418, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
+    heli, barsvg, _ = heli_on_edge(382, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenmuster) if obenmuster else "")
             + feld(unten) + heli + barsvg
@@ -120,7 +120,7 @@ AT    = ["#ED2939", "#FFFFFF", "#ED2939"]
 
 def _gold():
     """Invers: goldene Flaeche, Zeichen in Stratos."""
-    h, b, _ = heli_on_edge(418, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
+    h, b, _ = heli_on_edge(382, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
                     + h + b + word_max(KANTE_Y + BAR + 6, STRATOS), uid("g")))
 
@@ -148,9 +148,10 @@ E["pb_einheit"] = edition(streifen(DE), IVORY, IVORY)
 E["pb_at"]      = edition(streifen(AT), IVORY, STRATOS)
 # Schweiz -- Bergkette mit Matterhorn, die Flagge steckt in der Silhouette
 BERGE = (
-    # hintere Kette, blasser
-    "M-20,300 L40,214 L86,246 L134,180 L182,238 L228,196 L268,242 L312,188 "
-    "L352,236 L398,192 L446,244 L500,206 L540,300 Z"
+    # hintere Kette, blasser. Die Enden liegen weit ausserhalb des Kreises,
+    # damit sie auch nach dem Verkleinern noch randabfallend sind.
+    "M-300,300 L40,214 L86,246 L134,180 L182,238 L228,196 L268,242 L312,188 "
+    "L352,236 L398,192 L446,244 L500,206 L820,300 Z"
 )
 # Das Matterhorn: steile Pyramide, Gipfel nach rechts gekippt
 MATTERHORN = (
@@ -158,12 +159,24 @@ MATTERHORN = (
 )
 
 def schweiz():
-    """Rote Berge, weisses Kreuz darin -- alles auf die Silhouette beschnitten."""
+    """Rote Berge, weisses Kreuz darin -- alles auf die Silhouette beschnitten.
+
+    Gezeichnet wurde die Kette fuer das alte, hoehere Himmelsfeld: Fusslinie
+    bei y=303, 27 px ueber der damaligen Kante. Seit die Kante in der Mitte
+    liegt, wird die ganze Silhouette um denselben Faktor verkleinert und so
+    verschoben, dass der Abstand zur Kante gleich bleibt. Die Winkel des
+    Matterhorns bleiben dabei unangetastet -- eine reine Stauchung haette es
+    flacher gemacht, und die Steilheit ist der ganze Witz an dem Berg.
+    """
     cid = uid("chm")
+    FUSS, ALT_KANTE = 303.0, 330.0
+    f = KANTE_Y / ALT_KANTE                       # Himmel neu zu Himmel alt
+    dy = (KANTE_Y - (ALT_KANTE - FUSS)) - FUSS    # Fusslinie auf gleichen Abstand
     kreuz = (f'<g transform="translate(202,206)">'
              f'<rect x="-13" y="-40" width="26" height="80" fill="#FFFFFC"/>'
              f'<rect x="-40" y="-13" width="80" height="26" fill="#FFFFFC"/></g>')
     return (
+        f'<g transform="translate(0,{dy:.2f}) translate({C},{FUSS}) scale({f:.4f}) translate({-C},{-FUSS})">'
         # hintere Kette in gedecktem Rot, damit die Tiefe stimmt
         f'<path d="{BERGE}" fill="#8E1F17" opacity=".85"/>'
         # Matterhorn mit Flagge darin
@@ -172,7 +185,8 @@ def schweiz():
         f'<g clip-path="url(#{cid})">{kreuz}</g>'
         # Schneefeld auf der Nordflanke, ein Hauch
         f'<path d="M206,96 L214,110 L206,132 L232,170 L206,178 L188,120 Z" '
-        f'fill="#FFFFFC" opacity=".30"/>')
+        f'fill="#FFFFFC" opacity=".30"/>'
+        f'</g>')
 
 E["pb_ch"] = edition(flaeche(STRATOS), IVORY, IVORY, obenmuster=schweiz())
 
@@ -192,7 +206,7 @@ E["pb_silvester"] = edition(
 
 # Trauerfassung -- fuer Gedenktage und Ausnahmen. Kein Gold, kein Muster.
 def _trauer():
-    h, b, _ = heli_on_edge(418, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
+    h, b, _ = heli_on_edge(382, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="#121722"/>'
                     + feld(flaeche("#1B212E")) + h + b
                     + word_max(KANTE_Y + BAR + 6, "#9AA0AE")
@@ -209,7 +223,7 @@ E["pb_jubilaeum"] = edition(
     obenmuster=muster([STERN], 40, 33))
 
 # Leere Vorlage fuer den Generator
-_h, _b, _ = heli_on_edge(418, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
+_h, _b, _ = heli_on_edge(382, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
 E["pb_vorlage"] = svg(disc(
     f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
     + oben('<g id="muster-oben"></g>')

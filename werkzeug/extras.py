@@ -49,7 +49,7 @@ E["_evo_heute"] = svg(disc(
 
 # ---------------------------------------------------------------- Falschanwendung
 def base(cid, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, bg=STRATOS,
-         heli_w=418, edge=300, cut=CUT):
+         heli_w=382, edge=EDGE, cut=CUT):
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + cut, heli_col, cut, BAR, bar_col)
     return disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
                 + heli + barsvg + var_at(228, C, 398, word_col), cid)

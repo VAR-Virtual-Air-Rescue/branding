@@ -16,6 +16,17 @@ den Hubschrauber als eingebettetes PNG enthalten (3708 × 1201 px als Base64,
     png/           512 · 256 · 128 · 64 · 32 · 16
     werkzeug/      Skripte, mit denen sich alles neu erzeugen lässt
 
+## Wo die Kante liegt
+
+Steht eine Wortmarke unter der Kante, läuft sie **durch den Mittelpunkt** — sie
+ist dann ein Durchmesser, die längste Sehne, die der Kreis hergibt. Himmel und
+Feld sind gleich hoch, VAR bekommt die Hälfte des Zeichens statt eines Drittels.
+
+Ohne Wortmarke bleibt sie **tief**: Signet, Rotorfassungen R2–R5 und App-Icon
+würden sonst eine leere Hälfte zeigen und den Hubschrauber verkleinern, der dort
+allein trägt. Beide Höhen stehen als `EDGE` und `EDGE_LEER` in `werkzeug/mark.py`;
+Profilbilder und Animationen leiten ihre Kante daraus ab.
+
 ## Größen
 
 Hauptfassung ab 96 px bzw. 22 mm im Druck. Signet ab 40 px. Darunter gilt

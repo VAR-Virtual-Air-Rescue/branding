@@ -119,7 +119,7 @@ def _var_points(steps=14):
     _VP = pts
     return pts
 
-def word_max(top, fill, rad=R, gap=7.0, over=1.07, tilt=True, cid=None):
+def word_max(top, fill, rad=R, gap=7.0, over=0.94, tilt=True, cid=None):
     """Wortmarke unter der Kante.
 
     Sie laeuft absichtlich ueber den Rand hinaus und wird von einem Kreis
@@ -130,6 +130,9 @@ def word_max(top, fill, rad=R, gap=7.0, over=1.07, tilt=True, cid=None):
 
     `gap`  Abstand der Schnittkante zum Rand. 0 = buendig.
     `over` wie weit die Buchstaben ueber die Schnittkante hinausragen.
+           Seit die Kante durch die Mitte laeuft, ist das Feld hoch genug, dass
+           1.07 die Spitze des V und das Bein des R flach abschneiden wuerde.
+           0.94 laesst beide stehen -- und die Wortmarke waechst trotzdem.
     """
     pts = _var_points()
     inner = rad - gap
@@ -154,12 +157,18 @@ def word_max(top, fill, rad=R, gap=7.0, over=1.07, tilt=True, cid=None):
     return body
 
 # ---------------------------------------------------------------- Fassungen
-EDGE = 300      # Hoehe der Kante in Bildmitte
+EDGE = 226      # Kante mit Wortmarke darunter: EDGE + CUT = 256 = Kreismitte.
+                # Die Kante ist damit ein Durchmesser -- die laengste Sehne, die
+                # der Kreis hergibt. Himmel und Feld sind gleich hoch, und die
+                # Wortmarke bekommt die Haelfte statt eines Drittels.
+EDGE_LEER = 300 # Kante ohne Wortmarke darunter: Signet, R2-R5, App-Icon.
+                # Dort brauchte die Mitte niemand -- sie erzeugt nur eine leere
+                # Haelfte und verkleinert den Hubschrauber, der hier alles traegt.
 CUT  = 30
 BAR  = 13
 
 def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=None,
-         cid="m", heli_w=418, word_top=None, with_word=True, edge=EDGE,
+         cid="m", heli_w=382, word_top=None, with_word=True, edge=EDGE,
          bar=BAR, cut=CUT):
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + cut, heli_col, cut, bar, bar_col)
     parts = [f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>']
@@ -183,11 +192,11 @@ MARKS["n1_kante"]   = mark(cid="n1")
 MARKS["n2_ivory"]   = mark(heli_col=IVORY, bar_col=GALLIANO, cid="n2")
 MARKS["n3_zweifeld"]= mark(heli_col=IVORY, bar_col=IVORY, lower=GALLIANO,
                            word_col=STRATOS, cid="n3")
-MARKS["n4_signet"]  = mark(with_word=False, heli_w=442, edge=318, cid="n4")
+MARKS["n4_signet"]  = mark(with_word=False, heli_w=442, edge=318, cid="n4")  # tief, s. EDGE_LEER
 
 # --- Rotorfassungen -------------------------------------------------------
 def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
-               bar_col=IVORY, bg=STRATOS, heli_w=344, edge=300, blades=2,
+               bar_col=IVORY, bg=STRATOS, heli_w=344, edge=EDGE_LEER, blades=2,
                blade=0.40, with_word=False, word_col=IVORY, word_y=404, word_w=190,
                inner_r=None, cap="round"):
     inner_r = inner_r if inner_r is not None else R
@@ -198,8 +207,9 @@ def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
     return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
 
 # R1  Ring aussen, Heli auf der Kante, Wortmarke darunter
-MARKS["r1_rotor"] = rotor_mark("r1", ring_r=236, sw=19, inner_r=216, heli_w=292,
-                               edge=274, with_word=True)
+# R1 traegt die Wortmarke, also Kante durch die Mitte des inneren Kreises
+MARKS["r1_rotor"] = rotor_mark("r1", ring_r=236, sw=19, inner_r=216, heli_w=267,
+                               edge=EDGE, with_word=True)
 # R2  Zwei Rotorblaetter, kein gefuellter Innenkreis -- offene Fassung
 MARKS["r2_offen"] = rotor_mark("r2", ring_r=238, sw=17, inner_r=222, heli_w=326,
                                edge=300, blades=2, blade=0.44)
@@ -240,6 +250,8 @@ MARKS["icon_monogramm_gold"] = svg(disc(
     f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
     + var_at(376, C, 262, STRATOS), "i2"))
 def icon_kante():
+    # Bewusst tief: unter 32 px zaehlt allein, dass der Hubschrauber als
+    # Hubschrauber lesbar bleibt. Er braucht die volle Breite des Kreises.
     heli, barsvg, _ = heli_on_edge(500, C, 336, GALLIANO, 34, 22, IVORY)
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
                     + heli + barsvg, "i3"))
