@@ -55,7 +55,7 @@ def edition(unten, bar=IVORY, wort=IVORY, obenmuster="", bg=STRATOS, cid=None):
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenmuster) if obenmuster else "")
             + feld(unten) + heli + barsvg
-            + word_max(KANTE_Y + BAR + 6, wort))
+            + word_max(wort))
     return svg(disc(body, cid))
 
 # ---------------------------------------------------------------- Muster
@@ -122,7 +122,7 @@ def _gold():
     """Invers: goldene Flaeche, Zeichen in Stratos."""
     h, b, _ = heli_on_edge(414, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
-                    + h + b + word_max(KANTE_Y + BAR + 6, STRATOS), uid("g")))
+                    + h + b + word_max(STRATOS), uid("g")))
 
 E = {}
 E["pb_standard"] = edition(flaeche(STRATOS), IVORY, IVORY)
@@ -209,7 +209,7 @@ def _trauer():
     h, b, _ = heli_on_edge(414, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="#121722"/>'
                     + feld(flaeche("#1B212E")) + h + b
-                    + word_max(KANTE_Y + BAR + 6, "#9AA0AE")
+                    + word_max("#9AA0AE")
                     + f'<rect x="{-S}" y="{S*0.60:.0f}" width="{S*3}" height="26" '
                       f'fill="#0A0D14" transform="rotate({ANG:.3f} {C} {C})"/>', uid("t")))
 E["pb_trauer"] = _trauer()
@@ -231,7 +231,7 @@ E["pb_vorlage"] = svg(disc(
            + f'<rect x="{-S}" y="0" width="{S*3}" height="{S*2}" fill="#141C31"/>'
            + "".join(f'<rect x="{i*44-S}" y="0" width="22" height="{S*2}" fill="#1C2740"/>'
                      for i in range(24)) + '</g>')
-    + _h + _b + word_max(KANTE_Y + BAR + 6, IVORY), uid("v")))
+    + _h + _b + word_max(IVORY), uid("v")))
 
 if __name__ == "__main__":
     os.makedirs("neu", exist_ok=True)
