@@ -22,11 +22,16 @@ Steht eine Wortmarke unter der Kante, läuft sie **durch den Mittelpunkt** — s
 ist dann ein Durchmesser, die längste Sehne, die der Kreis hergibt. Himmel und
 Feld sind gleich hoch, VAR bekommt die Hälfte des Zeichens statt eines Drittels.
 
-Wie groß die Wortmarke darin wird, steuert `luft` in `word_max` — der Mindestabstand
-zum Kreisrand, voreingestellt auf **12** Einheiten. Der waagerechte Sitz wird dabei
-ausgemittelt, aber auf zwölf Einheiten gedeckelt: die Wortmarke wird um den
-Mittelpunkt gekippt und liegt darunter, säße ohne Ausgleich zu weit rechts — mit
-vollem Ausgleich (34) aber sichtbar aus der Mitte.
+Wie groß die Wortmarke darin wird, steuert `schnitt` in `word_max` — wie weit die
+Buchstaben über den konzentrischen Beschnitt hinauslaufen dürfen, voreingestellt auf
+**32** Einheiten. Der Anschnitt ist gewollt, dieselbe Geste wie beim angeschnittenen
+Hubschrauber; er muss nur beherrscht bleiben. Bei 32 ist VAR 399 breit und verliert
+unten bis zu 46 von 191 Einheiten Höhe. Ab etwa 48 verlieren Fuß des V und Bein des R
+ihre Abschlüsse — dann liest es sich als Fehler.
+
+Der waagerechte Sitz wird ausgemittelt, aber auf zwölf Einheiten gedeckelt: die
+Wortmarke wird um den Mittelpunkt gekippt und liegt darunter, säße ohne Ausgleich zu
+weit rechts — mit vollem Ausgleich (34) aber sichtbar aus der Mitte.
 
 **Die Wortmarke war beschnitten.** Bis zum 28.08.2026 stand in `traced.json` eine
 Fassung, die von einer schon im Badge-Kreis sitzenden Grafik abgenommen war: Fuß des
