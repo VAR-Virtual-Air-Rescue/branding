@@ -154,7 +154,7 @@ def halloween(animiert=False):
                    + spinne(int(S * .74), 118, animiert))
             + feld(flaeche(KUERBIS_TIEF) + rippen("#7E3603", ".42"))
             + heli + bar
-            + word_max(SCHNITT))
+            + word_max(SCHNITT, KANTE_Y + BAR))
     return svg(disc(body, uid("h")))
 
 # ---------------------------------------------------------------- Animiert
@@ -163,7 +163,7 @@ def bewegt(bg, heli_col, bar_col, wort_col, obenteil, unten):
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenteil) if obenteil else "")
             + unten + heli + bar
-            + word_max(wort_col))
+            + word_max(wort_col, KANTE_Y + BAR))
     return svg(disc(body, uid("a")))
 
 A = {}

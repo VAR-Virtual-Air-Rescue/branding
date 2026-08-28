@@ -22,12 +22,16 @@ Steht eine Wortmarke unter der Kante, läuft sie **durch den Mittelpunkt** — s
 ist dann ein Durchmesser, die längste Sehne, die der Kreis hergibt. Himmel und
 Feld sind gleich hoch, VAR bekommt die Hälfte des Zeichens statt eines Drittels.
 
-Die Wortmarke **hängt unten am Kreis**, nicht oben an der Kante — so sitzt sie im
-Ursprungslogo. `WORT_BREITE = 0.828` (Anteil des Durchmessers, dort gemessen) und
-`WORT_BODEN = 14` (Abstand der Grundlinie über dem tiefsten Punkt des Beschnitts)
-stehen in `werkzeug/mark.py`. Was links und rechts über die Rundung hinausragt, wird
-abgeschnitten: der Fuß des V und das Bein des R. In der Mitte läuft das A bis unten
-durch.
+Die Wortmarke **füllt das Feld zwischen Kante und Rundung**: oben liegt sie am Strich
+an, unten werden die Füße weitergeführt, bis der Beschnitt sie kappt. Sichtbar ist das
+beim A; V und R kappt die Rundung schon oberhalb der Grundlinie. `WORT_BREITE = 0.828`
+(Anteil des Durchmessers, am Ursprungslogo gemessen) und `VERLAENGERUNG = 200` stehen in
+`werkzeug/mark.py`.
+
+Die Verlängerung folgt den Kanten der Buchstaben, nicht der Senkrechten: die Stämme sind
+geneigt und verjüngen sich nach unten (Bein des A +0,41 je Einheit, Keil des V schließt
+sich nach 136). `_fuesse()` liest beide Kantenneigungen aus zwei waagerechten Schnitten
+durch die Zeichnung — senkrecht verlängert bekäme jeder Fuß einen Knick.
 
 Der waagerechte Sitz wird ausgemittelt, aber auf zwölf Einheiten gedeckelt: die
 Wortmarke wird um den Mittelpunkt gekippt und liegt darunter, säße ohne Ausgleich zu

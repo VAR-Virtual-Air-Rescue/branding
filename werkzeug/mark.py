@@ -119,6 +119,103 @@ def _var_points(steps=14):
     _VP = pts
     return pts
 
+def _var_konturen(steps=24):
+    """Die Wortmarke als geschlossene Polygonzuege -- fuer Schnitte auf Hoehe y."""
+    global _VK
+    if _VK is not None:
+        return _VK
+    toks = _re.findall(r"[MLCZ]|-?\d+(?:\.\d+)?", VAR)
+    ks, k = [], []
+    i = 0; cur = (0.0, 0.0); start = cur
+    while i < len(toks):
+        c = toks[i]
+        if c == "M":
+            if k: ks.append(k)
+            cur = (float(toks[i+1]), float(toks[i+2])); start = cur; k = [cur]; i += 3
+        elif c == "L":
+            cur = (float(toks[i+1]), float(toks[i+2])); k.append(cur); i += 3
+        elif c == "C":
+            p1 = (float(toks[i+1]), float(toks[i+2])); p2 = (float(toks[i+3]), float(toks[i+4]))
+            p3 = (float(toks[i+5]), float(toks[i+6]))
+            for j in range(1, steps+1):
+                t = j/steps; u = 1-t
+                k.append((u*u*u*cur[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],
+                          u*u*u*cur[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]))
+            cur = p3; i += 7
+        elif c == "Z":
+            k.append(start); cur = start; i += 1
+        else:
+            i += 1
+    if k: ks.append(k)
+    _VK = ks
+    return ks
+_VK = None
+
+
+def _schnitte(y):
+    """Waagerechter Schnitt durch die Wortmarke auf Hoehe y -- Paare von x."""
+    xs = []
+    for k in _var_konturen():
+        for (x1, y1), (x2, y2) in zip(k, k[1:]):
+            if ((y1 <= y < y2) or (y2 <= y < y1)) and y2 != y1:
+                xs.append(x1 + (y - y1) * (x2 - x1) / (y2 - y1))
+    xs.sort()
+    return [(xs[i], xs[i+1]) for i in range(0, len(xs)-1, 2)]
+
+
+_FUESSE = None
+
+def _fuesse():
+    """Die Fuesse auf der Grundlinie mit der Neigung ihrer beiden Aussenkanten.
+
+    Die Staemme dieser Wortmarke sind geneigt und verjuengen sich nach unten --
+    das Bein des A laeuft mit +0,41 je Einheit nach rechts, der Keil des V
+    schliesst sich nach 136 Einheiten. Eine Verlaengerung senkrecht nach unten
+    setzt deshalb einen sichtbaren Knick an. Stattdessen werden beide Aussenkanten
+    in ihrer eigenen Richtung weitergefuehrt; laufen sie zusammen, endet der Fuss
+    dort von selbst.
+    """
+    global _FUESSE
+    if _FUESSE is not None:
+        return _FUESSE
+    REF = 40.0
+    unten, oben = _schnitte(VAR_H - 1.0), _schnitte(VAR_H - REF)
+    out = []
+    for ua, ub in unten:
+        kand = [(oa, ob) for oa, ob in oben if not (ob < ua - 5 or oa > ub + 5)]
+        if not kand:
+            continue
+        oa, ob = max(kand, key=lambda t: min(t[1], ub) - max(t[0], ua))
+        sl, sr = (ua - oa) / (REF - 1.0), (ub - ob) / (REF - 1.0)
+        treff = (ub - ua) / (sl - sr) if sl > sr else float("inf")
+        out.append((ua, ub, sl, sr, treff))
+    _FUESSE = out
+    return out
+
+
+# Wie weit die Fuesse weitergefuehrt werden, in Pfadeinheiten. 200 reicht in jedem
+# Fall bis hinter den Beschnitt -- daran zu drehen aendert am Bild nichts mehr.
+VERLAENGERUNG = 200.0
+
+
+# Die Verlaengerung beginnt ein Stueck oberhalb der Grundlinie und schiebt sich
+# unter den Buchstaben. Stiesse sie genau auf die Grundlinie, zeichnete der
+# Renderer an der Naht eine Haarlinie -- zwei Flaechen gleicher Farbe, die sich
+# nur beruehren, decken die Kante nicht.
+UEBERLAPP = 4.0
+
+
+def _fuss_pfad(tiefe=VERLAENGERUNG):
+    d = []
+    u = UEBERLAPP
+    for xa, xb, sl, sr, treff in _fuesse():
+        t = min(tiefe, treff)
+        d.append("M%.2f %.2f L%.2f %.2f L%.2f %.2f L%.2f %.2f Z"
+                 % (xa - sl*u, VAR_H - u, xb - sr*u, VAR_H - u,
+                    xb + sr*t, VAR_H + t, xa + sl*t, VAR_H + t))
+    return "".join(d)
+
+
 _WCACHE = {}
 
 # Die Wortmarke haengt unten am Kreis, nicht oben an der Kante. So sitzt sie im
@@ -126,16 +223,16 @@ _WCACHE = {}
 # und wird von dessen Rundung angeschnitten -- dieselbe Geste wie beim
 # Hubschrauber, den die Kante anschneidet.
 WORT_BREITE = 0.828   # Anteil des Durchmessers, aus dem Ursprungslogo gemessen
-WORT_BODEN  = 14.0    # Abstand der Grundlinie ueber dem Beschnittkreis
 
 
-def _wort_lage(rad, gap, breite, boden, kappe=12.0):
+def _wort_lage(rad, gap, breite, oben, kappe=12.0):
     """Breite, Oberkante und waagerechter Versatz der Wortmarke.
 
-    Die Groesse steht fest (Anteil des Durchmessers), die Hoehe ergibt sich aus
-    der Grundlinie: sie endet `boden` ueber dem tiefsten Punkt des Beschnitts.
-    Was links und rechts darueber hinausragt, schneidet die Rundung ab -- beim
-    Fuss des V und beim Bein des R, in der Mitte laeuft das A durch.
+    Die Wortmarke liegt oben am Balken an; `oben` ist dessen Unterkante. Die
+    Groesse steht fest (Anteil des Durchmessers). Unten enden die Buchstaben nicht
+    von selbst am Rand -- ihre Fuesse werden weitergefuehrt, bis der Beschnitt sie
+    abschneidet (s. `_fuesse`). Sichtbar wird das nur beim A: V und R liegen so weit
+    aussen, dass die Rundung sie schon oberhalb der Grundlinie kappt.
 
     Bleibt der waagerechte Versatz. Die Wortmarke wird um den Mittelpunkt gekippt,
     liegt mit ihrem Schwerpunkt aber darunter; ohne Ausgleich stiesse das Bein des
@@ -143,14 +240,14 @@ def _wort_lage(rad, gap, breite, boden, kappe=12.0):
     Drittelsuche findet ihn also zuverlaessig. `kappe` begrenzt ihn: ohne Grenze
     wandert das Optimum so weit, dass die Wortmarke sichtbar aus der Mitte sitzt.
     """
-    schl = (round(rad, 3), round(gap, 3), round(breite, 4), round(boden, 3),
+    schl = (round(rad, 3), round(gap, 3), round(breite, 4), round(oben, 3),
             round(kappe, 3))
     if schl in _WCACHE:
         return _WCACHE[schl]
     pts = _var_points()
     inner = rad - gap
     w = breite * 2 * rad
-    oy = (C + inner - boden) - VAR_H * w / 1000.0
+    oy = float(oben)
 
     def dmax(dx):
         sc = w / 1000.0
@@ -167,26 +264,27 @@ def _wort_lage(rad, gap, breite, boden, kappe=12.0):
     return erg
 
 
-def word_max(fill, rad=R, gap=7.0, breite=WORT_BREITE, boden=WORT_BODEN,
-             tilt=True, cid=None):
+def word_max(fill, oben, rad=R, gap=7.0, breite=WORT_BREITE, tilt=True, cid=None):
     """Wortmarke unten im Zeichen, von der Rundung angeschnitten.
 
+    `oben`   Unterkante des Balkens -- dort liegt die Wortmarke an.
     `breite` Anteil des Durchmessers. 0.828 ist am Ursprungslogo gemessen.
-    `boden`  Abstand der Grundlinie ueber dem tiefsten Punkt des Beschnitts.
-             Klein halten -- die Wortmarke soll unten anliegen.
     `gap`    Abstand des Beschnittkreises zum sichtbaren Rand.
 
-    Der Beschnitt ist gewollt und trifft den Fuss des V und das Bein des R; das A
-    laeuft in der Mitte bis unten durch. Voraussetzung ist die vollstaendige
+    Die Wortmarke fuellt das Feld zwischen Balken und Rundung: oben liegt sie am
+    Strich an, unten werden die Fuesse weitergefuehrt und vom Beschnitt gekappt.
+    Sichtbar ist das beim A, das dadurch bis in den Rahmen laeuft; V und R kappt die
+    Rundung ohnehin schon oberhalb der Grundlinie. Voraussetzung ist die vollstaendige
     Zeichnung -- die Fassung, die bis 28.08.2026 in traced.json lag, war schon
     beschnitten (s. trace_var.py), und jeder Anschnitt kam dort zum zweiten Mal.
     """
     inner = rad - gap
-    w, oy, dx = _wort_lage(rad, gap, breite, boden * rad / R)
+    w, oy, dx = _wort_lage(rad, gap, breite, oben)
     sc = w / 1000.0
     cid = cid or uid("wc")
     body = (f'<g fill="{fill}" transform="translate({C-w/2+dx:.2f},{oy:.2f}) '
-            f'scale({sc:.5f})"><path d="{VAR}" fill-rule="evenodd"/></g>')
+            f'scale({sc:.5f})"><path d="{VAR}" fill-rule="evenodd"/>'
+            f'<path d="{_fuss_pfad()}"/></g>')
     body = (f'<defs><clipPath id="{cid}"><circle cx="{C}" cy="{C}" r="{inner:.2f}"/>'
             f'</clipPath></defs><g clip-path="url(#{cid})">{body}</g>')
     if tilt:
@@ -219,7 +317,7 @@ def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=Non
     parts.append(heli)
     parts.append(barsvg)
     if with_word:
-        parts.append(word_max(word_col))
+        parts.append(word_max(word_col, edge + cut + bar))
     return svg(disc("".join(parts), cid))
 
 MARKS = {}
@@ -240,7 +338,7 @@ def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + CUT, heli_col, CUT, BAR, bar_col)
     body = f'<circle cx="{C}" cy="{C}" r="{inner_r}" fill="{bg}"/>' + heli + barsvg
     if with_word:
-        body += word_max(word_col, rad=inner_r)
+        body += word_max(word_col, edge + CUT + BAR, rad=inner_r)
     return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
 
 # R1  Ring aussen, Heli auf der Kante, Wortmarke darunter
