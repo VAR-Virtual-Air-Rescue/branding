@@ -184,37 +184,47 @@ def absenderleiste(w, y, h, badge_size=None, url="VIRTUALAIRRESCUE.COM", right=N
     """Der wiederkehrende Fuss: gekippte Kante, darunter Flaeche mit Marke und URL.
 
     `y` ist die Oberkante der Kante in der Bildmitte, `h` die Hoehe der Flaeche
-    darunter -- ebenfalls in der Bildmitte gemessen. Alles steht im Bezugssystem
-    der Kante, laeuft also parallel zu ihr. Das ist der Punkt: im Zeichen steht
-    die Wortmarke ebenfalls parallel unter der Kante, nicht waagerecht.
+    darunter, ebenfalls dort gemessen.
+
+    **Die Kante kippt, was auf ihr steht nicht.** Marke, URL und Rubrik stehen
+    gerade. Alles mitzukippen war der naheliegende Gedanke -- im Zeichen steht die
+    Wortmarke schliesslich auch parallel zur Kante --, aber dort ist die Kante das
+    Bauteil und die Wortmarke gehoert dazu. Im Beitrag ist sie eine Linie, und ein
+    schraeger Absender darunter liest sich als Fehler, nicht als Absicht.
+
+    Weil die Kante nach links abfaellt, beginnt die nutzbare Flaeche dort am
+    tiefsten. Der Inhalt richtet sich danach, sonst laeuft die Marke links hinein.
     """
     ks = KANTE_STAERKE
-    bs = badge_size or int(h * 0.62)
-    pad = int(h * 0.20)
-    tx = pad + bs + h * 0.24
-    size = h * 0.185
-    gap = h * 0.36
     L = w * 2.6
+    # Flaeche und Linie gekippt -- sie laufen weit ueber den Bildrand hinaus.
+    unterbau = _gekippt(w, y, (
+        f'<rect x="{-L/2:.0f}" y="0" width="{L:.0f}" height="{L:.0f}" fill="{col}"/>'
+        f'<rect x="{-L/2:.0f}" y="{-ks}" width="{L:.0f}" height="{ks}" fill="{kante_col}"/>'))
+
+    # Inhalt waagerecht. Oberkante der nutzbaren Flaeche ist die linke Bildkante,
+    # dort liegt die Linie am tiefsten.
+    oben = y + kante_luft(w, ks + 4)
+    band = max(h - (oben - y), h * 0.5)
+    bs = badge_size or int(band * 0.66)
+    pad = int(h * 0.20)
+    tx = pad + bs + band * 0.26
+    size = band * 0.21
+    gap = band * 0.40
     if right:
         for _ in range(20):
             if tx + tw(url, size, BOLD, .16) + gap + tw(right, size, BOLD, .16) <= w - pad:
                 break
             size *= 0.94
-    # Die Flaeche laeuft weit ueber den Bildrand hinaus. Mit einem Vielfachen von
-    # `h` reichte sie bei hohen Formaten nicht bis unten -- dort steht die Kante
-    # weit oberhalb der Bildmitte, und darunter kam wieder das Foto zum Vorschein.
-    innen = [f'<rect x="{-L/2:.0f}" y="0" width="{L:.0f}" height="{L:.0f}" fill="{col}"/>',
-             f'<rect x="{-L/2:.0f}" y="{-ks}" width="{L:.0f}" height="{ks}" fill="{kante_col}"/>']
-    # Die Inhalte sitzen relativ zum linken Bildrand -- der liegt bei -w/2.
-    lx = -w / 2
-    innen.append(badge(bs, lx + pad, (h - bs) / 2))
-    t, _ = txt(url, size, ink, lx + tx, h * 0.5 + size * 0.36, BOLD, 0.16)
-    innen.append(t)
+    mitte = oben + band / 2
+    teile = [unterbau, badge(bs, pad, mitte - bs / 2)]
+    t, _ = txt(url, size, ink, tx, mitte + size * 0.36, BOLD, 0.16)
+    teile.append(t)
     if right:
-        t2, _ = txt(right, size, kante_col, lx + w - pad, h * 0.5 + size * 0.36,
+        t2, _ = txt(right, size, kante_col, w - pad, mitte + size * 0.36,
                     BOLD, 0.16, "end")
-        innen.append(t2)
-    return _gekippt(w, y, "".join(innen))
+        teile.append(t2)
+    return "".join(teile)
 
 
 def scrim(w, h, y, staerke=.88, anlauf=.55, col="#00081C"):

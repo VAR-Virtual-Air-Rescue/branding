@@ -36,6 +36,18 @@ Richtung ziehen. Als feine Linie bleibt der Winkel erkennbar, ohne die Aufmerksa
 an sich zu ziehen — er liest sich als Detail, nicht als Architektur. `0` lässt die Linie
 ganz weg; dann trägt nur der Anschnitt zwischen Bild und Absenderfeld den Winkel.
 
+**Die Kante kippt — was auf ihr steht nicht.** Marke, URL und Rubrik stehen gerade.
+Alles mitzukippen war der naheliegende Gedanke, denn im Zeichen steht die Wortmarke
+ebenfalls parallel zur Kante. Dort ist die Kante aber das Bauteil und die Wortmarke
+gehört dazu; im Beitrag ist sie eine Linie, und ein schräger Absender darunter liest
+sich als Fehler statt als Absicht. Aus demselben Grund wirkt der Winkel nur
+**randabfallend**: die Bauchbinde ist ein kurzer Kasten und bleibt gerade — geneigt
+wäre sie eine schiefe Schachtel.
+
+Weil die Kante nach links abfällt, beginnt die nutzbare Fläche dort am tiefsten. Breite
+Formate brauchen deshalb einen höheren Fuß: bei 1600 Breite gehen 46 Einheiten je Seite
+vom Band ab, bei 1920 sind es 55.
+
 Zwei Dinge, die dabei zu beachten sind und in `tpl.py` als Funktionen stehen:
 
 - **`kante_luft(w)`** — die Kante steigt nach rechts an, über 1080 Breite um 62

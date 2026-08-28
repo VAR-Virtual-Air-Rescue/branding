@@ -94,17 +94,21 @@ T["ig_4x5_foto"] = beitrag(1080, 1350, 190, "CHRISTOPH 22",
                            "LUFTRETTUNG", 92)
 T["ig_1x1_foto"] = beitrag(1080, 1080, 168, "WINDENRETTUNG",
                            "STATION ZÜRICH · HB-ZQM", None, None, 78)
-T["x_1600x900"] = beitrag(1600, 900, 150, "24 STUNDEN, 7 EINSÄTZE",
+# Breite Formate brauchen einen hoeheren Fuss: der Kantenversatz waechst mit der
+# Breite (bei 1600 sind es 46 Einheiten je Seite) und geht vom nutzbaren Band ab.
+T["x_1600x900"] = beitrag(1600, 900, 190, "24 STUNDEN, 7 EINSÄTZE",
                           "SCHICHTBERICHT · STATION HAMBURG", None,
                           "EINSATZRÜCKBLICK", 84)
-T["fb_link_1200x630"] = beitrag(1200, 630, 124, "NEUE STATION IN BETRIEB",
+T["fb_link_1200x630"] = beitrag(1200, 630, 152, "NEUE STATION IN BETRIEB",
                                 "CHRISTOPH 51 · STUTTGART", None, None, 62)
-T["yt_thumb_1280x720"] = beitrag(1280, 720, 118, "NACHTFLUG",
+T["yt_thumb_1280x720"] = beitrag(1280, 720, 148, "NACHTFLUG",
                                  None, None, "COCKPITVIDEO", 130,
                                  kopf2="IN DIE ALPEN")
-T["discord_event_800x320"] = beitrag(800, 320, 78, "NACHTFLUG IN DIE ALPEN",
-                                     "SAMSTAG 20:00 UTC · LSZS » LSZH", None,
-                                     None, 46)
+# 320 Zeilen sind wenig: die Kopfzeile ueber der Schlagzeile laeuft oben heraus.
+# Sie steht deshalb darunter.
+T["discord_event_800x320"] = beitrag(800, 320, 96, "NACHTFLUG IN DIE ALPEN",
+                                     None, "Samstag 20:00 UTC · LSZS » LSZH",
+                                     None, 44)
 
 # ==========================================================================
 #  B  Hochformat 9:16
@@ -227,9 +231,10 @@ b.append(kante(W, mitte, KANTE_STAERKE))
 # Die Beschriftungen liegen auf Fotos -- ohne eigene Flaeche waeren sie je nach
 # Motiv unlesbar. Ein kleines Feld im Markenwinkel traegt sie.
 def marke(b, s, x, y, col=IVORY):
+    # Gerade, wie alles Beschriftende. Gekippt wird nur die Kante selbst.
     w = tw(s, 30, BOLD, .18) + 44
-    b.append(f'<g transform="translate({x},{y}) rotate({KANTE_WINKEL:.4f})">'
-             f'<rect width="{w:.0f}" height="52" fill="{STRATOS}" opacity=".88"/></g>')
+    b.append(f'<rect x="{x}" y="{y}" width="{w:.0f}" height="52" fill="{STRATOS}" '
+             f'opacity=".88"/>')
     zeile(b, s, 30, col, x + 22, y + 35, BOLD, .18)
 
 marke(b, "VORHER", 56, 52)
@@ -290,21 +295,22 @@ T["crew_4x5"] = svg(W, H, "".join(b))
 # --- Live-Overlay ----------------------------------------------------------
 # Der Rahmen bleibt schmal: das Bild ist der Inhalt, nicht die Grafik.
 W, H = 1920, 1080
-b = [absenderleiste(W, H - 96, 96, right=None)]
-b.append(f'<circle cx="{W-150}" cy="{H-52}" r="10" fill="#E5484D"/>')
-zeile(b, "LIVE", 30, "#E5484D", W - 60, H - 42, BLK, .16, "end")
+b = [absenderleiste(W, H - 180, 180, right=None)]
+b.append(f'<circle cx="{W-152}" cy="{H-64}" r="10" fill="#E5484D"/>')
+zeile(b, "LIVE", 30, "#E5484D", W - 60, H - 54, BLK, .16, "end")
 T["overlay_live_1920x1080"] = svg(W, H, "".join(b))
 
 # --- Bauchbinde ------------------------------------------------------------
 W, H = 1920, 1080
 bx, by, bw_, bh_ = 90, 780, 800, 152
-b = [f'<g transform="translate({bx+bw_/2},{by}) rotate({KANTE_WINKEL:.4f})">'
-     f'<rect x="{-bw_/2:.0f}" y="0" width="{bw_}" height="{bh_}" fill="{STRATOS}" '
-     f'opacity=".94"/>'
-     f'<rect x="{-bw_/2:.0f}" y="-7" width="{bw_}" height="7" fill="{GALLIANO}"/></g>']
-b.append(badge(76, bx + 26, by + 40))
-zeile(b, "TOBIAS K.", 46, IVORY, bx + 128, by + 80, BLK, .01)
-zeile(b, "PILOT · STATION MÜNCHEN", 24, GALLIANO, bx + 128, by + 120, BOLD, .16)
+# Gerade. Der Winkel wirkt nur randabfallend -- an einem kurzen Kasten wuerde er
+# zur schiefen Schachtel, und der Absender soll ruhig stehen.
+b = [f'<rect x="{bx}" y="{by}" width="{bw_}" height="{bh_}" fill="{STRATOS}" '
+     f'opacity=".94"/>',
+     f'<rect x="{bx}" y="{by-6}" width="{bw_}" height="6" fill="{GALLIANO}"/>']
+b.append(badge(76, bx + 26, by + 38))
+zeile(b, "TOBIAS K.", 46, IVORY, bx + 128, by + 78, BLK, .01)
+zeile(b, "PILOT · STATION MÜNCHEN", 24, GALLIANO, bx + 128, by + 118, BOLD, .16)
 T["overlay_lowerthird_1920x1080"] = svg(W, H, "".join(b))
 
 # --- YouTube-Kanalbild -----------------------------------------------------
