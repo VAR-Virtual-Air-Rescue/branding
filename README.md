@@ -23,10 +23,15 @@ ist dann ein Durchmesser, die längste Sehne, die der Kreis hergibt. Himmel und
 Feld sind gleich hoch, VAR bekommt die Hälfte des Zeichens statt eines Drittels.
 
 Wie groß die Wortmarke darin wird, steuert `luft` in `word_max` — der Mindestabstand
-zum Kreisrand, voreingestellt auf **48** Einheiten. Weniger, und die Unterlängen von
-V und R verschmelzen mit der Rundung. Der waagerechte Sitz wird dabei selbst
-ausgemittelt: die Wortmarke wird um den Mittelpunkt gekippt, liegt aber darunter, und
-säße ohne Ausgleich rund neun Einheiten zu weit rechts.
+zum Kreisrand, voreingestellt auf **12** Einheiten. Der waagerechte Sitz wird dabei
+ausgemittelt, aber auf zwölf Einheiten gedeckelt: die Wortmarke wird um den
+Mittelpunkt gekippt und liegt darunter, säße ohne Ausgleich zu weit rechts — mit
+vollem Ausgleich (34) aber sichtbar aus der Mitte.
+
+**Die Wortmarke war beschnitten.** Bis zum 28.08.2026 stand in `traced.json` eine
+Fassung, die von einer schon im Badge-Kreis sitzenden Grafik abgenommen war: Fuß des
+V und Bein des R fehlten, rund sieben Prozent der Fläche. Neu abgenommen wird sie mit
+`werkzeug/trace_var.py` aus `werkzeug/quellen/var_wortmarke.png`.
 
 Ohne Wortmarke bleibt sie **tief**: Signet, Rotorfassungen R2–R5 und App-Icon
 würden sonst eine leere Hälfte zeigen und den Hubschrauber verkleinern, der dort

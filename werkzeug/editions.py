@@ -51,7 +51,7 @@ def oben(inhalt):
 
 def edition(unten, bar=IVORY, wort=IVORY, obenmuster="", bg=STRATOS, cid=None):
     cid = cid or uid("e")
-    heli, barsvg, _ = heli_on_edge(382, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
+    heli, barsvg, _ = heli_on_edge(414, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenmuster) if obenmuster else "")
             + feld(unten) + heli + barsvg
@@ -120,7 +120,7 @@ AT    = ["#ED2939", "#FFFFFF", "#ED2939"]
 
 def _gold():
     """Invers: goldene Flaeche, Zeichen in Stratos."""
-    h, b, _ = heli_on_edge(382, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
+    h, b, _ = heli_on_edge(414, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
                     + h + b + word_max(KANTE_Y + BAR + 6, STRATOS), uid("g")))
 
@@ -206,7 +206,7 @@ E["pb_silvester"] = edition(
 
 # Trauerfassung -- fuer Gedenktage und Ausnahmen. Kein Gold, kein Muster.
 def _trauer():
-    h, b, _ = heli_on_edge(382, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
+    h, b, _ = heli_on_edge(414, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="#121722"/>'
                     + feld(flaeche("#1B212E")) + h + b
                     + word_max(KANTE_Y + BAR + 6, "#9AA0AE")
@@ -223,7 +223,7 @@ E["pb_jubilaeum"] = edition(
     obenmuster=muster([STERN], 40, 33))
 
 # Leere Vorlage fuer den Generator
-_h, _b, _ = heli_on_edge(382, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
+_h, _b, _ = heli_on_edge(414, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
 E["pb_vorlage"] = svg(disc(
     f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
     + oben('<g id="muster-oben"></g>')

@@ -5,7 +5,9 @@ Rasterfassungen, erzeugt aus den SVGs in `../logo`, `../icon`, `../lockup` und
 
     VAR_logo_*        Hauptfassung, 512 bis 16 px
     VAR_signet_*      Signet ohne Wortmarke
-    VAR_appicon_*     App-Icon, für alles unter 32 px
+    VAR_appicon_*     App-Icon, aus `../icon/icon_monogramm.svg` — nicht aus
+                      `icon_kante.svg`: bei 16 px überleben die Buchstaben, der
+                      Hubschrauber nicht
     VAR_profilbild_*  Profilbild-Grundfassung
     VAR_lockup_*      waagerechte und senkrechte Sperrung
     vorlage_*         fünf Social-Media-Vorlagen in 1080 px

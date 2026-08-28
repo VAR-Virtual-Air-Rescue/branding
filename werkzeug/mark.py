@@ -121,21 +121,24 @@ def _var_points(steps=14):
 
 _WCACHE = {}
 
-def _wort_masse(top, rad, luft):
+def _wort_masse(top, rad, luft, kappe=12.0):
     """Groesste Wortmarke, die unter der Kante noch `luft` Abstand zum Rand haelt
     -- und der waagerechte Versatz, bei dem dieser Abstand am groessten ist.
 
     Warum ein Versatz noetig ist: die Wortmarke wird um den Mittelpunkt gekippt,
     liegt mit ihrem Schwerpunkt aber deutlich darunter. Waere sie vor dem Kippen
-    mittig, saesse sie danach rund 9 px zu weit rechts -- links bliebe 33 px Luft,
-    rechts nur 22. Der Versatz gleicht das aus und schenkt dabei knapp 3 Prozent
-    Groesse zurueck.
+    mittig, saesse sie danach zu weit rechts und das Bein des R stiesse zuerst an.
+
+    Warum er gedeckelt ist: ohne Grenze wandert das Optimum auf rund 34 px nach
+    links. Die Luft waere dann zwar auf beiden Seiten gleich, die Wortmarke saesse
+    aber sichtbar aus der Mitte -- das Auge liest die Buchstaben, nicht den Abstand.
+    `kappe` begrenzt den Ausgleich deshalb auf das, was die Kippung verursacht.
 
     Der Abstand zum Mittelpunkt aendert sich beim Drehen nicht, deshalb genuegt es,
     ueber die ungedrehte Lage zu rechnen. max(Abstand) ist konvex in `dx`, also
     findet eine Drittelsuche den besten Versatz zuverlaessig.
     """
-    schl = (round(top, 3), round(rad, 3), round(luft, 3))
+    schl = (round(top, 3), round(rad, 3), round(luft, 3), round(kappe, 3))
     if schl in _WCACHE:
         return _WCACHE[schl]
     pts = _var_points()
@@ -146,7 +149,7 @@ def _wort_masse(top, rad, luft):
         return max(math.hypot(ox + px*sc - C, top + py*sc - C) for px, py in pts)
 
     def bestes_dx(w):
-        lo, hi = -60.0, 60.0
+        lo, hi = -kappe, kappe
         for _ in range(60):
             a, b = lo + (hi-lo)/3, hi - (hi-lo)/3
             if dmax(w, a) < dmax(w, b): hi = b
@@ -163,7 +166,7 @@ def _wort_masse(top, rad, luft):
     return erg
 
 
-def word_max(top, fill, rad=R, gap=7.0, luft=48.0, tilt=True, cid=None):
+def word_max(top, fill, rad=R, gap=7.0, luft=12.0, tilt=True, cid=None):
     """Wortmarke unter der Kante.
 
     Sie laeuft absichtlich ueber den Rand hinaus und wird von einem Kreis
@@ -175,11 +178,12 @@ def word_max(top, fill, rad=R, gap=7.0, luft=48.0, tilt=True, cid=None):
     `gap`   Abstand der Schnittkante zum Rand. 0 = buendig.
     `luft`  Mindestabstand der Buchstaben zum sichtbaren Kreisrand, in Einheiten
             des 512er Zeichens. Das ist der eigentliche Regler: frueher stand hier
-            ein Verhaeltnis (`over`), das niemandem sagte, was es tut -- und das in
-            der alten Fassung sogar negativ ausfiel, die Wortmarke wurde also
-            wirklich beschnitten. Jetzt sagt man, wie viel Luft bleiben soll.
-            48 px sind der Wert, bei dem V, A und R einzeln klar ablesbar bleiben,
-            statt mit der Rundung zu verschmelzen.
+            ein Verhaeltnis (`over`), das niemandem sagte, was es tut.
+            12 px ziehen die Wortmarke bis dicht an den Rand, ohne sie anzuschneiden.
+            Das geht erst, seit die Zeichnung vollstaendig ist -- die alte Fassung
+            in traced.json war schon beschnitten (s. trace_var.py), Fuss des V und
+            Bein des R fehlten, und jeder Versuch, naeher an den Rand zu gehen,
+            machte genau diesen Fehler sichtbar.
     """
     inner = rad - gap
     w, dx = _wort_masse(top, rad, luft)
@@ -205,7 +209,7 @@ CUT  = 30
 BAR  = 13
 
 def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=None,
-         cid="m", heli_w=382, word_top=None, with_word=True, edge=EDGE,
+         cid="m", heli_w=414, word_top=None, with_word=True, edge=EDGE,
          bar=BAR, cut=CUT):
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + cut, heli_col, cut, bar, bar_col)
     parts = [f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>']
@@ -241,7 +245,7 @@ def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
     body = f'<circle cx="{C}" cy="{C}" r="{inner_r}" fill="{bg}"/>' + heli + barsvg
     if with_word:
         body += word_max(edge + CUT + BAR + 6, word_col, rad=inner_r,
-                         luft=48.0 * inner_r / R)
+                         luft=12.0 * inner_r / R)
     return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
 
 # R1  Ring aussen, Heli auf der Kante, Wortmarke darunter
