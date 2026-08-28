@@ -130,6 +130,20 @@ def badge(size, x, y, key="n1_kante"):
 # Hubschrauber traegt und die Wortmarke darunter steht.
 from mark import ANG as KANTE_WINKEL
 
+# Wie kraeftig die Kante in den Vorlagen auftritt. Der Winkel ist gesetzt -- er ist
+# der Marke entnommen und wird nicht abgeschwaecht; wer ihn halbiert, hat einen
+# Winkel, den niemand benennen kann und der zum Zeichen nicht mehr passt.
+#
+# Geregelt wird stattdessen die **Staerke**. Als kraeftiger Balken (14) beherrscht
+# die Kante die Kachel: im Profilraster kippt der ganze Kanal, weil neun Kacheln
+# in dieselbe Richtung ziehen. Als feine Linie (5) bleibt der Winkel erkennbar,
+# ohne die Aufmerksamkeit an sich zu ziehen -- er liest sich als Detail, nicht als
+# Architektur. Das ist die Voreinstellung.
+#
+# 0 laesst die Linie ganz weg; dann traegt nur noch der Anschnitt zwischen Bild und
+# Absenderfeld den Winkel.
+KANTE_STAERKE = 5
+
 def _gekippt(w, y, inhalt):
     """Inhalt in das Bezugssystem der gekippten Kante setzen.
 
@@ -174,7 +188,7 @@ def absenderleiste(w, y, h, badge_size=None, url="VIRTUALAIRRESCUE.COM", right=N
     der Kante, laeuft also parallel zu ihr. Das ist der Punkt: im Zeichen steht
     die Wortmarke ebenfalls parallel unter der Kante, nicht waagerecht.
     """
-    ks = max(3, int(h * 0.075))
+    ks = KANTE_STAERKE
     bs = badge_size or int(h * 0.62)
     pad = int(h * 0.20)
     tx = pad + bs + h * 0.24

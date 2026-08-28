@@ -27,6 +27,15 @@ wenn das Logo klein ist oder gar nicht im Bild steht.
 Der Aufbau wiederholt das Zeichen im Großen: oben das Bild wie der Himmel, darunter
 die Kante, darunter die Fläche mit dem Absender wie die Wortmarke.
 
+Wie **kräftig** sie auftritt, regelt `KANTE_STAERKE` in `tpl.py`, voreingestellt auf
+**5**. Der Winkel selbst wird nicht abgeschwächt — er ist der Marke entnommen, und ein
+halbierter Winkel wäre einer, den niemand benennen kann und der zum Zeichen nicht mehr
+passt. Geregelt wird die Stärke: als kräftiger Balken (14) beherrscht die Kante die
+Kachel, und im Profilraster kippt der ganze Kanal, weil neun Kacheln in dieselbe
+Richtung ziehen. Als feine Linie bleibt der Winkel erkennbar, ohne die Aufmerksamkeit
+an sich zu ziehen — er liest sich als Detail, nicht als Architektur. `0` lässt die Linie
+ganz weg; dann trägt nur der Anschnitt zwischen Bild und Absenderfeld den Winkel.
+
 Zwei Dinge, die dabei zu beachten sind und in `tpl.py` als Funktionen stehen:
 
 - **`kante_luft(w)`** — die Kante steigt nach rechts an, über 1080 Breite um 62

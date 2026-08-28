@@ -16,6 +16,7 @@ echte Bilder eingesetzt, um jede Vorlage mit Material gegenzupruefen.
 """
 import os, sys, glob
 from tpl import (svg, scene, shade, scrim, badge, kante, kante_luft, feld, absenderleiste,
+                 KANTE_STAERKE,
                  foto, txt, tw, uid, STRATOS, GALLIANO, IVORY, SIGNAL, INK,
                  BOLD, REG, BLK, MARKS, _inner, KANTE_WINKEL)
 
@@ -144,7 +145,7 @@ for i, s in enumerate([
     zeile(b, s, 38, IVORY, 64, 450 + i * 58, REG, .02, op=".88")
 b.append(bild(W, bildhoehe + 40, x=0, y=bildoben - 20, bw=W, bh=bildhoehe + 40))
 b.append(feld(W, H, y, STRATOS))
-b.append(kante(W, bildoben, 8))
+b.append(kante(W, bildoben, KANTE_STAERKE))
 b.append(absenderleiste(W, y, foot, right="3 / 7"))
 T["karussell_inhalt_4x5"] = svg(W, H, "".join(b))
 
@@ -168,7 +169,7 @@ T["karussell_abschluss_4x5"] = svg(W, H, "".join(b))
 W = H = 1080
 foot = 150; y = H - foot
 b = [f'<rect width="{W}" height="{H}" fill="{STRATOS}"/>']
-b.append(kante(W, 214, 10))
+b.append(kante(W, 214, KANTE_STAERKE))
 zeile(b, "EINSATZ", 28, GALLIANO, 64, 150, BOLD, .18)
 zeile(b, "PRIMÄREINSATZ", 88, IVORY, 64, 340, BLK, .01)
 for i, (k, v) in enumerate([("FUNKRUFNAME", "CHRISTOPH 22"),
@@ -185,7 +186,7 @@ T["einsatzmeldung_1x1"] = svg(W, H, "".join(b))
 W, H = 1080, 1350
 foot = 170; y = H - foot
 b = [f'<rect width="{W}" height="{H}" fill="{STRATOS}"/>']
-b.append(kante(W, 254, 10))
+b.append(kante(W, 254, KANTE_STAERKE))
 zeile(b, "„", 240, GALLIANO, 52, 470, BLK, .0, op=".30")
 for i, s in enumerate(["Wir fliegen nicht,", "weil es geht.",
                        "Wir fliegen, weil", "jemand wartet."]):
@@ -201,7 +202,7 @@ foot = 170; y = H - foot
 tren = 640
 b = [bild(W, tren + 40, x=0, y=0, bw=W, bh=tren + 40), scrim(W, tren + 40, tren, .70)]
 b.append(feld(W, H, tren))
-b.append(kante(W, tren, 10))
+b.append(kante(W, tren, KANTE_STAERKE))
 zeile(b, "GEMEINSAMER FLUGABEND", 28, GALLIANO, 64, 760, BOLD, .18)
 zeile(b, "NACHTFLUG", 96, IVORY, 64, 876, BLK, .01)
 zeile(b, "IN DIE ALPEN", 96, IVORY, 64, 972, BLK, .01)
@@ -222,7 +223,7 @@ b = [bild(W, mitte + 40, x=0, y=0, bw=W, bh=mitte + 40)]
 b.append(feld(W, H, mitte, STRATOS))
 b.append(bild(W, y - mitte + 40, x=0, y=mitte - 20, bw=W, bh=y - mitte + 60))
 b.append(feld(W, H, y, STRATOS))
-b.append(kante(W, mitte, 12))
+b.append(kante(W, mitte, KANTE_STAERKE))
 # Die Beschriftungen liegen auf Fotos -- ohne eigene Flaeche waeren sie je nach
 # Motiv unlesbar. Ein kleines Feld im Markenwinkel traegt sie.
 def marke(b, s, x, y, col=IVORY):
@@ -255,7 +256,7 @@ T["fb_1x1_vierbild"] = svg(W, H, "".join(b))
 W = H = 1080
 foot = 150; y = H - foot
 b = [f'<rect width="{W}" height="{H}" fill="{STRATOS}"/>']
-b.append(kante(W, 640, 12))
+b.append(kante(W, 640, KANTE_STAERKE))
 zeile(b, "IM JAHR 2026", 28, GALLIANO, 64, 190, BOLD, .18)
 zeile(b, "1.284", 230, IVORY, 64, 460, BLK, .0)
 zeile(b, "EINSÄTZE GEFLOGEN", 44, GALLIANO, 64, 550, BLK, .02)
@@ -271,7 +272,7 @@ foot = 170; y = H - foot
 tren = 750
 b = [bild(W, tren + 40, x=0, y=0, bw=W, bh=tren + 40), scrim(W, tren + 40, tren, .55)]
 b.append(feld(W, H, tren))
-b.append(kante(W, tren, 10))
+b.append(kante(W, tren, KANTE_STAERKE))
 zeile(b, "NEU IM TEAM", 28, GALLIANO, 64, 872, BOLD, .18)
 zeile(b, "MARIE L.", 92, IVORY, 64, 980, BLK, .01)
 zeile(b, "NOTFALLSANITÄTERIN · STATION LEIPZIG", 28, IVORY, 64, 1032,
@@ -312,7 +313,7 @@ W, H = 2560, 1440
 sx, sy = (W - 1546) / 2, (H - 423) / 2
 b = [f'<rect width="{W}" height="{H}" fill="{STRATOS}"/>', bild(W, H),
      f'<rect width="{W}" height="{H}" fill="{STRATOS}" opacity=".74"/>']
-b.append(kante(W, H / 2 + 160, 12))
+b.append(kante(W, H / 2 + 160, KANTE_STAERKE))
 b.append(badge(158, sx, sy + 54))
 zeile(b, "VIRTUAL AIR RESCUE", 84, IVORY, sx + 200, sy + 172, BLK, .02)
 zeile(b, "VIRTUELLE LUFTRETTUNG · VATSIM · MSFS", 30, GALLIANO,
