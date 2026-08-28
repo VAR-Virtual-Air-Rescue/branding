@@ -119,7 +119,51 @@ def _var_points(steps=14):
     _VP = pts
     return pts
 
-def word_max(top, fill, rad=R, gap=7.0, over=0.94, tilt=True, cid=None):
+_WCACHE = {}
+
+def _wort_masse(top, rad, luft):
+    """Groesste Wortmarke, die unter der Kante noch `luft` Abstand zum Rand haelt
+    -- und der waagerechte Versatz, bei dem dieser Abstand am groessten ist.
+
+    Warum ein Versatz noetig ist: die Wortmarke wird um den Mittelpunkt gekippt,
+    liegt mit ihrem Schwerpunkt aber deutlich darunter. Waere sie vor dem Kippen
+    mittig, saesse sie danach rund 9 px zu weit rechts -- links bliebe 33 px Luft,
+    rechts nur 22. Der Versatz gleicht das aus und schenkt dabei knapp 3 Prozent
+    Groesse zurueck.
+
+    Der Abstand zum Mittelpunkt aendert sich beim Drehen nicht, deshalb genuegt es,
+    ueber die ungedrehte Lage zu rechnen. max(Abstand) ist konvex in `dx`, also
+    findet eine Drittelsuche den besten Versatz zuverlaessig.
+    """
+    schl = (round(top, 3), round(rad, 3), round(luft, 3))
+    if schl in _WCACHE:
+        return _WCACHE[schl]
+    pts = _var_points()
+
+    def dmax(w, dx):
+        sc = w / 1000.0
+        ox = C - w / 2 + dx
+        return max(math.hypot(ox + px*sc - C, top + py*sc - C) for px, py in pts)
+
+    def bestes_dx(w):
+        lo, hi = -60.0, 60.0
+        for _ in range(60):
+            a, b = lo + (hi-lo)/3, hi - (hi-lo)/3
+            if dmax(w, a) < dmax(w, b): hi = b
+            else: lo = a
+        return (lo + hi) / 2
+
+    lo, hi = 60.0, rad * 3.0
+    for _ in range(40):
+        mid = (lo + hi) / 2
+        if dmax(mid, bestes_dx(mid)) <= rad - luft: lo = mid
+        else: hi = mid
+    erg = (lo, bestes_dx(lo))
+    _WCACHE[schl] = erg
+    return erg
+
+
+def word_max(top, fill, rad=R, gap=7.0, luft=48.0, tilt=True, cid=None):
     """Wortmarke unter der Kante.
 
     Sie laeuft absichtlich ueber den Rand hinaus und wird von einem Kreis
@@ -128,27 +172,20 @@ def word_max(top, fill, rad=R, gap=7.0, over=0.94, tilt=True, cid=None):
     weitesten Punkt genuegt nicht, weil dann nur die Ecken den Rand beruehren und
     alles dazwischen abfaellt.
 
-    `gap`  Abstand der Schnittkante zum Rand. 0 = buendig.
-    `over` wie weit die Buchstaben ueber die Schnittkante hinausragen.
-           Seit die Kante durch die Mitte laeuft, ist das Feld hoch genug, dass
-           1.07 die Spitze des V und das Bein des R flach abschneiden wuerde.
-           0.94 laesst beide stehen -- und die Wortmarke waechst trotzdem.
+    `gap`   Abstand der Schnittkante zum Rand. 0 = buendig.
+    `luft`  Mindestabstand der Buchstaben zum sichtbaren Kreisrand, in Einheiten
+            des 512er Zeichens. Das ist der eigentliche Regler: frueher stand hier
+            ein Verhaeltnis (`over`), das niemandem sagte, was es tut -- und das in
+            der alten Fassung sogar negativ ausfiel, die Wortmarke wurde also
+            wirklich beschnitten. Jetzt sagt man, wie viel Luft bleiben soll.
+            48 px sind der Wert, bei dem V, A und R einzeln klar ablesbar bleiben,
+            statt mit der Rundung zu verschmelzen.
     """
-    pts = _var_points()
     inner = rad - gap
-    def worst(w):
-        sc = w/1000; h = VAR_H*sc
-        ox, oy = C - w/2, top
-        return max(math.hypot(ox+px*sc - C, oy+py*sc - C) for px, py in pts)
-    lo, hi = 60.0, rad*3.0
-    ziel = inner * over
-    for _ in range(40):
-        mid = (lo+hi)/2
-        if worst(mid) <= ziel: lo = mid
-        else: hi = mid
-    w = lo; sc = w/1000
+    w, dx = _wort_masse(top, rad, luft)
+    sc = w/1000
     cid = cid or uid("wc")
-    body = (f'<g fill="{fill}" transform="translate({C-w/2:.2f},{top:.2f}) '
+    body = (f'<g fill="{fill}" transform="translate({C-w/2+dx:.2f},{top:.2f}) '
             f'scale({sc:.5f})"><path d="{VAR}" fill-rule="evenodd"/></g>')
     body = (f'<defs><clipPath id="{cid}"><circle cx="{C}" cy="{C}" r="{inner:.2f}"/>'
             f'</clipPath></defs><g clip-path="url(#{cid})">{body}</g>')
@@ -203,7 +240,8 @@ def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + CUT, heli_col, CUT, BAR, bar_col)
     body = f'<circle cx="{C}" cy="{C}" r="{inner_r}" fill="{bg}"/>' + heli + barsvg
     if with_word:
-        body += word_max(edge + CUT + BAR + 6, word_col, rad=inner_r)
+        body += word_max(edge + CUT + BAR + 6, word_col, rad=inner_r,
+                         luft=48.0 * inner_r / R)
     return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
 
 # R1  Ring aussen, Heli auf der Kante, Wortmarke darunter

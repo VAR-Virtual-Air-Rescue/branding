@@ -22,6 +22,12 @@ Steht eine Wortmarke unter der Kante, läuft sie **durch den Mittelpunkt** — s
 ist dann ein Durchmesser, die längste Sehne, die der Kreis hergibt. Himmel und
 Feld sind gleich hoch, VAR bekommt die Hälfte des Zeichens statt eines Drittels.
 
+Wie groß die Wortmarke darin wird, steuert `luft` in `word_max` — der Mindestabstand
+zum Kreisrand, voreingestellt auf **48** Einheiten. Weniger, und die Unterlängen von
+V und R verschmelzen mit der Rundung. Der waagerechte Sitz wird dabei selbst
+ausgemittelt: die Wortmarke wird um den Mittelpunkt gekippt, liegt aber darunter, und
+säße ohne Ausgleich rund neun Einheiten zu weit rechts.
+
 Ohne Wortmarke bleibt sie **tief**: Signet, Rotorfassungen R2–R5 und App-Icon
 würden sonst eine leere Hälfte zeigen und den Hubschrauber verkleinern, der dort
 allein trägt. Beide Höhen stehen als `EDGE` und `EDGE_LEER` in `werkzeug/mark.py`;
