@@ -20,6 +20,20 @@ T = json.load(open("traced.json"))
 HELI, HELI_H = T["heli"]["levels"]["mittel"]["d"], T["heli"]["h"]   # 1000 x 318.5
 VAR,  VAR_H  = T["var"]["levels"]["mittel"]["d"],  T["var"]["h"]    # 1000 x 482.16
 
+# Die beiden Scheiben, aus dem Hubschrauberpfad herausgeloest. Der Pfad hat fuenf
+# Teilpfade: 0 ist der Rumpf, 1 die Fenestron-Oeffnung im Heck, 2 das Kabinen-
+# fenster, 3 die Frontscheibe, 4 ein Spalt unter dem Rotormast. Nur 2 und 3 sind
+# Scheiben; 1 und 4 sind Durchbrueche und bleiben offen.
+import re as _re0
+_HELI_TEILE = _re0.findall(r"M[^M]*", HELI)
+SCHEIBEN = _HELI_TEILE[2] + _HELI_TEILE[3]
+
+# Als Loch im Pfad wirkten die Scheiben vollstaendig durchsichtig. Sie bekommen
+# jetzt einen Hauch der Rumpffarbe -- nicht eine feste Farbe, damit es auf jedem
+# Untergrund traegt: auf Stratos, auf Ivory, auf den Flaggen der Editionen.
+# Ab etwa 60 % verschmilzt die Frontscheibe mit der Nase.
+SCHEIBE_DECKUNG = 0.45
+
 TILT = json.load(open("tilt.json"))
 ANG  = TILT["angle"]                 # -3.27 Grad
 SP1, SP2 = TILT["p1"], TILT["p2"]    # Stuetzpunkte in der 1000er-Zeichnung
@@ -36,7 +50,8 @@ S, C, R = 512, 256, 256
 def _heli(w, ox, oy, fill, oid=""):
     s = w / 1000
     return (f'<g fill="{fill}"{oid} transform="translate({ox:.2f},{oy:.2f}) '
-            f'scale({s:.5f})"><path d="{HELI}" fill-rule="evenodd"/></g>')
+            f'scale({s:.5f})"><path d="{HELI}" fill-rule="evenodd"/>'
+            f'<path d="{SCHEIBEN}" opacity="{SCHEIBE_DECKUNG}"/></g>')
 
 def var_at(w, cx, cy, fill):
     s = w / 1000

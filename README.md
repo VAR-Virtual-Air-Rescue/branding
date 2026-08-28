@@ -49,6 +49,12 @@ Profilbilder und Animationen leiten ihre Kante daraus ab.
 
 ## Größen
 
+Seine **Scheiben** sind keine Löcher mehr: Kabinenfenster und Frontscheibe bekommen
+`SCHEIBE_DECKUNG = 0.45` der Rumpffarbe. Nicht eine feste Farbe — so trägt es auf
+Stratos, auf Ivory und auf den Flaggen der Editionen gleichermaßen. Ab etwa 60 %
+verschmilzt die Frontscheibe mit der Nase. Die Fenestron-Öffnung im Heck und der Spalt
+unter dem Rotormast bleiben offen; das sind Durchbrüche, keine Scheiben.
+
 Der Hubschrauber ist **444** breit — so nah an den Rand, wie es trägt: die Rotorspitzen
 behalten 11 Einheiten Luft. Bei der Mindestgröße von 96 px sind das noch zwei sichtbare
 Pixel Grund; darunter übernimmt ohnehin das Signet.
