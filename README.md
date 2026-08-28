@@ -10,11 +10,37 @@ den Hubschrauber als eingebettetes PNG enthalten (3708 × 1201 px als Base64,
     icon/          App-Icons für alles unter 32 px
     profilbilder/  Grundfassung, 12 Sondereditionen, 5 davon animiert, Vorlage
     reel/          6 Overlays für das Einsatz-Tagebuch plus leere Vorlage
-    vorlagen/      15 Formate für Social Media, Video und Veranstaltungen
+    vorlagen/      22 Formate für Social Media, Video und Veranstaltungen
     herleitung/    Foto, Entwurf, heutiges Logo, sechs Falschanwendungen
     karte/         Lagebild und Livekarte in RescueTrack-Anmutung
     png/           512 · 256 · 128 · 64 · 32 · 16
     werkzeug/      Skripte, mit denen sich alles neu erzeugen lässt
+
+## Die Kante in den Vorlagen
+
+Sie ist auch dort **gekippt** — im selben Winkel wie im Zeichen. Bis August 2026 war
+der Balken in allen Vorlagen waagerecht; damit fehlte genau das Element, an dem man
+die Marke wiedererkennt. Jetzt läuft er in jedem Format randabfallend durch und trägt
+darunter den Absender. Ein Beitrag ist dadurch auch dann als VAR-Beitrag zu erkennen,
+wenn das Logo klein ist oder gar nicht im Bild steht.
+
+Der Aufbau wiederholt das Zeichen im Großen: oben das Bild wie der Himmel, darunter
+die Kante, darunter die Fläche mit dem Absender wie die Wortmarke.
+
+Zwei Dinge, die dabei zu beachten sind und in `tpl.py` als Funktionen stehen:
+
+- **`kante_luft(w)`** — die Kante steigt nach rechts an, über 1080 Breite um 62
+  Einheiten. Text, der nur zur Mittelhöhe misst, läuft rechts in die Kante.
+- **`scrim(w, h, y)`** — die Abdunklung läuft auf die Kante zu, nicht auf den
+  Bildrand. Sitzt die Kante weit darüber (bei 9:16 fast in der Bildmitte), ist der
+  Text sonst nur halb abgedeckt und fällt auf hellen Fotos auseinander.
+
+Mit `python tpl_build.py --fotos <ordner>` wird statt der Platzhalterkulissen echtes
+Bildmaterial eingesetzt — so lässt sich jede Vorlage vor dem Einsatz gegenprüfen.
+
+**Uniform hat kein `→`.** Der Setzer verschluckt fehlende Zeichen still, die Breite
+bleibt stehen. `tpl.py` schreibt deshalb mit, was fehlt, und der Bauschritt meldet es
+am Ende. Vorhanden und benutzbar sind `»`, `·`, `–`, `—`, `•`, `+`, `×`.
 
 ## Wo die Kante liegt
 
