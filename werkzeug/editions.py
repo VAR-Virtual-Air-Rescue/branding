@@ -51,7 +51,7 @@ def oben(inhalt):
 
 def edition(unten, bar=IVORY, wort=IVORY, obenmuster="", bg=STRATOS, cid=None):
     cid = cid or uid("e")
-    heli, barsvg, _ = heli_on_edge(414, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
+    heli, barsvg, _ = heli_on_edge(444, C, KANTE_Y, GALLIANO, CUT, BAR, bar)
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenmuster) if obenmuster else "")
             + feld(unten) + heli + barsvg
@@ -120,7 +120,7 @@ AT    = ["#ED2939", "#FFFFFF", "#ED2939"]
 
 def _gold():
     """Invers: goldene Flaeche, Zeichen in Stratos."""
-    h, b, _ = heli_on_edge(414, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
+    h, b, _ = heli_on_edge(444, C, KANTE_Y, STRATOS, CUT, BAR, STRATOS)
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="{GALLIANO}"/>'
                     + h + b + word_max(STRATOS, KANTE_Y + BAR), uid("g")))
 
@@ -167,6 +167,11 @@ def schweiz():
     verschoben, dass der Abstand zur Kante gleich bleibt. Die Winkel des
     Matterhorns bleiben dabei unangetastet -- eine reine Stauchung haette es
     flacher gemacht, und die Steilheit ist der ganze Witz an dem Berg.
+
+    Zusaetzlich steht die Kette 60 Einheiten links der Mitte. Seit der
+    Hubschrauber bis an den Rand reicht, laege das Kreuz sonst hinter der Kabine
+    und waere nur noch zur Haelfte zu sehen; links steht es ueber dem duennen
+    Heckausleger frei.
     """
     cid = uid("chm")
     FUSS, ALT_KANTE = 303.0, 330.0
@@ -176,7 +181,7 @@ def schweiz():
              f'<rect x="-13" y="-40" width="26" height="80" fill="#FFFFFC"/>'
              f'<rect x="-40" y="-13" width="80" height="26" fill="#FFFFFC"/></g>')
     return (
-        f'<g transform="translate(0,{dy:.2f}) translate({C},{FUSS}) scale({f:.4f}) translate({-C},{-FUSS})">'
+        f'<g transform="translate(-60,{dy:.2f}) translate({C},{FUSS}) scale({f:.4f}) translate({-C},{-FUSS})">'
         # hintere Kette in gedecktem Rot, damit die Tiefe stimmt
         f'<path d="{BERGE}" fill="#8E1F17" opacity=".85"/>'
         # Matterhorn mit Flagge darin
@@ -206,7 +211,7 @@ E["pb_silvester"] = edition(
 
 # Trauerfassung -- fuer Gedenktage und Ausnahmen. Kein Gold, kein Muster.
 def _trauer():
-    h, b, _ = heli_on_edge(414, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
+    h, b, _ = heli_on_edge(444, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
     return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="#121722"/>'
                     + feld(flaeche("#1B212E")) + h + b
                     + word_max("#9AA0AE", KANTE_Y + BAR)
@@ -223,7 +228,7 @@ E["pb_jubilaeum"] = edition(
     obenmuster=muster([STERN], 40, 33))
 
 # Leere Vorlage fuer den Generator
-_h, _b, _ = heli_on_edge(414, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
+_h, _b, _ = heli_on_edge(444, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
 E["pb_vorlage"] = svg(disc(
     f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
     + oben('<g id="muster-oben"></g>')

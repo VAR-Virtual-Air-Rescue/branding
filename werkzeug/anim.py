@@ -135,7 +135,7 @@ def fledermaus(x0, y0, x1, y1, dauer, verzug, gross=1.0):
 
 def halloween(animiert=False):
     """Das Icon selbst ist der Kuerbis: Rippen, Stiel, Glimmkern, ausgeschnittene Marke."""
-    heli, bar, _ = heli_on_edge(414, C, KANTE_Y, SCHNITT, CUT, BAR, "#6B3402")
+    heli, bar, _ = heli_on_edge(444, C, KANTE_Y, SCHNITT, CUT, BAR, "#6B3402")
     puls = ('<animate attributeName="opacity" values=".22;.62;.22" dur="2.4s" '
             'repeatCount="indefinite"/>') if animiert else ""
     tiere = (fledermaus(-60, 96, S + 60, 62, 7.5, 0.0, 1.0)
@@ -159,7 +159,7 @@ def halloween(animiert=False):
 
 # ---------------------------------------------------------------- Animiert
 def bewegt(bg, heli_col, bar_col, wort_col, obenteil, unten):
-    heli, bar, _ = heli_on_edge(414, C, KANTE_Y, heli_col, CUT, BAR, bar_col)
+    heli, bar, _ = heli_on_edge(444, C, KANTE_Y, heli_col, CUT, BAR, bar_col)
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenteil) if obenteil else "")
             + unten + heli + bar

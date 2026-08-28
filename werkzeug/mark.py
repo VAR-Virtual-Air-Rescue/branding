@@ -293,6 +293,9 @@ def word_max(fill, oben, rad=R, gap=7.0, breite=WORT_BREITE, tilt=True, cid=None
 
 
 # ---------------------------------------------------------------- Fassungen
+# Der Hubschrauber ist 444 breit -- so nah an den Rand, wie es traegt: die
+# Rotorspitzen behalten 11 Einheiten Luft. Bei der Mindestgroesse von 96 px sind
+# das noch zwei sichtbare Pixel Grund; darunter uebernimmt ohnehin das Signet.
 EDGE = 226      # Kante mit Wortmarke darunter: EDGE + CUT = 256 = Kreismitte.
                 # Die Kante ist damit ein Durchmesser -- die laengste Sehne, die
                 # der Kreis hergibt. Himmel und Feld sind gleich hoch, und die
@@ -304,7 +307,7 @@ CUT  = 30
 BAR  = 13
 
 def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=None,
-         cid="m", heli_w=414, word_top=None, with_word=True, edge=EDGE,
+         cid="m", heli_w=444, word_top=None, with_word=True, edge=EDGE,
          bar=BAR, cut=CUT):
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + cut, heli_col, cut, bar, bar_col)
     parts = [f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>']

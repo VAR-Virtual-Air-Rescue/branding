@@ -49,6 +49,11 @@ Profilbilder und Animationen leiten ihre Kante daraus ab.
 
 ## Größen
 
+Der Hubschrauber ist **444** breit — so nah an den Rand, wie es trägt: die Rotorspitzen
+behalten 11 Einheiten Luft. Bei der Mindestgröße von 96 px sind das noch zwei sichtbare
+Pixel Grund; darunter übernimmt ohnehin das Signet.
+
+
 Hauptfassung ab 96 px bzw. 22 mm im Druck. Signet ab 40 px. Darunter gilt
 ausschließlich das App-Icon — der Hubschrauber ist 3,1 : 1 breit und im runden
 Beschnitt unter 100 px kaum noch zu erkennen. Schutzraum rundherum: ein Viertel
