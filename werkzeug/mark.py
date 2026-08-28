@@ -321,6 +321,15 @@ EDGE_LEER = 300 # Kante ohne Wortmarke darunter: Signet, R2-R5, App-Icon.
 CUT  = 30
 BAR  = 13
 
+
+# Die Fuge zwischen Kante und Wortmarke ist so stark wie die Kante selbst.
+# Fugenlos verschmelzen die flachen Oberkanten von V und R mit dem Balken --
+# zusammen ein Drittel der Wortmarkenbreite -- und die Kante wird zum
+# Unterstrich, was sie ausdruecklich nicht sein soll. Die Zahl ist nicht
+# gegriffen: die Kante misst sich an sich selbst, und wenn BAR sich aendert,
+# wandert die Fuge mit. 13 sind bei der Mindestgroesse von 96 px noch 2,4 px
+# und im Druck bei 22 mm noch 0,56 mm -- sie schliesst sich also nirgends.
+FUGE = BAR
 def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=None,
          cid="m", heli_w=444, word_top=None, with_word=True, edge=EDGE,
          bar=BAR, cut=CUT):
@@ -335,7 +344,7 @@ def mark(bg=STRATOS, heli_col=GALLIANO, bar_col=IVORY, word_col=IVORY, lower=Non
     parts.append(heli)
     parts.append(barsvg)
     if with_word:
-        parts.append(word_max(word_col, edge + cut + bar))
+        parts.append(word_max(word_col, edge + cut + bar + FUGE))
     return svg(disc("".join(parts), cid))
 
 MARKS = {}
@@ -356,7 +365,7 @@ def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
     heli, barsvg, _ = heli_on_edge(heli_w, C, edge + CUT, heli_col, CUT, BAR, bar_col)
     body = f'<circle cx="{C}" cy="{C}" r="{inner_r}" fill="{bg}"/>' + heli + barsvg
     if with_word:
-        body += word_max(word_col, edge + CUT + BAR, rad=inner_r)
+        body += word_max(word_col, edge + CUT + BAR + FUGE, rad=inner_r)
     return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
 
 # R1  Ring aussen, Heli auf der Kante, Wortmarke darunter

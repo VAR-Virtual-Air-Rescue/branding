@@ -22,8 +22,14 @@ Steht eine Wortmarke unter der Kante, läuft sie **durch den Mittelpunkt** — s
 ist dann ein Durchmesser, die längste Sehne, die der Kreis hergibt. Himmel und
 Feld sind gleich hoch, VAR bekommt die Hälfte des Zeichens statt eines Drittels.
 
-Die Wortmarke **füllt das Feld zwischen Kante und Rundung**: oben liegt sie am Strich
-an, unten werden die Füße weitergeführt, bis der Beschnitt sie kappt. Sichtbar ist das
+Die Wortmarke **füllt das Feld zwischen Kante und Rundung**: oben steht sie unter dem
+Strich, unten werden die Füße weitergeführt, bis der Beschnitt sie kappt.
+
+Zwischen beiden steht eine **Fuge, so stark wie die Kante selbst** (`FUGE = BAR`). Ohne
+sie verschmelzen die flachen Oberkanten von V und R mit dem Balken — zusammen ein Drittel
+der Wortmarkenbreite — und die Kante wird zum Unterstrich. Der Schriftzug läuft im selben
+Winkel: seine Oberkante liegt auf derselben Geraden wie die Balkenunterkante, nur um die
+Fuge versetzt. Sichtbar ist das
 beim A; V und R kappt die Rundung schon oberhalb der Grundlinie. `WORT_BREITE = 0.828`
 (Anteil des Durchmessers, am Ursprungslogo gemessen) und `VERLAENGERUNG = 200` stehen in
 `werkzeug/mark.py`.

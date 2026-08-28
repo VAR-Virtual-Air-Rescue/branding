@@ -7,7 +7,7 @@ Discord wird daraus ein APNG exportiert.
 """
 import math, os
 from mark import (STRATOS, GALLIANO, IVORY, C, R, S, ANG, svg, disc,
-                  heli_on_edge, word_max, uid, EDGE, CUT, BAR)
+                  heli_on_edge, word_max, uid, EDGE, CUT, BAR, FUGE)
 from editions import (feld, oben, flaeche, streifen, muster, E,
                       STERN, KUERBIS, FLEDER, KNOCHEN, RAKETE, PRIDE)
 
@@ -154,7 +154,7 @@ def halloween(animiert=False):
                    + spinne(int(S * .74), 118, animiert))
             + feld(flaeche(KUERBIS_TIEF) + rippen("#7E3603", ".42"))
             + heli + bar
-            + word_max(SCHNITT, KANTE_Y + BAR))
+            + word_max(SCHNITT, KANTE_Y + BAR + FUGE))
     return svg(disc(body, uid("h")))
 
 # ---------------------------------------------------------------- Animiert
@@ -163,7 +163,7 @@ def bewegt(bg, heli_col, bar_col, wort_col, obenteil, unten):
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{bg}"/>'
             + (oben(obenteil) if obenteil else "")
             + unten + heli + bar
-            + word_max(wort_col, KANTE_Y + BAR))
+            + word_max(wort_col, KANTE_Y + BAR + FUGE))
     return svg(disc(body, uid("a")))
 
 A = {}
