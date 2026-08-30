@@ -61,7 +61,14 @@ Bildmaterial eingesetzt — so lässt sich jede Vorlage vor dem Einsatz gegenpr�
 
 **Uniform hat kein `→`.** Der Setzer verschluckt fehlende Zeichen still, die Breite
 bleibt stehen. `tpl.py` schreibt deshalb mit, was fehlt, und der Bauschritt meldet es
-am Ende. Vorhanden und benutzbar sind `»`, `·`, `–`, `—`, `•`, `+`, `×`.
+am Ende. Vorhanden und benutzbar sind `»`, `«`, `·`, `–`, `—`, `•`, `›`, `‹`, `°`,
+`+`, `×`, `…`, `§`, `±`.
+
+Ebenfalls **nicht vorhanden**: `✓`, `★`, `≥` — und `U+2011`, der geschützte
+Bindestrich. Der fällt besonders leicht durch, weil er im Editor wie ein normaler
+Bindestrich aussieht; in `P‑1` geschrieben ist er im SVG-Satz weg und in HTML in einer
+fremden Schrift. Alle vier Schnitte haben dieselben 416 Glyphen — was in einem fehlt,
+fehlt in allen.
 
 ## Wo die Kante liegt
 
