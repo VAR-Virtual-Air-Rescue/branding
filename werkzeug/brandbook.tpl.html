@@ -558,14 +558,26 @@ footer code{color:var(--ink)}
 <section id="tokens">
   <div class="head">
     <div class="kick">&Uuml;bergabe an die Software</div>
-    <h2>Ein Satz Tokens f&uuml;r Hub und Leitstelle</h2>
-    <p>Hub und Leitstelle laufen heute auf den daisyUI-Standardthemes <code>dark</code>
-    und <code>nord</code>, dazu ein <code>rescuetrack: #46b7a3</code> in der
-    Tailwind-Konfiguration, das in keinem Style Guide steht. Der n&auml;chste Schritt ist
-    eine gemeinsame <code>tokens.css</code> in <code>packages/shared-components/</code>,
-    die beide importieren.</p>
+    <h2>Dieselben Werte, als Tokens</h2>
+    <p>Wer eine Oberfl&auml;che in den Farben der Marke baut, kopiert diesen Satz und
+    verweist darauf, statt Hex-Werte einzeln einzutragen. Die vier obersten sind die
+    Marke selbst; alles darunter ist daraus abgeleitet und darf angepasst werden.
+    <b>Statusfarben sind keine Markenfarben</b> &mdash; sie kommen aus dem
+    Rettungsdienst und bedeuten etwas, deshalb stehen sie getrennt.</p>
   </div>
   <pre>{{TOKENS}}</pre>
+  <div class="rules" style="margin-top:16px">
+    <div><h4>Fest</h4><p><code>--var-stratos</code>, <code>--var-galliano</code>,
+      <code>--var-ivory</code>. Diese drei sind die Marke und &auml;ndern sich
+      nicht.</p></div>
+    <div><h4>Ableitbar</h4><p>Fl&auml;chen und Linien sind aus Stratos abgestuft. Wer
+      eine hellere Oberfl&auml;che braucht, stuft neu ab &mdash; aus derselben
+      Farbe.</p></div>
+    <div><h4>Nur Oberfl&auml;che</h4><p><code>--var-signal</code> f&uuml;r Links und
+      Fokus. Im Zeichen und in Grafiken kommt es nicht vor.</p></div>
+    <div><h4>Kontrast pr&uuml;fen</h4><p>Die Werte oben gelten weiter. Gold auf Ivory
+      bleibt auch als Token eine Fl&auml;che und keine Schrift.</p></div>
+  </div>
 </section>
 
 <!-- ------------------------------------------------------- Bestand -->
