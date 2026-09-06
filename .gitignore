@@ -1,0 +1,15 @@
+# Die echten Zugangsdaten. Dieses Repository ist oeffentlich -- was hier
+# hineinrutscht, ist veroeffentlicht, auch wenn es gleich wieder entfernt wird.
+.env
+.env.*
+!.env.example
+
+**/__pycache__/
+**/node_modules/
+*.pyc
+
+# Werkstattstaende der Vorlagen
+werkzeug/neu/
+werkzeug/tpl/
+werkzeug/tpl_fotos/
+werkzeug/out/
