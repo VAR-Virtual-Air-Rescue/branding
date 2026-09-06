@@ -11,7 +11,8 @@ eingebettet. Die SVG ist immer der Master, PNGs entstehen aus ihr, nie umgekehrt
     icon/          App-Icons für alles unter 32 px
     profilbilder/  Grundfassung, 11 Sondereditionen, 5 davon animiert, Vorlage
     reel/          6 Overlays für das Einsatz-Tagebuch plus leere Vorlage
-    vorlagen/      22 Formate für Social Media, Video und Veranstaltungen
+    vorlagen/      22 Formate für Social Media, Video und Stream, dazu 18
+                   Event-Vorlagen (`event_*`)
     herleitung/    Foto, Entwurf, heutiges Logo, sechs Falschanwendungen
     karte/         Lagebild und Livekarte in RescueTrack-Anmutung
     png/           512 · 256 · 128 · 64 · 32 · 16
@@ -183,6 +184,36 @@ ein öffentliches Repository. Das fällt kaum auf:
 Wer die Lizenz hat, legt die Dateien unter `werkzeug/fonts/` beziehungsweise
 `website/schrift/` ab und baut neu.
 
+
+
+## Vorlagen für Veranstaltungen
+
+`werkzeug/events.py` erzeugt `vorlagen/event_*` — drei Formate, zwei Anlassarten,
+drei Macharten:
+
+    Formate    Discord-Titelbild 800×320 · Discord-Ankündigung 1200×630
+               Instagram-Beitrag 1080×1350
+    Anlassart  Serie (wiederkehrend) · Special (einmalig)
+    Machart    A Depesche · B Bild · C Plakat
+
+Die drei Macharten sind eine echte Auswahl, weil sie etwas anderes können: die
+**Depesche** trägt viele Angaben und kein Bild, das **Bild** trägt Stimmung und
+wenig Text, das **Plakat** trägt ein Datum und sonst fast nichts. Gewählt wird
+danach, was zu sagen ist — nicht danach, welche Farbe gefällt.
+
+**Serie gegen Special** ist keine Beschriftung, sondern eine andere Gewichtung.
+Bei einer Serie ist der Rhythmus die Nachricht: der Wochentag steht groß, das
+Datum klein. Bei einem Special ist der Anlass die Nachricht: die Schlagzeile
+steht groß, das Datum als Marke daneben.
+
+Neu bauen, mit eigenen Bildern:
+
+    python werkzeug/events.py --fotos <ordner>
+
+Jede Zeile wird auf ihre verfügbare Breite geprüft und notfalls verkleinert.
+Ohne das lief bei 1080 Breite die zweite Schlagzeile aus dem Bild
+(`DER LUFTRETTU`) und die drei Datenspalten liefen ineinander — beides fällt im
+Entwurf mit kurzen Platzhaltern nicht auf und erst mit echten Texten.
 
 ## Anmeldung
 

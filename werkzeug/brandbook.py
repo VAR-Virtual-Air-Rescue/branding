@@ -148,6 +148,36 @@ VORLAGEN = [
     ("vorlagen/overlay_live_1920x1080.svg", "Live-Overlay", "Stream"),
     ("vorlagen/overlay_lowerthird_1920x1080.svg", "Bauchbinde", "Stream"),
 ]
+# Veranstaltungen: drei Formate, zwei Anlassarten, drei Macharten. Sortiert
+# nach Machart, nicht nach Format -- wer eine Ankuendigung schreibt, waehlt
+# zuerst, wie sie aussehen soll.
+EVENTS = [
+    ("vorlagen/event_discord_titel_wiederkehrend_a_depesche.svg",
+     "Depesche &middot; Serie", "Discord-Titelbild 800&times;320"),
+    ("vorlagen/event_discord_titel_special_a_depesche.svg",
+     "Depesche &middot; Special", "Discord-Titelbild"),
+    ("vorlagen/event_discord_titel_wiederkehrend_b_bild.svg",
+     "Bild &middot; Serie", "Discord-Titelbild"),
+    ("vorlagen/event_discord_titel_special_c_plakat.svg",
+     "Plakat &middot; Special", "Discord-Titelbild"),
+    ("vorlagen/event_discord_ankuendigung_special_a_depesche.svg",
+     "Depesche &middot; Special", "Ank&uuml;ndigung 1200&times;630"),
+    ("vorlagen/event_discord_ankuendigung_wiederkehrend_b_bild.svg",
+     "Bild &middot; Serie", "Ank&uuml;ndigung"),
+    ("vorlagen/event_discord_ankuendigung_special_c_plakat.svg",
+     "Plakat &middot; Special", "Ank&uuml;ndigung"),
+    ("vorlagen/event_discord_ankuendigung_wiederkehrend_c_plakat.svg",
+     "Plakat &middot; Serie", "Ank&uuml;ndigung"),
+    ("vorlagen/event_instagram_special_a_depesche.svg",
+     "Depesche &middot; Special", "Instagram 1080&times;1350"),
+    ("vorlagen/event_instagram_special_b_bild.svg",
+     "Bild &middot; Special", "Instagram"),
+    ("vorlagen/event_instagram_wiederkehrend_b_bild.svg",
+     "Bild &middot; Serie", "Instagram"),
+    ("vorlagen/event_instagram_wiederkehrend_c_plakat.svg",
+     "Plakat &middot; Serie", "Instagram"),
+]
+
 REEL = [("reel/tb_1_alarmierung.svg", "1 &middot; Alarmierung", "Einsatz geht ein"),
         ("reel/tb_2_ausruecken.svg", "2 &middot; Ausr&uuml;cken", "Start"),
         ("reel/tb_3_ankommen.svg", "3 &middot; Ankommen", "Einsatzstelle"),
@@ -257,6 +287,7 @@ rep = {
     "{{LOCKUPS}}": grid(LOCKUPS, "g2"),
     "{{PB}}": grid(PB, "g6", "plain"),
     "{{VORLAGEN}}": grid(VORLAGEN, "g4", "plain"),
+    "{{EVENTS}}": grid(EVENTS, "g4", "plain"),
     "{{REEL}}": grid(REEL, "g4", "plain"),
     "{{KARTE}}": grid(KARTE, "g3", "plain"),
     "{{EVO}}": grid(EVO, "g2", "plain"),
