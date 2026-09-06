@@ -1,0 +1,1690 @@
+<title>Virtual Air Rescue — Virtuelle Luftrettung</title>
+<meta name="color-scheme" content="dark light">
+<!-- Vor dem ersten Anstrich, sonst blitzt beim Laden das falsche
+     Erscheinungsbild auf. Ohne Wahl entscheidet das Betriebssystem. -->
+<script>(function(){try{var w=localStorage.getItem("var-thema");if(w==="hell"||w==="dunkel")document.documentElement.setAttribute("data-theme",w==="hell"?"light":"dark");}catch(e){}})();</script>
+
+<style>
+/* ================= Uniform =================
+   Die Hausschrift, vier Schnitte, auf Latein-1 beschnitten und als WOFF2
+   eingebettet (44 KB roh). Erzeugt aus brand/werkzeug/fonts/ -- dieselben
+   Dateien, aus denen mkpage die Wortmarke in Pfade setzt.
+
+   Uniform hat 416 Glyphen. Was fehlt, faellt hier auf die Systemschrift zurueck
+   und sieht falsch aus, statt wie im SVG-Satz still zu verschwinden. Nicht
+   vorhanden und deshalb zu meiden: U+2011 (gesch. Bindestrich), sowie
+   die aus dem Brandbuch bekannten Faelle -- kein Pfeil, kein Haken, kein Stern.
+   Benutzbar: » « · – — • › ‹ ° × … § " " „ ± */
+@font-face{font-family:Uniform;font-style:normal;font-weight:400;font-display:swap;
+  src:url({{FONT:schrift/uniform-400.woff2}}) format("woff2")}
+@font-face{font-family:Uniform;font-style:normal;font-weight:500;font-display:swap;
+  src:url({{FONT:schrift/uniform-500.woff2}}) format("woff2")}
+@font-face{font-family:Uniform;font-style:normal;font-weight:700;font-display:swap;
+  src:url({{FONT:schrift/uniform-700.woff2}}) format("woff2")}
+@font-face{font-family:Uniform;font-style:normal;font-weight:800;font-display:swap;
+  src:url({{FONT:schrift/uniform-800.woff2}}) format("woff2")}
+
+:root{
+  /* Die Marke. Gilt in beiden Erscheinungsbildern unveraendert. */
+  --navy:#00113A; --gold:#D5A507; --gold-hi:#EFC02A; --ivory:#FFFFFC; --sig:#2B6EFF;
+  /* Uniform ist die Grundschrift der Seite -- ueberall, auch im Lagebild und in
+     der Einsatzliste. Es gibt keine zweite Schrift mehr.
+
+     --fh  Fliesstext und Ueberschriften.
+     --fl  Beschriftungen: dieselbe Schrift im Auszeichnungssatz der Vorlagen --
+           Versalien, weite Sperrung. So setzt absenderleiste() in tpl.py die
+           Absenderzeile (Uniform Bold, Sperrung 0,16).
+
+     Uniform hat Tabellenziffern -- aber nicht unter dem ueblichen Namen. Es
+     gibt kein `tnum`; der Satz heisst hier **`lnum`** und macht alle zehn
+     Ziffern gleich breit (605 Einheiten statt 450 bis 605). `--ziffern` schaltet
+     ihn ein, und zwar nur dort, wo Ziffern untereinander stehen muessen -- im
+     Fliesstext sind gleich breite Ziffern schlechter, nicht besser. */
+  --ziffern:"lnum" 1;
+  --fh:Uniform,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --fl:var(--fh);
+  --kante:4px;
+
+  /* Der Winkel der Marke. Gemessen, nicht gewaehlt: brand/werkzeug/tilt.json.
+     tan(3,2746681643916267 Grad) = 0,0572155 -- ueber 1080 Breite 61,8 px.
+     --stieg ist der Anstieg von der Mitte zum Rand, --luft die Zugabe, die
+     Text ueber der Kante braucht (kante_luft() in tpl.py). */
+  --tilt:-3.2746681643916267deg;
+  --stieg:calc(50vw * 0.0572155);
+  --luft:calc(var(--stieg) + 16px);
+
+  /* ---- Dunkel ist die Grundfassung ------------------------------------- */
+  --bg:#050B1C; --surf:#0A1430; --surf2:#101C3D; --line:#1C2A4E;
+  --line-weich:rgba(28,42,78,.6);
+  --tx:#E7EAF3; --dim:#8E97AE;
+  /* Gold traegt auf Dunkel auch als Schrift. Auf Hell nicht -- 2,3:1 gegen
+     Ivory. Deshalb zwei Rollen: --gold ist die Flaeche, --akz die Schrift. */
+  --akz:#D5A507; --akz-hi:#EFC02A;
+  --krit:#E5484D; --warn:#E5920A; --ok:#2FA96B;
+  --kopf:rgba(5,11,28,.86);
+  --hero-schleier:linear-gradient(100deg,#050B1C 4%,rgba(5,11,28,.88) 42%,
+    rgba(5,11,28,.22) 72%);
+  /* Lagebild im Kopf: dieselben Farben wie die Leitstellenkarte */
+  --karte-land:#1E2A22; --karte-weg:rgba(51,59,56,.55);
+  --karte-bahn:rgba(107,116,112,.38); --karte-lrz:#2FA3A0; --karte-spur:#46b7a3;
+  --karte-lrz-fuell:rgba(8,20,16,.85); --karte-klinik:rgba(255,255,252,.72);
+  --karte-klinik-strich:rgba(255,255,252,.5);
+}
+
+/* ---- Hell. Zweimal notiert: einmal fuer die Systemeinstellung, einmal fuer
+   die ausdrueckliche Wahl. Beide Faelle in einem Selektor zusammenzufassen
+   geht in CSS nicht. ---------------------------------------------------- */
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#FFFFFC; --surf:#F2F4F8; --surf2:#E8EBF2; --line:#D3D8E4;
+    --line-weich:rgba(0,17,58,.10);
+    --tx:#00113A; --dim:#535D73;
+    --akz:#8A6A05; --akz-hi:#6E5504;
+    --krit:#C2231F; --warn:#8A5C00; --ok:#1B7A48;
+    --kopf:rgba(255,255,252,.88);
+    --hero-schleier:linear-gradient(100deg,#FFFFFC 4%,rgba(255,255,252,.90) 42%,
+      rgba(255,255,252,.28) 72%);
+    --karte-land:#E9EBE5; --karte-weg:rgba(150,158,150,.55);
+    --karte-bahn:rgba(120,128,120,.55); --karte-lrz:#0E6E6C; --karte-spur:#0C7F6E;
+    --karte-lrz-fuell:rgba(255,255,255,.9); --karte-klinik:rgba(0,17,58,.75);
+    --karte-klinik-strich:rgba(0,17,58,.45);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#FFFFFC; --surf:#F2F4F8; --surf2:#E8EBF2; --line:#D3D8E4;
+  --line-weich:rgba(0,17,58,.10);
+  --tx:#00113A; --dim:#535D73;
+  --akz:#8A6A05; --akz-hi:#6E5504;
+  --krit:#C2231F; --warn:#8A5C00; --ok:#1B7A48;
+  --kopf:rgba(255,255,252,.88);
+  --hero-schleier:linear-gradient(100deg,#FFFFFC 4%,rgba(255,255,252,.90) 42%,
+    rgba(255,255,252,.28) 72%);
+  --karte-land:#E9EBE5; --karte-weg:rgba(150,158,150,.55);
+  --karte-bahn:rgba(120,128,120,.55); --karte-lrz:#0E6E6C; --karte-spur:#0C7F6E;
+  --karte-lrz-fuell:rgba(255,255,255,.9); --karte-klinik:rgba(0,17,58,.75);
+  --karte-klinik-strich:rgba(0,17,58,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--fh);
+  font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1200px;margin:0 auto;padding:0 30px}
+@media(max-width:640px){.wrap{padding:0 18px}}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.024em;line-height:1.08;text-wrap:balance}
+h2{font-size:clamp(30px,4.4vw,52px)}
+h3{font-size:clamp(18px,2.1vw,23px);letter-spacing:-.014em}
+p{margin:0 0 1em}
+a{color:var(--akz-hi);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+.eyebrow{font-family:var(--fl);font-size:11.5px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--akz);display:inline-flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:var(--kante);background:var(--gold)}
+.lede{font-size:clamp(17px,2vw,20px);color:var(--dim);max-width:58ch;line-height:1.55}
+
+/* ---------------- Kopfzeile ---------------- */
+header{position:sticky;top:0;z-index:60;background:var(--kopf);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header .bar{display:flex;align-items:center;gap:30px;padding:14px 0}
+
+/* ---------------- Die Marke im Kopf ----------------
+   Vorher stand hier das waagerechte Lockup mit 44 px Hoehe. Zwei Dinge sprachen
+   dagegen: es war klein, und es unterschritt die eigene Regel -- die
+   Hauptfassung gilt ab 96 px, darunter das Signet, unter 40 px das App-Icon.
+
+   Jetzt steht dort die Hauptfassung mit 104 px und haengt ueber die Leiste
+   hinaus. Das ist erlaubt und passt zum Zeichen: es ist eine Scheibe, und eine
+   Scheibe, die eine Kante schneidet, ist genau das Bild, aus dem die Marke
+   kommt. Verzerrt, gedreht oder mit Effekt versehen wird nichts.
+
+   Die Wortmarke steht daneben als Text in Uniform statt als Pfade im Lockup --
+   das spart die zwei eingebetteten Lockups (37 KB) und laesst sich faerben. */
+.marke{display:flex;align-items:center;gap:16px;flex:0 0 auto;text-decoration:none;
+  position:relative;z-index:2}
+header .mk{height:104px;width:auto;flex:0 0 auto;display:block;
+  margin-bottom:-32px}
+.marke .wort{display:flex;flex-direction:column;line-height:1.2}
+.marke .wort b{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--tx);
+  text-transform:uppercase}
+.marke .wort span{font-size:12px;color:var(--dim);letter-spacing:.06em}
+
+/* Beim Scrollen zieht sich die Scheibe in die Leiste zurueck: oben gross, beim
+   Lesen kompakt. Erlaubt ist das, weil nur **gleichmaessig** skaliert wird --
+   verzerrt, gedreht oder mit Effekt versehen wird nichts. Wer weniger Bewegung
+   eingestellt hat, bekommt gar keine. */
+@media(prefers-reduced-motion:no-preference){
+  header .mk{transition:height .22s cubic-bezier(.2,.7,.3,1),
+                        margin-bottom .22s cubic-bezier(.2,.7,.3,1),
+                        transform .26s cubic-bezier(.2,.7,.3,1)}
+}
+
+/* Unter dem Zeiger waechst die Scheibe.
+
+   `transform: scale` und nicht `height`: eine Hoehenaenderung wuerde die
+   Wortmarke daneben bei jedem Ueberfahren verschieben. So bleibt das Layout
+   stehen, es bewegt sich nur die Zeichnung.
+
+   Der Drehpunkt liegt oben: die Scheibe waechst nach **unten** ins Bild statt
+   nach oben in die Menuezeile. Und weil gleichmaessig skaliert wird, bleibt das
+   Zeichen unverzerrt -- das ist die einzige Groessenaenderung, die das
+   Brandbook nicht verbietet.
+
+   Nur fuer Zeiger: auf Tippgeraeten bleibt ein `:hover` sonst haengen. */
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  header .mk{transform-origin:50% 14%}
+  .marke:hover .mk,
+  .marke:focus-visible .mk{transform:scale(1.14)}
+  header.eng .marke:hover .mk,
+  header.eng .marke:focus-visible .mk{transform:scale(1.2)}
+}
+header.eng .mk{height:60px;margin-bottom:0}
+@media(max-width:860px){header.eng .mk{height:54px;margin-bottom:0}}
+@media(max-width:640px){header.eng .mk{height:48px;margin-bottom:0}}
+@media(max-width:860px){
+  header .mk{height:84px;margin-bottom:-24px}
+  .marke .wort b{font-size:15px}
+}
+@media(max-width:640px){
+  header .mk{height:70px;margin-bottom:-18px}
+  .marke{gap:12px}
+  .marke .wort span{display:none}
+}
+
+/* ---------------- Marke auf hellem und dunklem Grund ----------------
+   Zwei Originaldateien, nicht eine gefilterte. Die Auswahl steht in CSS,
+   damit sie auch ohne JavaScript sitzt.
+
+   Die Doppelklasse `.mk.mk-hell` ist Absicht: `header .mk{display:block}` hat
+   eine Klasse und ein Element und schlaegt damit ein einfaches `.mk-hell`.
+   Ohne die zweite Klasse standen im dunklen Erscheinungsbild **beide** Logos
+   nebeneinander -- und zwar nur dann, wenn kein `data-theme` gesetzt war, also
+   genau im Normalfall. */
+.mk.mk-hell{display:none}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]) .mk.mk-dunkel{display:none}
+  :root:not([data-theme="dark"]) .mk.mk-hell{display:block}
+}
+:root[data-theme="light"] .mk.mk-dunkel{display:none}
+:root[data-theme="light"] .mk.mk-hell{display:block}
+:root[data-theme="dark"] .mk.mk-dunkel{display:block}
+:root[data-theme="dark"] .mk.mk-hell{display:none}
+header nav{display:flex;gap:26px;margin-left:auto;font-size:14px}
+header nav a{color:var(--dim)}
+header nav a:hover{color:var(--tx)}
+@media(max-width:860px){header nav{display:none}}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--navy);
+  font-weight:700;font-size:14.5px;padding:11px 22px;border:0;border-radius:2px;cursor:pointer;
+  letter-spacing:.01em;font-family:inherit}
+.btn:hover{background:var(--gold-hi)}
+.btn.ghost{background:transparent;color:var(--tx);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--gold);color:var(--akz-hi)}
+
+/* ---------------- Hell/Dunkel ---------------- */
+.thema{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;
+  margin-left:18px;padding:0;background:transparent;border:0;border-radius:2px;cursor:pointer;
+  box-shadow:inset 0 0 0 1px var(--line);color:var(--dim);flex:0 0 auto}
+.thema:hover{box-shadow:inset 0 0 0 1px var(--gold);color:var(--akz-hi)}
+.thema svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* Gezeigt wird, wohin der Knopf fuehrt, nicht wo man steht. */
+.thema .mond{display:none}
+[data-ist="light"] .thema .mond{display:block}
+[data-ist="light"] .thema .sonne{display:none}
+@media(max-width:860px){.thema{margin-left:auto}}
+
+/* ---------------- Lagebild ---------------- */
+.hero{position:relative;min-height:min(88vh,860px);display:flex;align-items:center;
+  border-bottom:var(--kante) solid var(--gold);overflow:hidden}
+#lage{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:var(--hero-schleier)}
+.hero .inner{position:relative;z-index:3;padding:96px 0 84px;width:100%}
+.hero h1{font-size:clamp(40px,7.2vw,86px);margin:20px 0 22px;max-width:15ch}
+.hero h1 em{font-style:normal;color:var(--akz)}
+.hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+
+.stats{display:flex;flex-wrap:wrap;gap:0;margin-top:52px;border-top:1px solid var(--line);
+  max-width:820px}
+.stat{padding:20px 34px 6px 0;margin-right:34px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0;margin-right:0}
+.stat b{display:block;font-family:var(--fl);font-feature-settings:var(--ziffern);font-size:clamp(24px,3vw,34px);font-weight:600;
+  color:var(--akz);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--dim);font-family:var(--fl);letter-spacing:.1em;
+  text-transform:uppercase}
+.livedot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--krit);
+  margin-right:7px;vertical-align:middle}
+@media(prefers-reduced-motion:no-preference){
+  .livedot{animation:pulse 2.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+}
+
+section{padding:104px 0;border-top:1px solid var(--line)}
+@media(max-width:640px){section{padding:70px 0}}
+.sechead{max-width:62ch;margin-bottom:52px}
+.sechead h2{margin:16px 0 18px}
+
+/* ---------------- Wege ---------------- */
+.ways{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line)}
+@media(max-width:860px){.ways{grid-template-columns:1fr}}
+.way{background:var(--surf);padding:38px 32px 34px;position:relative;transition:background .2s}
+.way:hover{background:var(--surf2)}
+.way .no{font-family:var(--fl);font-size:12px;color:var(--akz);letter-spacing:.14em}
+.way h3{margin:14px 0 12px}
+.way p{color:var(--dim);font-size:15px;margin:0}
+.way .kante{position:absolute;left:0;top:0;width:0;height:var(--kante);background:var(--gold);
+  transition:width .35s cubic-bezier(.2,.7,.3,1)}
+.way:hover .kante{width:100%}
+
+/* ---------------- Einsatzablauf ---------------- */
+.flow{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:start}
+@media(max-width:940px){.flow{grid-template-columns:1fr;gap:34px}}
+.rail{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);
+  padding-left:0;margin:0;list-style:none}
+.rail li{position:relative}
+.rail button{width:100%;text-align:left;background:none;border:0;cursor:pointer;
+  padding:18px 20px 18px 30px;color:var(--dim);font-family:inherit;font-size:15.5px;
+  display:flex;align-items:baseline;gap:16px;transition:color .2s}
+.rail button:hover{color:var(--tx)}
+.rail li::before{content:"";position:absolute;left:-2px;top:0;bottom:0;width:2px;
+  background:transparent;transition:background .25s}
+.rail li.on::before{background:var(--gold)}
+/* War var(--ivory): im hellen Erscheinungsbild stand der aktive Schritt
+   dann elfenbein auf elfenbein. --tx traegt auf beiden Gruenden. */
+.rail li.on button{color:var(--tx);font-weight:600}
+.rail .code{font-family:var(--fl);font-feature-settings:var(--ziffern);
+  font-size:12px;letter-spacing:.1em;color:var(--akz);
+  flex:0 0 100px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rail li.on .code{color:var(--akz-hi)}
+.rail .nm{font-weight:600}
+.panel{background:var(--surf);border:1px solid var(--line);border-top:var(--kante) solid var(--gold);
+  padding:38px 36px;min-height:290px}
+.panel .st{font-family:var(--fl);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--akz)}
+.panel h3{margin:12px 0 16px;font-size:clamp(22px,2.8vw,30px)}
+.panel p{color:var(--dim);margin:0 0 18px;max-width:52ch}
+.panel .who{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.chip{font-family:var(--fl);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 11px;border:1px solid var(--line);color:var(--dim);border-radius:2px}
+.chip.hot{border-color:var(--gold);color:var(--akz)}
+
+/* ---------------- Systeme ---------------- */
+.sys{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:900px){.sys{grid-template-columns:1fr}}
+.sysbox{background:var(--surf);border:1px solid var(--line);padding:0;overflow:hidden;
+  display:flex;flex-direction:column}
+.sysbox .top{height:8px;background:var(--gold)}
+.sysbox .bd{padding:30px 28px 32px;flex:1;display:flex;flex-direction:column}
+.sysbox h3{margin:0 0 12px}
+.sysbox p{color:var(--dim);font-size:15px;flex:1}
+.sysbox .meta{font-family:var(--fl);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--akz);margin-top:22px}
+
+/* ---------------- Stationen-Laufband ---------------- */
+.marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:22px 0;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.mrow{display:flex;gap:0;width:max-content}
+.mrow span{font-family:var(--fl);font-size:14px;letter-spacing:.12em;color:var(--dim);
+  padding:0 26px;white-space:nowrap;border-right:1px solid var(--line)}
+.mrow span b{color:var(--akz);font-weight:600}
+@media(prefers-reduced-motion:no-preference){
+  .mrow{animation:slide 46s linear infinite}
+  @keyframes slide{to{transform:translateX(-50%)}}
+  /* Ausserhalb des Blickfelds steht es still -- es lief bisher die ganze
+     Seite lang durch, auch acht Abschnitte weiter unten. */
+  .marquee.ruht .mrow{animation-play-state:paused}
+}
+
+
+/* ---------------- Livekarte ---------------- */
+.livewrap{display:grid;grid-template-columns:1fr 330px;gap:0;border:1px solid var(--line);
+  background:var(--surf)}
+@media(max-width:940px){.livewrap{grid-template-columns:1fr}}
+.livemap{position:relative;min-height:440px;overflow:hidden;border-right:1px solid var(--line)}
+.livemap svg{position:absolute;inset:0;width:100%;height:100%}
+/* --- Livekarte --- */
+.lk-land{fill:none;stroke:var(--line);stroke-width:1.2}
+.lk-land.ein{fill:var(--surf2);stroke:var(--line)}
+.lk-stat{fill:var(--dim);opacity:.42}
+.lk-tag rect{shape-rendering:crispEdges}
+.lk-tag text{font-family:var(--fl);font-weight:700;dominant-baseline:middle}
+.lk-nr{font-size:15px}
+.lk-nm{font-size:13px;fill:#fff}
+.lk-leer{fill:var(--dim);font-family:var(--fl);font-size:15px;text-anchor:middle}
+.livelist .hd{display:flex;align-items:baseline;gap:10px}
+.livelist .hd .alt{margin-left:auto;text-transform:none;letter-spacing:.04em;opacity:.75}
+.lq{padding:15px 18px;font-family:var(--fl);font-size:10.5px;color:var(--dim);
+  letter-spacing:.14em;text-transform:uppercase;margin-top:auto;
+  border-top:1px solid var(--line-weich)}
+.lq a{color:var(--akz-hi)}
+.l-hinweis{padding:18px;font-size:14px;color:var(--dim);line-height:1.6}
+.l-hinweis b{color:var(--tx);display:block;margin-bottom:4px}
+/* Die Karten-SVGs aus brand/karte/ tragen font-family="monospace" als
+   Praesentationsattribut. Uniform ist die Grundschrift der Seite; eine
+   CSS-Regel schlaegt das Attribut, ohne die geteilte Markendatei anzufassen. */
+.livemap svg text,.livemap svg [font-family]{font-family:var(--fl)}
+.livemap .tag{position:absolute;left:14px;top:14px;z-index:3;display:flex;gap:7px;flex-wrap:wrap}
+.livelist{display:flex;flex-direction:column}
+.livelist .hd{padding:13px 18px;border-bottom:1px solid var(--line);font-family:var(--fl);
+  font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+.lrow{padding:13px 18px;border-bottom:1px solid var(--line-weich);display:flex;gap:12px;
+  align-items:flex-start}
+.lrow .num{width:24px;height:24px;border-radius:2px;display:flex;align-items:center;
+  justify-content:center;font-family:var(--fl);font-feature-settings:var(--ziffern);
+  font-size:12px;color:#fff;flex:0 0 24px}
+.lrow .nm{font-size:13.5px;font-weight:600;color:var(--tx)}
+.lrow .sub{font-family:var(--fl);font-feature-settings:var(--ziffern);font-size:10.5px;color:var(--dim);letter-spacing:.06em;
+  margin-top:2px}
+.lrow .sub b{color:var(--akz);font-weight:600}
+.g1{background:#2E7D46} .g3{background:#B3312C} .g8{background:#8A7A1E}
+
+/* ---------------- Galerie ---------------- */
+.gal{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px}
+@media(max-width:860px){.gal{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.gal{grid-template-columns:1fr}}
+.gal figure{margin:0;position:relative;overflow:hidden;border:1px solid var(--line);
+  min-height:200px}
+.gal figure:first-child{grid-row:span 2;min-height:420px}
+@media(max-width:860px){.gal figure:first-child{grid-row:auto;grid-column:span 2;min-height:260px}}
+.gal svg{width:100%;height:100%;display:block;position:absolute;inset:0;object-fit:cover}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;z-index:2;
+  background:linear-gradient(transparent,rgba(0,17,58,.9))}
+.gal figcaption b{display:block;font-size:14px;color:var(--ivory)}
+.gal figcaption span{font-family:var(--fl);font-size:10.5px;letter-spacing:.1em;
+  color:var(--gold)}
+.gal .kante{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--gold);z-index:3}
+
+
+/* ---------------- Galerie ---------------- */
+.shot{position:relative;overflow:hidden;background:var(--surf);margin:0}
+.shot .ph{position:absolute;inset:0;width:100%;height:100%}
+.shot .ph svg{width:100%;height:100%;display:block}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1}
+.shot .veil{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(transparent 42%,rgba(0,17,58,.86))}
+.shot .kante{position:absolute;left:0;right:0;bottom:0;height:var(--kante);
+  background:var(--gold);z-index:4}
+.shot figcaption{position:absolute;left:0;right:0;bottom:0;padding:20px 22px 24px;z-index:3}
+.shot figcaption b{display:block;font-size:16px;color:var(--ivory);letter-spacing:-.01em}
+.shot figcaption span{display:block;font-family:var(--fl);font-size:10.5px;letter-spacing:.13em;
+  color:var(--gold);margin-top:4px}
+.banner{aspect-ratio:21/8;min-height:280px}
+@media(max-width:700px){.banner{aspect-ratio:16/10}}
+.galgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+.galgrid .shot{aspect-ratio:4/3}
+@media(max-width:900px){.galgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.galgrid{grid-template-columns:1fr}}
+.origin{display:grid;grid-template-columns:1.25fr 1fr;gap:0;margin-top:14px;
+  border:1px solid var(--line)}
+@media(max-width:820px){.origin{grid-template-columns:1fr}}
+.origin .shot{aspect-ratio:14/9;border-right:1px solid var(--line)}
+.origin .txt{padding:44px 40px;display:flex;flex-direction:column;justify-content:center;
+  background:var(--surf)}
+.origin .txt h3{margin-bottom:14px}
+.origin .txt p{color:var(--dim);font-size:15.5px;margin:0 0 14px}
+.origin .txt .mk{width:118px;height:auto;display:block;margin-top:8px}
+
+
+/* ---------------- Wissensdatenbank ---------------- */
+.wissen{display:grid;grid-template-columns:1.1fr 1fr;gap:0;border:1px solid var(--line)}
+@media(max-width:900px){.wissen{grid-template-columns:1fr}}
+.wissen .links{background:var(--surf);padding:40px 38px;border-right:1px solid var(--line)}
+.wissen .rechts{background:var(--surf2);padding:0}
+.kapitel{border-bottom:1px solid var(--line)}
+.kapitel:last-child{border-bottom:0}
+.kapitel .kopf{padding:18px 30px;display:flex;align-items:baseline;gap:14px}
+.kapitel .kopf b{font-size:15px;color:var(--tx)}
+.kapitel .kopf .n{font-family:var(--fl);font-size:11px;color:var(--akz);
+  letter-spacing:.12em;flex:0 0 26px}
+.kapitel .kopf .z{margin-left:auto;font-family:var(--fl);font-size:11px;color:var(--dim)}
+.kapitel .seiten{padding:0 30px 20px 70px;display:flex;flex-wrap:wrap;gap:8px}
+.kapitel .seiten span{font-size:12.5px;color:var(--dim);background:rgba(43,110,255,.07);
+  border:1px solid var(--line);border-radius:2px;padding:3px 9px}
+.zahl{display:flex;gap:0;flex-wrap:wrap;margin:26px 0 0;border-top:1px solid var(--line)}
+.zahl div{padding:18px 30px 4px 0;margin-right:30px;border-right:1px solid var(--line)}
+.zahl div:last-child{border-right:0}
+.zahl b{display:block;font-family:var(--fl);font-feature-settings:var(--ziffern);font-size:27px;color:var(--akz);
+  font-variant-numeric:tabular-nums;line-height:1.15}
+.zahl span{font-size:11.5px;color:var(--dim);font-family:var(--fl);letter-spacing:.1em;
+  text-transform:uppercase}
+
+/* ---------------- Statuspruefung ---------------- */
+.gate{border:1px solid var(--line);background:var(--surf);border-top:var(--kante) solid var(--gold)}
+.gate .kopf{padding:34px 38px 0}
+.gate .kopf h3{margin-bottom:10px}
+.gate .kopf p{color:var(--dim);font-size:15.5px;max-width:60ch}
+.gate .frage{padding:26px 38px 34px}
+.gate .zaehler{font-family:var(--fl);font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--akz);margin-bottom:14px}
+.gate .text{font-size:clamp(18px,2.2vw,23px);font-weight:700;letter-spacing:-.015em;
+  margin-bottom:22px;max-width:52ch;line-height:1.3}
+.gate .optionen{display:flex;gap:12px;flex-wrap:wrap}
+.gate .opt{display:flex;align-items:center;gap:12px;background:var(--surf2);
+  border:1px solid var(--line);border-radius:2px;padding:12px 18px 12px 12px;
+  cursor:pointer;font-family:inherit;font-size:14.5px;color:var(--tx);
+  transition:border-color .15s,background .15s}
+.gate .opt:hover{border-color:var(--gold)}
+.gate .opt .zi{width:34px;height:34px;border-radius:2px;background:#3B4560;
+  display:flex;align-items:center;justify-content:center;font-family:var(--fl);
+  font-feature-settings:var(--ziffern);
+  font-size:16px;font-weight:700;color:#fff;flex:0 0 34px}
+.gate .opt.richtig{border-color:rgb(10,134,25);background:rgba(10,134,25,.12)}
+.gate .opt.falsch{border-color:rgb(140,10,10);background:rgba(140,10,10,.12)}
+.gate .opt:disabled{cursor:default}
+.gate .hinweis{margin-top:20px;padding:16px 20px;border-left:3px solid var(--gold);
+  background:rgba(213,165,7,.07);font-size:14.5px;color:var(--dim);display:none}
+.gate .hinweis.an{display:block}
+.gate .hinweis b{color:var(--tx);display:block;margin-bottom:4px}
+.gate .hinweis a{color:var(--akz-hi)}
+.gate .fortschritt{display:flex;gap:6px;padding:0 38px 26px}
+.gate .fortschritt i{height:3px;flex:1;background:var(--line);border-radius:2px}
+.gate .fortschritt i.ok{background:rgb(10,134,25)}
+.gate .fortschritt i.jetzt{background:var(--gold)}
+.gate .fertig{display:none;padding:34px 38px 38px;border-top:1px solid var(--line)}
+.gate .fertig.an{display:block}
+.gate .fertig h3{margin-bottom:12px}
+.gate .fertig p{color:var(--dim);max-width:58ch}
+
+/* ---------------- Mitmachen ---------------- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line)}
+@media(max-width:900px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.steps{grid-template-columns:1fr}}
+.stp{background:var(--surf);padding:30px 26px}
+.stp b{font-family:var(--fl);font-size:12px;color:var(--akz);letter-spacing:.14em;display:block;
+  margin-bottom:12px}
+.stp h3{font-size:18px;margin-bottom:8px}
+.stp p{color:var(--dim);font-size:14.5px;margin:0}
+
+.close{background:var(--navy);border-top:var(--kante) solid var(--gold);padding:96px 0;
+  text-align:center;color:var(--ivory)}
+.close h2{margin-bottom:20px}
+/* Das Band steht in beiden Erscheinungsbildern auf Navy -- --dim waere hier im
+   hellen Modus fast schwarz auf dunkelblau. Deshalb eine eigene feste Farbe. */
+.close p{color:#9AA6C0;max-width:50ch;margin:0 auto 34px}
+
+footer{padding:52px 0 64px;border-top:1px solid var(--line);font-size:14px;color:var(--dim)}
+footer .cols{display:flex;gap:60px;flex-wrap:wrap;justify-content:space-between}
+footer .lnk{display:flex;gap:26px;flex-wrap:wrap}
+footer a{color:var(--dim)}
+footer a:hover{color:var(--akz-hi)}
+footer .mk{height:52px;width:auto;display:block;margin-bottom:16px}
+.hint{font-size:12.5px;color:var(--dim);opacity:.62;margin-top:26px;font-family:var(--fl);
+  letter-spacing:.06em}
+</style>
+
+<header>
+  <div class="wrap bar">
+    <a class="marke" href="#" aria-label="Virtual Air Rescue, zum Seitenanfang">
+      {{SVG:n1_hell|mk mk-dunkel}}{{SVG:n1_kante|mk mk-hell}}
+      <span class="wort"><b>Virtual Air Rescue</b><span>Virtuelle Luftrettung</span></span>
+    </a>
+    <nav>
+      <a href="#ablauf">Einsatzablauf</a>
+      <a href="#systeme">Systeme</a>
+      <a href="#live">Livekarte</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#wissen">Wissen</a>
+      <a href="#mitmachen">Mitmachen</a>
+    </nav>
+    <button class="thema" id="thema" type="button"
+      aria-label="Zum hellen Erscheinungsbild wechseln">
+      <svg class="sonne" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.4v2.3M12 19.3v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.3M19.3 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+      <svg class="mond" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg>
+    </button>
+    <a class="btn" href="#pruefung">Registrieren</a>
+  </div>
+</header>
+
+<main>
+
+<div class="hero">
+  <canvas id="lage" aria-hidden="true"></canvas>
+  <div class="wrap inner">
+    <span class="eyebrow">Virtuelle Luftrettung seit 2020</span>
+    <h1>Irgendwo läuft gerade ein <em>Einsatz</em>.</h1>
+    <p class="lede">Wir fliegen Rettungshubschrauber im Simulator — mit eigener Leitstelle,
+      eigenem Funk und Disponenten aus Fleisch und Blut. Kein Skript, keine
+      Zufallsmission: jemand alarmiert dich wirklich.</p>
+    <div class="cta">
+      <a class="btn" href="#mitmachen">Mitfliegen</a>
+      <a class="btn ghost" href="#ablauf">So läuft ein Einsatz</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b><span class="livedot"></span><span data-count="7">0</span></b>
+        <span>Luftfahrzeuge online</span></div>
+      <div class="stat"><b><span data-count="3">0</span></b><span>Einsätze aktiv</span></div>
+      <div class="stat"><b><span data-count="2">0</span></b><span>Disponenten</span></div>
+      <div class="stat"><b><span data-count="7">0</span></b><span>Länder</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= Wege ================= -->
+<section id="wege">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Drei Rollen</span>
+      <h2>Du entscheidest, auf welcher Seite des Funks du sitzt.</h2>
+      <p class="lede">Die meisten fangen im Cockpit an und landen irgendwann in der
+        Leitstelle. Beides braucht Übung, beides bilden wir aus.</p>
+    </div>
+    <div class="ways">
+      <div class="way"><span class="kante"></span>
+        <div class="no">01 — PILOT</div>
+        <h3>Fliegen</h3>
+        <p>Du meldest dich an einer Station an, der Client verbindet deinen Simulator mit
+          unserer Leitstelle. Ab dann bist du im Lagebild — und wirst alarmiert.</p></div>
+      <div class="way"><span class="kante"></span>
+        <div class="no">02 — DISPONENT</div>
+        <h3>Disponieren</h3>
+        <p>Du sitzt in der Webleitstelle, nimmst Einsätze auf, wählst das nächstgelegene
+          geeignete Rettungsmittel und führst den Funkverkehr.
+          <b style="color:var(--tx)">Voraussetzung: berufliche Erfahrung aus dem
+          Rettungsdienst oder einer Leitstelle</b> — dieser Platz ist nicht für
+          jeden offen.</p></div>
+      <div class="way"><span class="kante"></span>
+        <div class="no">03 — CREW</div>
+        <h3>Lernen</h3>
+        <p>HEMS TC, Notarzt, Außenlandung, BOS-Funk, Status. Dazu Luftraumstruktur,
+          Meteorologie und Navigation — die
+          <a href="https://docs.virtualairrescue.com" rel="noopener">Wissensdatenbank</a> und die Kurse
+          im Hub bringen dich dahin.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Einsatzablauf ================= -->
+<section id="ablauf">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Status und Anweisungen</span>
+      <h2>So läuft ein Einsatz bei uns ab.</h2>
+      <p class="lede">Dieselben Statusmeldungen wie im echten Rettungsdienst — und die
+        Anweisungen, die aus der Leitstelle zurückkommen. Klick dich durch; links die
+        Meldung, rechts was in dieser Sekunde passiert.</p>
+    </div>
+    <div class="flow">
+      <ol class="rail" id="rail">
+        <li class="on"><button type="button" data-i="0">
+          <span class="code">STATUS 9</span><span class="nm">Fahrzeuganmeldung</span></button></li>
+        <li><button type="button" data-i="1">
+          <span class="code">STATUS 2</span><span class="nm">Einsatzbereit auf Wache</span></button></li>
+        <li><button type="button" data-i="2">
+          <span class="code">ANWEIS. C</span><span class="nm">Die Leitstelle alarmiert</span></button></li>
+        <li><button type="button" data-i="3">
+          <span class="code">STATUS 3</span><span class="nm">Einsatz übernommen</span></button></li>
+        <li><button type="button" data-i="4">
+          <span class="code">STATUS 4</span><span class="nm">Einsatzort an</span></button></li>
+        <li><button type="button" data-i="5">
+          <span class="code">STATUS 7</span><span class="nm">Einsatzgebunden</span></button></li>
+        <li><button type="button" data-i="6">
+          <span class="code">ANWEIS. d</span><span class="nm">Transportziel durchgeben</span></button></li>
+        <li><button type="button" data-i="7">
+          <span class="code">STATUS 1</span><span class="nm">Einsatzbereit über Funk</span></button></li>
+      </ol>
+      <div class="panel" id="panel" aria-live="polite">
+        <div class="st" id="p-st">Status 9</div>
+        <h3 id="p-h">Eingeloggt — und die Leitstelle weiß es.</h3>
+        <p id="p-p">Der VAR-Client verbindet deinen Simulator mit der Leitstelle. Status 9
+          ist die Anmeldung im Funkverkehrsbereich; bei uns meldest du damit, dass du
+          eingeloggt bist. Die Leitstelle quittiert mit der Anweisung u — verstanden.</p>
+        <div class="who" id="p-w">
+          <span class="chip hot">Pilot</span><span class="chip">Leitstelle</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Systeme ================= -->
+<section id="systeme">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Selbst gebaut</span>
+      <h2>Drei Systeme, die es so nirgends zu kaufen gibt.</h2>
+      <p class="lede">Wir entwickeln alles selbst — weil es für das, was wir machen,
+        keine fertige Software gibt.</p>
+    </div>
+    <div class="sys">
+      <div class="sysbox"><div class="top"></div><div class="bd">
+        <h3>Webleitstelle</h3>
+        <p>Lagekarte mit Leitstellenbereichen, Niederschlag, Luftrettungszentren samt
+          10- und 20-Minuten-Ringen, Heliports, Luftraum nach OpenAIP, Skigebieten und
+          Offshore-Windparks. Dazu Einsatzerstellung per Rechtsklick, Stichwortkatalog,
+          Meldewesen und Einsatzprotokoll. Alles im Browser.</p>
+        <div class="meta">ops.virtualairrescue.com/dispatch</div></div></div>
+      <div class="sysbox"><div class="top"></div><div class="bd">
+        <h3>VAR Desktop Client</h3>
+        <p>Verbindet MSFS 2020/2024 oder X-Plane 11/12 mit der Leitstelle. Überträgt
+          Position, Höhe und Status, bringt Push-to-Talk mit und setzt Einsatzstellen als
+          Objekte in die Simulatorwelt.</p>
+        <div class="meta">Nur Windows · kostenlos</div></div></div>
+      <div class="sysbox"><div class="top"></div><div class="bd">
+        <h3>Wissensdatenbank</h3>
+        <p>BOS-Funk, OPTA, Status, Außenlandung, HEMS TC, Notarzt, Militär-SOP und der
+          Betrieb in der Schweiz — dazu Luftraumstruktur, Meteorologie, Navigation und
+          die H145-Checkliste. Geschrieben von Leuten, die es im echten Leben machen.</p>
+        <div class="meta"><a href="https://docs.virtualairrescue.com" rel="noopener">docs.virtualairrescue.com</a></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Stationen ================= -->
+<section id="stationen" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Standorte</span>
+      <h2>Von Niebüll bis Sion.</h2>
+      <p class="lede">Deutschland, Österreich, Schweiz, Niederlande, Italien,
+        Luxemburg und Liechtenstein — 178 Stationen mit den echten Funkrufnamen,
+        Betreibern und Mustern. Gefunkt wird ausschließlich auf Deutsch.</p>
+    </div>
+  </div>
+  <div class="marquee">
+    <div class="mrow" id="mrow"></div>
+  </div>
+  <div class="wrap" style="padding-top:52px;padding-bottom:104px">
+    <div class="steps">
+      <div class="stp"><b>WINDE</b><h3>Rettungswinde</h3>
+        <p>An den Bergstationen mit Windenbetrieb und Rettungstau.</p></div>
+      <div class="stp"><b>NVG</b><h3>Nachtsichtfähig</h3>
+        <p>Stationen, die auch bei Dunkelheit an unbekannte Landestellen fliegen.</p></div>
+      <div class="stp"><b>24 H</b><h3>Rund um die Uhr</h3>
+        <p>Standorte im durchgehenden Betrieb statt nur bei Tageslicht.</p></div>
+      <div class="stp"><b>ITH</b><h3>Intensivtransport</h3>
+        <p>Verlegungen zwischen Kliniken, oft über größere Strecken.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= Livekarte ================= -->
+<section id="live">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Jetzt gerade</span>
+      <h2>Wer fliegt, und von welcher Station.</h2>
+      <p class="lede">Dieselben Angaben wie im Lagebild der Leitstelle: Funkrufname,
+        Status, Station. <b style="color:var(--tx)">Keine Namen, keine Mitgliedsnummern</b>
+        — wer fliegt, bleibt hier anonym.</p>
+    </div>
+    <div class="livewrap">
+      <div class="livemap">
+        <div class="tag"><span class="pill">Stationen</span>
+          <span class="pill">Luftfahrzeuge</span><span class="pill">Status</span></div>
+        <svg id="lk" role="img"
+             aria-label="Karte mit den Stationen der VAR und den gerade verbundenen Luftfahrzeugen"></svg>
+      </div>
+      <div class="livelist">
+        <div class="hd"><span id="l-kopf">Wird geladen &#8230;</span>
+          <span class="alt" id="l-alter"></span></div>
+        <div id="l-liste"></div>
+        <div class="lq">Quelle: Lagebild der Leitstelle &#183;
+          <a href="https://ops.virtualairrescue.com/tracker" rel="noopener">Tracker</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Galerie ================= -->
+<section id="galerie">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Aus dem Simulator</span>
+      <h2>Wie das aussieht, wenn es läuft.</h2>
+      <p class="lede">Alles Bilder aus laufenden Einsätzen unserer Mitglieder &#8212;
+        nichts gestellt, nichts nachbearbeitet.</p>
+    </div>
+
+    <figure class="shot banner">
+      <div class="ph">{{SVG:_ph_banner}}</div>
+      {{IMG:alpen-panorama.jpg|Rettungshubschrauber über einem Alpental||100vw}}
+      <div class="veil"></div><span class="kante"></span>
+      <figcaption><b>Über dem Inntal</b>
+        <span>ALPENROTATION &#183; H145</span></figcaption>
+    </figure>
+
+    <div class="galgrid">
+      <figure class="shot"><div class="ph">{{SVG:_ph_cockpit}}</div>
+        {{IMG:wasserrettung.jpg|Notarzthubschrauber im Schwebeflug über dem Wasser||(max-width:520px) 100vw, (max-width:900px) 50vw, 300px}}
+        <div class="veil"></div><span class="kante"></span>
+        <figcaption><b>Über dem Wasser</b><span>DRF &#183; NOTARZT</span></figcaption></figure>
+      <figure class="shot"><div class="ph">{{SVG:_ph_winde}}</div>
+        {{IMG:windenrettung.jpg|Windenrettung über bewaldetem Hang||(max-width:520px) 100vw, (max-width:900px) 50vw, 300px}}
+        <div class="veil"></div><span class="kante"></span>
+        <figcaption><b>Retter am Seil</b><span>WINDENBETRIEB</span></figcaption></figure>
+      <figure class="shot"><div class="ph">{{SVG:_ph_alpen}}</div>
+        {{IMG:nachteinsatz.jpg|Nachteinsatz mit Blaulicht am Boden||(max-width:520px) 100vw, (max-width:900px) 50vw, 300px}}
+        <div class="veil"></div><span class="kante"></span>
+        <figcaption><b>Nachteinsatz</b><span>BLAULICHT &#183; LANDESTELLE</span></figcaption></figure>
+      <figure class="shot"><div class="ph">{{SVG:_ph_rotor}}</div>
+        {{IMG:rotorkopf.jpg|Rotorkopf aus der Nähe||(max-width:520px) 100vw, (max-width:900px) 50vw, 300px}}
+        <div class="veil"></div><span class="kante"></span>
+        <figcaption><b>Vor dem Anlassen</b><span>ROTORKOPF &#183; DETAIL</span></figcaption></figure>
+    </div>
+
+    <div class="origin">
+      <figure class="shot"><div class="ph">{{SVG:_ph_dach}}</div>
+        {{IMG:landeplatz.jpg|Hubschrauber auf dem Landeplatz, Einweiser davor||(max-width:820px) 100vw, 660px}}
+        <div class="veil"></div><span class="kante"></span>
+        <figcaption><b>Einweisung am Landeplatz</b><span>VOR DEM START</span></figcaption></figure>
+      <div class="txt">
+        <span class="eyebrow" style="margin-bottom:16px">Woher das Zeichen kommt</span>
+        <h3>Der Hubschrauber steht auf einer Kante.</h3>
+        <p>Am Anfang stand das Foto eines Rettungshubschraubers auf dem Dach einer
+          Klinik. Nicht darüber schwebend, nicht daneben &#8212; auf der Kante stehend
+          und von ihr angeschnitten. Genau das ist das Zeichen.</p>
+        <p>Deshalb ist der Strich im Zeichen nicht waagerecht, sondern um 3,27&#176;
+          gekippt: genau so viel, dass die Unterkante des Hubschraubers exakt darauf
+          aufliegt.</p>
+        {{SVG:n1_kante|mk}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Wissensdatenbank ================= -->
+<section id="wissen">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Wissensdatenbank</span>
+      <h2>Der Teil, den man nicht wegklicken kann.</h2>
+      <p class="lede">46 Seiten Fachwissen in fünf Bereichen, geschrieben von Leuten,
+        die es im echten Leben machen. Das ist keine Beilage zum Fliegen &#8212; das ist
+        die Grundlage, auf der bei uns disponiert und geflogen wird.</p>
+    </div>
+    <div class="wissen">
+      <div class="links">
+        <h3 style="margin-bottom:14px">Und daran hängt die Ausbildung</h3>
+        <p style="color:var(--dim);font-size:15.5px">Zwei Grundkurse in Moodle, beide auf
+          der Startseite des Hubs.
+          <strong style="color:var(--tx)">P-1</strong> für Piloten: 85&nbsp;% zum
+          Bestehen, zwei Versuche, ein dritter erst nach zwei Wochen und nur auf Ticket.
+          <strong style="color:var(--tx)">D-1</strong> für Disponenten: 90&nbsp;%
+          &#8212; und davor die Frage nach beruflicher Erfahrung aus Rettungsdienst oder
+          Leitstelle.</p>
+        <p style="color:var(--dim);font-size:15.5px">Wer besteht, bekommt die Freigabe
+          automatisch, ohne dass jemand etwas von Hand freischalten muss. Wer zweimal
+          durchfällt und auch den dritten Versuch nicht besteht, fliegt bei uns nicht.</p>
+        <div class="zahl">
+          <div><b>46</b><span>Seiten</span></div>
+          <div><b>5</b><span>Bereiche</span></div>
+          <div><b>2</b><span>Grundkurse</span></div>
+        </div>
+        <div style="margin-top:26px">
+          <a class="btn ghost" href="https://docs.virtualairrescue.com" rel="noopener">Zur Wissensdatenbank</a>
+        </div>
+      </div>
+      <div class="rechts">
+        <div class="kapitel"><div class="kopf"><span class="n">01</span>
+          <b><a href="https://docs.virtualairrescue.com/pilotenbereich/how-to-pilot.html" rel="noopener">Pilotenbereich</a></b><span class="z">10 SEITEN</span></div>
+          <div class="seiten"><span>How-To Pilot</span><span>Addons</span>
+            <span>Standardplatzrunde</span><span>Luftraumstruktur</span>
+            <span>Navigation</span><span>Meteorologie</span><span>Reichweite</span>
+            <span>Steuerorgane</span><span>Über SOPs</span>
+            <span>H145-Checkliste</span></div></div>
+        <div class="kapitel"><div class="kopf"><span class="n">02</span>
+          <b><a href="https://docs.virtualairrescue.com/disponentenbereich/how-to-disponent.html" rel="noopener">Disponentenbereich</a></b><span class="z">3 SEITEN</span></div>
+          <div class="seiten"><span>How-To Disponent</span><span>Disposition</span>
+            <span>Stichworte</span></div></div>
+        <div class="kapitel"><div class="kopf"><span class="n">03</span>
+          <b><a href="https://docs.virtualairrescue.com/luftrettung/bos-funk/Grundlagen.html" rel="noopener">Luftrettung</a></b><span class="z">15 SEITEN</span></div>
+          <div class="seiten"><span>HEMS-TC</span><span>Notarzt</span>
+            <span>BOS-Funk Grundlagen</span><span>Funkverkehr</span><span>OPTA</span>
+            <span>Status</span><span>Funkbeispiel</span><span>Außenlandungen</span>
+            <span>Landestellen</span><span>Luftrettungszentren</span>
+            <span>Militär: Einführung</span><span>Militär: SOP</span>
+            <span>Schweiz: Organisation</span><span>Schweiz: Operationsbetrieb</span>
+            <span>Spitallexikon</span></div></div>
+        <div class="kapitel"><div class="kopf"><span class="n">04</span>
+          <b><a href="https://docs.virtualairrescue.com/var-systeme/webleitstelle.html" rel="noopener">VAR-Systeme</a></b><span class="z">7 SEITEN</span></div>
+          <div class="seiten"><span>Webleitstelle</span><span>Pilotenansicht</span>
+            <span>Mobile App-Alarmierung</span><span>Flugpläne und Landeplätze</span>
+            <span>R&amp;E: Voraussetzungen</span><span>R&amp;E: Einrichtung</span>
+            <span>R&amp;E: Fehlerbehebung</span></div></div>
+        <div class="kapitel"><div class="kopf"><span class="n">05</span>
+          <b><a href="https://docs.virtualairrescue.com/allgemein/team.html" rel="noopener">Allgemein</a></b><span class="z">4 SEITEN</span></div>
+          <div class="seiten"><span>VATSIM: Registrierung</span><span>VATSIM: Prefile</span>
+            <span>Live-Streaming</span><span>Team &amp; Struktur</span></div></div>
+        <div class="kapitel"><div class="kopf"><span class="n">&#183;</span>
+          <b><a href="https://docs.virtualairrescue.com/faq.html" rel="noopener">Dazu</a></b><span class="z">FREI STEHEND</span></div>
+          <div class="seiten"><span>FAQ</span><span>Mitwirken</span>
+            <span>VAR FAIR PLAY</span><span>Hubschraubertypen</span>
+            <span>Discord verknüpfen</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Mitmachen ================= -->
+<section id="mitmachen">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">In vier Schritten</span>
+      <h2>Bis zum ersten Einsatz vergeht ein Abend.</h2>
+    </div>
+    <div class="steps">
+      <div class="stp"><b>01</b><h3>Konto im Hub</h3>
+        <p>Anlegen auf hub.virtualairrescue.com — mit echter E-Mail, sie wird geprüft.
+          Discord verknüpfen, sonst gibt es keinen Support.</p></div>
+      <div class="stp"><b>02</b><h3>P-1 bestehen</h3>
+        <p>Der Grundkurs in Moodle: MRT &amp; DME, Status &amp; SDS, BOS-Funk, wie ein
+          Hubschrauber fliegt. 85&nbsp;% zum Bestehen, zwei Versuche.</p></div>
+      <div class="stp"><b>03</b><h3>Simulator und Client</h3>
+        <p>MSFS 2020/2024 oder X-Plane 11/12, mindestens ein Hubschrauber — empfohlen
+          HPG H145, kostenlos geht die H135. Der Client läuft nur unter Windows.</p></div>
+      <div class="stp"><b>04</b><h3>Station anmelden</h3>
+        <p>Im Tracker sehen, welche Station frei ist. Einloggen, Status 9 melden,
+          Status 2 setzen — und warten, dass der Melder geht.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pruefung" style="padding-top:0;border-top:0">
+  <div class="wrap">
+    <div class="gate" id="gate" style="margin-top:44px">
+      <div class="kopf">
+        <h3>Vor dem Anmelden: vier Fragen.</h3>
+        <p>Bei uns alarmiert dich ein Mensch, und du antwortest über Funk. Dafür
+          brauchst du die Statusmeldungen &#8212; sie sind das erste, was in jeder
+          Einweisung drankommt, und die ganze Leitstelle läuft darauf. Wenn du sie
+          hier hinbekommst, kennst du das Wichtigste vom ersten Flug an.</p>
+      </div>
+      <div class="fortschritt" id="g-fort"></div>
+      <div class="frage" id="g-frage">
+        <div class="zaehler" id="g-zaehler">Frage 1 von 3</div>
+        <div class="text" id="g-text"></div>
+        <div class="optionen" id="g-opt"></div>
+        <div class="hinweis" id="g-hinweis"></div>
+      </div>
+      <div class="fertig" id="g-fertig">
+        <h3>Das war es schon.</h3>
+        <p>Genau so meldest du dich künftig über Funk. Im Hub wartet der Grundkurs
+          P-1 mit dem Rest &#8212; Funkverkehr, Außenlandung, der Ablauf einer
+          Alarmierung &#8212; und am Ende ein Test in Moodle. 85&nbsp;%, zwei Versuche.
+          Wer besteht, ist freigeschaltet.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:26px">
+          <a class="btn" href="https://hub.virtualairrescue.com" rel="noopener">Jetzt registrieren</a>
+          <a class="btn ghost" href="#wissen">Erst weiterlesen</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="close">
+  <div class="wrap">
+    <h2>Der nächste Alarm läuft ohne dich.</h2>
+    <p>Oder eben nicht. Registrierung dauert zwei Minuten und kostet nichts.</p>
+    <a class="btn" href="#pruefung">Zur Anmeldung</a>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      {{SVG:lockup_v_neg|mk mk-dunkel}}{{SVG:lockup_v|mk mk-hell}}
+      <div style="max-width:34ch">Virtuelle Luftrettung im Flugsimulator.
+        Ein Gemeinschaftsprojekt, kein realer Rettungsdienst.</div>
+    </div>
+    <div class="lnk">
+      <a href="https://docs.virtualairrescue.com" rel="noopener">Wissensdatenbank</a>
+      <a href="https://docs.virtualairrescue.com/fair-play.html" rel="noopener">Fair Play</a>
+      <a href="https://hub.virtualairrescue.com" rel="noopener">Hub</a>
+      <a href="https://ops.virtualairrescue.com/tracker" rel="noopener">Tracker</a>
+      <a href="https://virtualairrescue.com/datenschutz/" rel="noopener">Datenschutz</a>
+      <a href="https://virtualairrescue.com/impressum/" rel="noopener">Impressum</a>
+    </div>
+  </div>
+  <div class="wrap"><div class="hint">Entwurf &#183; Livezahlen und Stationsnamen sind
+    Beispiele &#183; Fachangaben nach docs.virtualairrescue.com, Stand 28.08.2026</div></div>
+</footer>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Hell/Dunkel ----------
+     Drei Zustaende: ausdruecklich hell, ausdruecklich dunkel, und ohne Wahl --
+     dann entscheidet das Betriebssystem und die Seite hoert weiter auf dessen
+     Umschalten. `data-theme` steuert die Farben, `data-ist` nur das Sinnbild
+     auf dem Knopf und die Farben des Lagebilds. */
+  var wu = document.documentElement,
+      sysHell = matchMedia('(prefers-color-scheme: light)');
+
+  function effektiv(){
+    var w = wu.getAttribute('data-theme');
+    return w ? (w === 'light' ? 'hell' : 'dunkel') : (sysHell.matches ? 'hell' : 'dunkel');
+  }
+
+  function anwenden(){
+    var e = effektiv();
+    wu.setAttribute('data-ist', e === 'hell' ? 'light' : 'dark');
+    var k = document.getElementById('thema');
+    if (k) k.setAttribute('aria-label', e === 'hell'
+      ? 'Zum dunklen Erscheinungsbild wechseln'
+      : 'Zum hellen Erscheinungsbild wechseln');
+    palette();
+  }
+
+  var knopf = document.getElementById('thema');
+  if (knopf) knopf.addEventListener('click', function(){
+    var neu = effektiv() === 'hell' ? 'dunkel' : 'hell';
+    wu.setAttribute('data-theme', neu === 'hell' ? 'light' : 'dark');
+    try { localStorage.setItem('var-thema', neu); } catch (e) {}
+    anwenden();
+  });
+  /* Ohne eigene Wahl folgt die Seite dem System weiter. */
+  sysHell.addEventListener('change', function(){
+    if (!wu.getAttribute('data-theme')) anwenden();
+  });
+
+  /* ---------- Bilder, die es noch nicht gibt ----------
+     Solange eine Datei fehlt, bleibt der Platzhalter darunter sichtbar. */
+  [].forEach.call(document.querySelectorAll('.shot img'), function(im){
+    function hide(){ im.style.display = 'none'; }
+    im.addEventListener('error', hide);
+    if (im.complete && im.naturalWidth === 0) hide();
+  });
+
+  /* ---------- Zähler ----------
+     Die Breite hält jetzt schon `font-feature-settings: "lnum"` fest -- Uniforms
+     Tabellenziffern. Die Messung hier bleibt trotzdem: Sie greift, wenn Uniform
+     nicht lädt und eine Ersatzschrift einspringt, die keine gleich breiten
+     Ziffern hat. Gemessen wird erst nach `document.fonts.ready`, sonst steht da
+     die Breite der Ersatzschrift. */
+  function zaehler(){
+  document.querySelectorAll('[data-count]').forEach(function(el){
+    var to = +el.dataset.count;
+    el.style.display = 'inline-block';
+    el.textContent = to;
+    el.style.minWidth = Math.ceil(el.getBoundingClientRect().width) + 'px';
+    el.textContent = '0';
+    if (reduce){ el.textContent = to; return; }
+    var t0 = null, dur = 1100 + Math.random()*500;
+    function step(t){
+      if(!t0) t0 = t;
+      var k = Math.min(1, (t-t0)/dur), e = 1-Math.pow(1-k,3);
+      el.textContent = Math.round(to*e);
+      if(k<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(zaehler);
+  else zaehler();
+
+  /* ---------- Einsatzablauf ---------- */
+  var STEPS = [
+    ["Status 9","Eingeloggt — und die Leitstelle weiß es.",
+     "Der VAR-Client verbindet deinen Simulator mit der Leitstelle. Status 9 ist die Anmeldung im Funkverkehrsbereich; bei uns meldest du damit, dass du eingeloggt bist. Die Leitstelle quittiert mit der Anweisung u — verstanden. Das hält die Rufgruppe frei von Funksprechproben.",
+     ["Pilot","Leitstelle"],0],
+    ["Status 2","Der Hubschrauber steht, die Crew wartet.",
+     "Im Lagebild der Leitstelle erscheint dein Luftfahrzeug mit Funkrufname, Musterkennung und Reichweitenring. Status 2 heißt: am Heimatstandort alarmierbar. Wer nur unter Auflagen kann — Wetter, Tageszeit —, meldet stattdessen Status 5 und sagt es über Funk.",
+     ["Pilot","Leitstelle"],1],
+    ["Anweisung C","Ein Disponent legt einen Einsatz an.",
+     "Stichwort aus dem Katalog, Einsatzort auf der Karte, Angaben zum Patienten. Die Leitstelle sucht das nächstgelegene geeignete Rettungsmittel — Reichweite, Winde, Nachtflugfähigkeit — und alarmiert. Die Anweisung C fordert dich auf, die Übernahme zu quittieren.",
+     ["Leitstelle","Pilot"],2],
+    ["Status 3","Auftrag angenommen, du bist auf Anfahrt.",
+     "Du quittierst mit Status 3. Die Einsatzstelle erscheint als Objekt in deiner Simulatorwelt, die Koordinaten liegen im Client. Auf dem Lagebild zieht deine Spur los, alle Beteiligten sehen sie in Echtzeit.",
+     ["Pilot"],3],
+    ["Status 4","Angekommen. Jetzt wird es eng.",
+     "Landeplatzerkundung, Hindernisse, Wind, Zuschauer. Für die Leitstelle heißt Status 4: mit der Abarbeitung vor Ort beschäftigt und nur bedingt erreichbar. Außenlandung ist der Teil, den man am längsten übt — und der Grund, warum es eine eigene Seite in der Wissensdatenbank dafür gibt.",
+     ["Pilot","Crew"],4],
+    ["Status 7","Patient an Bord — nicht alarmierbar.",
+     "Status 7 heißt: Patient aufgenommen, einsatzgebunden. Ab hier bist du für die Leitstelle gebunden, bis der Einsatz endet.",
+     ["Crew","Leitstelle"],5],
+    ["Anweisung d","Welche Klinik — und weiß sie Bescheid?",
+     "Die Leitstelle sucht die passende Klinik: Fachabteilung, Entfernung, Dachlandeplatz oder bodengebundene Übergabe. Mit der Anweisung d fragt sie das Transportziel ab, mit h meldet sie zurück, dass die Zielklinik verständigt hat. Einen eigenen Status für das Transportziel gibt es nicht — die 8 bedeutet etwas anderes: bedingt verfügbar.",
+     ["Leitstelle","Crew"],6],
+    ["Status 1","Übergeben. Frei über Funk.",
+     "Nach der Übergabe meldest du Status 1: alarmierbar nach Rücksprache, abhängig vom Standort. Der Einsatz wird geschlossen und landet im Einsatzprotokoll. Zurück auf der Station folgt wieder die 2.",
+     ["Pilot","Leitstelle"],7]
+  ];
+  var rail = document.getElementById('rail');
+  var pSt = document.getElementById('p-st'), pH = document.getElementById('p-h'),
+      pP = document.getElementById('p-p'), pW = document.getElementById('p-w');
+  function show(i){
+    var s = STEPS[i];
+    pSt.textContent = s[0]; pH.textContent = s[1]; pP.textContent = s[2];
+    pW.innerHTML = s[3].map(function(c,k){
+      return '<span class="chip'+(k===0?' hot':'')+'">'+c+'</span>';
+    }).join('');
+    [].forEach.call(rail.children, function(li,k){ li.classList.toggle('on', k===i); });
+  }
+  rail.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(b) show(+b.dataset.i);
+  });
+
+  /* ---------- Stationen-Laufband ---------- */
+  var NAMES = [
+    ["Christoph","1 · München"],["Christoph","4 · Hannover"],["Christoph","6 · Bremen"],
+    ["Christoph","12 · Siblin"],["Christoph","22 · Ulm"],["Christoph","31 · Berlin"],
+    ["Christoph","51 · Stuttgart"],["Christoph Europa","5 · Niebüll"],
+    ["Rega","1 · Dübendorf"],["Rega","10 · Wilderswil"],["Air Zermatt","· Zermatt"],
+    ["Christophorus","1 · Wien"],["Christophorus","6 · Salzburg"],
+    ["Lifeliner","1 · Amsterdam"],["Luxembourg Air Rescue","· Findel"]
+  ];
+  var row = document.getElementById('mrow');
+  function bauen(stumm){
+    return NAMES.map(function(n){
+      return '<span'+(stumm ? ' aria-hidden="true"' : '')+'><b>'+n[0]+'</b> '+n[1]+'</span>';
+    }).join('');
+  }
+  /* Doppelt, damit die Schleife nahtlos läuft -- die zweite Kopie ist aber nur
+     Bildmaterial. Ohne aria-hidden liest ein Vorleser alle Stationen zweimal. */
+  row.innerHTML = bauen(false) + bauen(true);
+
+
+  /* ---------- Statusgruppen-Pruefung vor der Registrierung ---------- */
+  var FRAGEN = [
+    { t: 'Du hast dich gerade über den Client eingeloggt und willst der Leitstelle sagen, dass du da bist. Was setzt du?',
+      opt: ['0', '5', '9', '2'], ok: 2,
+      hilf: 'Status 9 ist die Fahrzeuganmeldung — bei der VAR die Meldung nach dem Einloggen. Die Leitstelle antwortet mit der Anweisung u, verstanden. Das hält die Rufgruppe frei von Funksprechproben.' },
+    { t: 'Die Leitstelle hat dich alarmiert, du hebst ab und fliegst die Einsatzstelle an. Welchen Status meldest du?',
+      opt: ['1', '3', '4', '7'], ok: 1,
+      hilf: 'Status 3 heißt: Einsatz übernommen, auf Anfahrt. Damit weiß die Leitstelle, dass du unterwegs bist — und ab dann läuft deine Spur über das Lagebild.' },
+    { t: 'Du bist gelandet, die Crew ist beim Patienten. Welcher Status geht jetzt raus?',
+      opt: ['4', '5', '8', '2'], ok: 0,
+      hilf: 'Status 4 bedeutet: Einsatzort an — mit der Abarbeitung vor Ort beschäftigt und nur bedingt erreichbar. Erst ab hier zählt die Zeit vor Ort, nicht mehr die Anfahrt.' },
+    { t: 'Der Patient ist an Bord und ihr fliegt die Klinik an. Was meldest du?',
+      opt: ['3', '6', '7', '1'], ok: 2,
+      hilf: 'Status 7 heißt: Patient aufgenommen, einsatzgebunden. Einen eigenen Status für das Transportziel gibt es nicht — das läuft über die Anweisungen d und h. Die 8 bedeutet etwas anderes: bedingt verfügbar. Nach der Übergabe meldest du die 1.' }
+  ];
+  /* eigene Kopie: FMS wird erst weiter unten im Lagebild zugewiesen */
+  var G_FARBE = { '0': 'rgb(140,10,10)', '1': 'rgb(10,134,25)', '2': 'rgb(10,134,25)',
+    '3': 'rgb(140,10,10)', '4': 'rgb(140,10,10)', '5': 'rgb(231,77,22)',
+    '6': 'rgb(85,85,85)', '7': 'rgb(140,10,10)', '8': 'rgb(186,105,0)',
+    '9': 'rgb(10,134,25)' };
+  var gIdx = 0;
+  var gEl = document.getElementById('gate');
+  if (gEl) {
+    var gFort = document.getElementById('g-fort'), gZ = document.getElementById('g-zaehler'),
+        gT = document.getElementById('g-text'), gO = document.getElementById('g-opt'),
+        gH = document.getElementById('g-hinweis'), gF = document.getElementById('g-frage'),
+        gFertig = document.getElementById('g-fertig');
+    FRAGEN.forEach(function () { gFort.appendChild(document.createElement('i')); });
+
+    function malen() {
+      var f = FRAGEN[gIdx];
+      gZ.textContent = 'Frage ' + (gIdx + 1) + ' von ' + FRAGEN.length;
+      gT.textContent = f.t;
+      gH.className = 'hinweis';
+      gO.innerHTML = '';
+      [].forEach.call(gFort.children, function (i, k) {
+        i.className = k < gIdx ? 'ok' : (k === gIdx ? 'jetzt' : '');
+      });
+      f.opt.forEach(function (nr, k) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'opt';
+        b.innerHTML = '<span class="zi" style="background:' +
+          (G_FARBE[nr] || '#3B4560') + '">' + nr + '</span>Status ' + nr;
+        b.addEventListener('click', function () { antwort(b, k, f); });
+        gO.appendChild(b);
+      });
+    }
+
+    function antwort(btn, k, f) {
+      [].forEach.call(gO.children, function (b) { b.disabled = true; });
+      btn.classList.add(k === f.ok ? 'richtig' : 'falsch');
+      if (k !== f.ok) gO.children[f.ok].classList.add('richtig');
+      gH.className = 'hinweis an';
+      gH.innerHTML = '<b>' + (k === f.ok ? 'Richtig.' : 'Nicht ganz.') + '</b>' +
+        f.hilf + ' <a href="#wissen">Nachlesen in der Wissensdatenbank &#8250;</a>';
+      setTimeout(function () {
+        gIdx++;
+        if (gIdx < FRAGEN.length) { malen(); }
+        else {
+          [].forEach.call(gFort.children, function (i) { i.className = 'ok'; });
+          gF.style.display = 'none';
+          gFertig.className = 'fertig an';
+        }
+      }, k === f.ok ? 1900 : 3600);
+    }
+    malen();
+  }
+
+  /* ---------- Lagebild ----------
+     Anmutung wie RescueTrack. Die Luftfahrzeuge laufen einen echten Einsatzzyklus
+     durch; Statusziffer und Farbe kommen aus FMS_STATUS_COLORS des Monorepos
+     (apps/dispatch/app/_helpers/fmsStatusColors.ts). */
+  var cv = document.getElementById('lage'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, dpr = Math.min(devicePixelRatio || 1, 2);
+
+  /* Die Karte hat im hellen Erscheinungsbild eine eigene Tafel -- eine dunkle
+     Karte unter navyfarbener Schrift waere nicht lesbar. Beide Saetze stehen
+     im Stylesheet, damit Farbe an einer Stelle gepflegt wird. */
+  var P = {};
+  function palette(){
+    var cs = getComputedStyle(document.documentElement);
+    function v(n, ers){ return (cs.getPropertyValue(n) || '').trim() || ers; }
+    P.land   = v('--karte-land', '#1E2A22');
+    P.weg    = v('--karte-weg', 'rgba(51,59,56,.55)');
+    P.bahn   = v('--karte-bahn', 'rgba(107,116,112,.38)');
+    P.lrz    = v('--karte-lrz', '#2FA3A0');
+    P.lrzBg  = v('--karte-lrz-fuell', 'rgba(8,20,16,.85)');
+    P.spur   = v('--karte-spur', '#46b7a3');
+    P.klinik = v('--karte-klinik', 'rgba(255,255,252,.72)');
+    P.klinikStrich = v('--karte-klinik-strich', 'rgba(255,255,252,.5)');
+  }
+  palette();
+
+  /* aus dem Monorepo uebernommen */
+  var FMS = {
+    '0': 'rgb(140,10,10)', '1': 'rgb(10,134,25)', '2': 'rgb(10,134,25)',
+    '3': 'rgb(140,10,10)', '4': 'rgb(140,10,10)', '5': 'rgb(231,77,22)',
+    '6': 'rgb(85,85,85)',  '7': 'rgb(140,10,10)', '8': 'rgb(186,105,0)',
+    '9': 'rgb(10,134,25)'
+  };
+
+  /* die hellen Gegenstuecke -- fuer Ziffer und Eckklammer */
+  var FMS_TX = {
+    '0': 'rgb(243,27,25)', '1': 'rgb(9,212,33)',  '2': 'rgb(9,212,33)',
+    '3': 'rgb(243,27,25)', '4': 'rgb(243,27,25)', '5': 'rgb(251,176,158)',
+    '6': 'rgb(153,153,153)','7': 'rgb(243,27,25)','8': 'rgb(255,143,0)',
+    '9': 'rgb(9,212,33)'
+  };
+
+  /* Ablauf eines Einsatzes: Status, Dauer in ms, wohin geflogen wird */
+  var ABLAUF = [
+    { st: '2', dauer: [5000, 14000], ziel: null      },  /* auf Wache          */
+    { st: '3', dauer: [9000, 13000], ziel: 'einsatz' },  /* Einsatz uebernommen */
+    { st: '4', dauer: [5000,  8000], ziel: null      },  /* am Einsatzort       */
+    { st: '7', dauer: [8000, 12000], ziel: 'klinik'  },  /* Patient an Bord     */
+    { st: '8', dauer: [4000,  7000], ziel: null      },  /* am Transportziel    */
+    { st: '1', dauer: [8000, 12000], ziel: 'station' }   /* frei, Rueckflug     */
+  ];
+
+  var FLOTTE = [
+    'Christoph 51', 'Rega 10', 'Christophorus 3', 'Christoph 22', 'Lifeliner 1'
+  ];
+
+  var STATIONEN = [], KLINIKEN = [], ROADS = [], LFZ = [];
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(a) { return a[(Math.random() * a.length) | 0]; }
+
+  function seed() {
+    STATIONEN = []; KLINIKEN = []; ROADS = []; LFZ = [];
+    var i, j;
+    for (i = 0; i < 16; i++) {
+      var x = rnd(0, W), y = rnd(0, H), ang = rnd(0, 6.283), p = [[x, y]];
+      for (j = 0; j < 5; j++) {
+        ang += rnd(-0.55, 0.55);
+        x += Math.cos(ang) * Math.min(W, H) * 0.14;
+        y += Math.sin(ang) * Math.min(W, H) * 0.14;
+        p.push([x, y]);
+      }
+      ROADS.push({ p: p, big: i < 4 });
+    }
+    var n = Math.max(4, Math.round(W / 300));
+    for (i = 0; i < n; i++) STATIONEN.push({ x: rnd(0.34, 0.98) * W, y: rnd(0.10, 0.92) * H });
+    for (i = 0; i < 3; i++) KLINIKEN.push({ x: rnd(0.36, 0.96) * W, y: rnd(0.12, 0.90) * H });
+
+    var namen = FLOTTE.slice();
+    for (i = 0; i < Math.min(4, STATIONEN.length); i++) {
+      var heim = STATIONEN[i % STATIONEN.length];
+      LFZ.push({
+        nm: namen.splice((Math.random() * namen.length) | 0, 1)[0],
+        heim: heim, x: heim.x, y: heim.y, von: null, nach: null,
+        phase: (Math.random() * ABLAUF.length) | 0, t: 0, dauer: rnd(2000, 9000),
+        spur: [], einsatz: null, klinik: null, blitz: 0, ang: 0
+      });
+    }
+    LFZ.forEach(starte);
+  }
+
+  function starte(a) {
+    var p = ABLAUF[a.phase];
+    a.dauer = rnd(p.dauer[0], p.dauer[1]);
+    a.t = 0;
+    a.blitz = 1;
+    if (p.ziel === 'einsatz') {
+      a.einsatz = { x: rnd(0.34, 0.98) * W, y: rnd(0.10, 0.92) * H };
+      a.von = { x: a.x, y: a.y }; a.nach = a.einsatz; a.spur = [];
+    } else if (p.ziel === 'klinik') {
+      a.klinik = pick(KLINIKEN);
+      a.von = { x: a.x, y: a.y }; a.nach = a.klinik; a.spur = [];
+    } else if (p.ziel === 'station') {
+      a.von = { x: a.x, y: a.y }; a.nach = a.heim; a.spur = [];
+    } else {
+      a.von = null; a.nach = null;
+    }
+  }
+
+  function schritt(a, dt) {
+    a.t += dt;
+    if (a.nach) {
+      var k = Math.min(1, a.t / a.dauer);
+      var e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;   /* weich an/ab */
+      a.x = a.von.x + (a.nach.x - a.von.x) * e;
+      a.y = a.von.y + (a.nach.y - a.von.y) * e;
+      a.ang = Math.atan2(a.nach.y - a.von.y, a.nach.x - a.von.x);
+      a.spur.push([a.x, a.y]);
+      if (a.spur.length > 260) a.spur.shift();
+    }
+    if (a.blitz > 0) a.blitz = Math.max(0, a.blitz - dt / 900);
+    if (a.t >= a.dauer) {
+      a.phase = (a.phase + 1) % ABLAUF.length;
+      if (a.phase === 0) { a.einsatz = null; a.klinik = null; a.spur = []; }
+      starte(a);
+    }
+  }
+
+  function fahne(a) {
+    /* Nach getMarkerHTML aus AircraftMarker.tsx: das Tag IST das Luftfahrzeug.
+       Kein eigenes Symbol -- nur eine Eckklammer, die auf die Position zeigt. */
+    var st = ABLAUF[a.phase].st, bg = FMS[st], tx = FMS_TX[st];
+    var fs = 13, numw = 15, gap = 7, pad = 8, hgt = 22;
+    ctx.font = '600 ' + fs + 'px Uniform, system-ui, sans-serif';
+    var nmw = ctx.measureText(a.nm).width;
+    var bw = pad + numw + gap + nmw + pad;
+
+    /* Quadrant waehlen, damit das Tag im Bild bleibt */
+    var rechts = a.x < W - bw - 30, unten = a.y < H - hgt - 30;
+    var ox = rechts ? a.x : a.x - bw;
+    var oy = unten ? a.y : a.y - hgt;
+
+    if (a.blitz > 0) {
+      ctx.globalAlpha = a.blitz * 0.5; ctx.fillStyle = tx;
+      ctx.fillRect(ox - 5, oy - 5, bw + 10, hgt + 10); ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle = bg; ctx.fillRect(ox, oy, bw, hgt);
+
+    /* Eckklammer: zwei 3-px-Kanten in der Ecke, die an der Position sitzt */
+    ctx.fillStyle = tx;
+    var cx = rechts ? ox : ox + bw - 16, cy = unten ? oy : oy + hgt - 16;
+    if (rechts) ctx.fillRect(ox, cy, 3, 16); else ctx.fillRect(ox + bw - 3, cy, 3, 16);
+    if (unten)  ctx.fillRect(cx, oy, 16, 3); else ctx.fillRect(cx, oy + hgt - 3, 16, 3);
+
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center'; ctx.fillStyle = tx;
+    ctx.font = '700 15px Uniform, system-ui, sans-serif';
+    ctx.fillText(st, ox + pad + numw / 2, oy + hgt / 2 + 0.5);
+    ctx.textAlign = 'left'; ctx.fillStyle = '#fff';
+    ctx.font = '600 ' + fs + 'px Uniform, system-ui, sans-serif';
+    ctx.fillText(a.nm, ox + pad + numw + gap, oy + hgt / 2 + 0.5);
+  }
+
+  function klinik(k) {
+    ctx.strokeStyle = P.klinikStrich; ctx.lineWidth = 1.4;
+    ctx.strokeRect(k.x - 8, k.y - 8, 16, 16);
+    ctx.fillStyle = P.klinik;
+    ctx.font = 'bold 11px Uniform, system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('H', k.x, k.y + 0.5);
+  }
+
+  function skaliere(fx, fy) {
+    function s(o) { if (o) { o.x *= fx; o.y *= fy; } }
+    STATIONEN.forEach(s); KLINIKEN.forEach(s);
+    ROADS.forEach(function (r) { r.p.forEach(function (q) { q[0] *= fx; q[1] *= fy; }); });
+    LFZ.forEach(function (a) {
+      s(a); s(a.heim); s(a.von); s(a.nach); s(a.einsatz); s(a.klinik);
+      a.spur.forEach(function (q) { q[0] *= fx; q[1] *= fy; });
+    });
+  }
+
+  /* Auf dem Telefon ändert sich die Fensterhöhe beim Scrollen ständig, weil die
+     Adressleiste ein- und ausfährt. Bei jedem resize neu zu würfeln ließ die
+     Luftfahrzeuge springen. Jetzt wird nur beim ersten Mal gewürfelt und sonst
+     mitskaliert -- die Karte bleibt dieselbe, sie passt sich nur an. */
+  function size(erstmalig) {
+    var r = cv.getBoundingClientRect();
+    var altW = W, altH = H;
+    W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (erstmalig || !altW || !altH) seed();
+    else skaliere(W / altW, H / altH);
+  }
+
+  var vorher = 0;
+  function draw(now) {
+    var dt = Math.min(64, now - vorher || 16); vorher = now;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = P.land; ctx.fillRect(0, 0, W, H);
+
+    ROADS.forEach(function (r) {
+      ctx.beginPath();
+      r.p.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); });
+      ctx.strokeStyle = r.big ? P.bahn : P.weg;
+      ctx.lineWidth = r.big ? 1.7 : 1; ctx.stroke();
+    });
+
+    STATIONEN.forEach(function (s) {
+      /* Luftrettungszentrum */
+      ctx.fillStyle = P.lrzBg;
+      ctx.fillRect(s.x - 9, s.y - 9, 18, 18);
+      ctx.strokeStyle = P.lrz; ctx.lineWidth = 1.5;
+      ctx.strokeRect(s.x - 8.5, s.y - 8.5, 17, 17);
+      ctx.fillStyle = P.lrz;
+      ctx.fillRect(s.x - 1.5, s.y - 5, 3, 10);
+      ctx.fillRect(s.x - 5, s.y - 1.5, 10, 3);
+    });
+    KLINIKEN.forEach(klinik);
+
+    LFZ.forEach(function (a) {
+      if (!reduce) schritt(a, dt);
+      if (a.einsatz) {
+        var p = (Math.sin(now / 500) + 1) / 2;
+        ctx.strokeStyle = 'rgba(217,59,52,' + (0.75 - 0.4 * p) + ')'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(a.einsatz.x, a.einsatz.y, 9 + 7 * p, 0, 6.2832); ctx.stroke();
+        ctx.fillStyle = '#D93B34';
+        ctx.beginPath(); ctx.arc(a.einsatz.x, a.einsatz.y, 3, 0, 6.2832); ctx.fill();
+      }
+      if (a.spur.length > 1) {
+        ctx.beginPath();
+        a.spur.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); });
+        ctx.strokeStyle = P.spur; ctx.lineWidth = 1.6; ctx.stroke();
+      }
+      fahne(a);
+    });
+
+    if (sichtbar) requestAnimationFrame(draw);
+  }
+
+  /* Das Lagebild zeichnete bisher weiter, auch acht Abschnitte tiefer -- rund
+     60 Bilder je Sekunde fuer etwas, das niemand sieht. Dasselbe gilt fuer das
+     Stationen-Laufband. Beides ruht jetzt ausserhalb des Blickfelds. */
+  var sichtbar = true;
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function (e) {
+      var jetzt = e[0].isIntersecting;
+      if (jetzt && !sichtbar) { sichtbar = true; vorher = 0; requestAnimationFrame(draw); }
+      else { sichtbar = jetzt; }
+    }, { rootMargin: '140px' }).observe(cv);
+
+    var lauf = document.querySelector('.marquee');
+    if (lauf) new IntersectionObserver(function (e) {
+      lauf.classList.toggle('ruht', !e[0].isIntersecting);
+    }, { rootMargin: '140px' }).observe(lauf);
+  }
+
+  size(true);
+  var warte = 0;
+  addEventListener('resize', function () {
+    clearTimeout(warte);
+    warte = setTimeout(function () { size(false); }, 120);
+  });
+  anwenden();
+  /* ---------- Die Marke zieht sich beim Scrollen zurueck ----------
+     Oben soll sie gross sein, beim Lesen nicht im Weg. Umgeschaltet wird
+     einmalig ueber eine Klasse, nicht bei jedem Scroll-Ereignis -- sonst
+     rechnet der Browser dauernd Layout nach. */
+  (function () {
+    var kopf = document.querySelector('header');
+    if (!kopf) return;
+    var eng = false;
+    function pruefe() {
+      var soll = scrollY > 90;
+      if (soll !== eng) { eng = soll; kopf.classList.toggle('eng', eng); }
+    }
+    addEventListener('scroll', pruefe, { passive: true });
+    pruefe();
+  })();
+
+  /* ---------- Livekarte ----------
+     Die einzige Stelle der Seite, die etwas nachlaedt. Alles andere steht in
+     der Datei.
+
+     Eingebacken ist der unbewegliche Teil: Laenderumrisse und Stationen, aus
+     `web/karte.json` (erzeugt von brand/werkzeug/livekarte.py). Damit steht die
+     Karte sofort und bleibt auch dann brauchbar, wenn die Leitstelle nicht
+     antwortet -- man sieht dann das Netz, nur keine Luftfahrzeuge.
+
+     **Was hier bewusst NICHT gelesen wird:** `publicUser`. Das Feld liegt in der
+     Antwort der Leitstelle und enthaelt Vorname, abgekuerzten Nachnamen und
+     Mitgliedsnummer. Auf der oeffentlichen Website hat das nichts zu suchen.
+     Gelesen werden nur Funkrufname der Station, Status und Position. */
+  var KARTE = {{JSON:karte.json}};
+
+  /* Woher die Luftfahrzeuge kommen.
+
+     Die Liste wird der Reihe nach durchprobiert, die erste Antwort gewinnt und
+     wird fuer die Sitzung gemerkt. So funktioniert die Karte, sobald **eine**
+     der drei Moeglichkeiten steht -- ohne dass die Seite neu gebaut werden muss:
+
+       1. gleiche Herkunft -- greift, sobald der Webserver oder ein Worker
+          `/api/live` auf die Leitstelle weiterreicht. Braucht kein CORS.
+       2. die schlanke oeffentliche Route der Leitstelle.
+       3. die bestehende Route -- greift, sobald dort CORS gesetzt ist.
+
+     Warum es nicht schon laeuft: Punkt 3 antwortet zwar, schickt aber kein
+     `Access-Control-Allow-Origin`. Ein Browser auf virtualairrescue.com darf
+     die Antwort deshalb nicht lesen -- der Server sieht das gar nicht, das
+     passiert im Browser. */
+  var LIVE_QUELLEN = [
+    '/api/live',
+    'https://ops.virtualairrescue.com/api/aircrafts/public',
+    'https://ops.virtualairrescue.com/api/aircrafts'
+  ];
+  var LIVE_TAKT = 30000;
+
+  (function () {
+    var svg = document.getElementById('lk');
+    if (!svg || !KARTE) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var P = KARTE.proj;
+    svg.setAttribute('viewBox', '0 0 ' + P.breite + ' ' + P.hoehe);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+    function el(name, attrs, klasse) {
+      var e = document.createElementNS(NS, name);
+      if (klasse) e.setAttribute('class', klasse);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      return e;
+    }
+
+    /* --- unbeweglicher Teil, einmal --- */
+    var gLand = el('g');
+    KARTE.laender.forEach(function (l) {
+      gLand.appendChild(el('path', { d: l.d }, 'lk-land' + (l.e ? ' ein' : '')));
+    });
+    svg.appendChild(gLand);
+
+    var gStat = el('g');
+    KARTE.stationen.forEach(function (st) {
+      gStat.appendChild(el('rect', { x: st[2] - 2.5, y: st[3] - 2.5, width: 5, height: 5 },
+                           'lk-stat'));
+    });
+    svg.appendChild(gStat);
+
+    var gLfz = el('g');
+    svg.appendChild(gLfz);
+
+    /* --- Projektion, dieselbe wie beim Erzeugen --- */
+    function merc(lat) { return Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)); }
+    function proj(lon, lat) {
+      return [(lon - P.lon0) / (P.lon1 - P.lon0) * P.breite,
+              (P.yOben - merc(lat)) / P.spanneY * P.hoehe];
+    }
+
+    /* --- Eine Antwort auf das reduzieren, was gezeigt wird ---
+       Absichtlich nachsichtig: die Route kann die schlanke Fassung liefern oder
+       den Datensatz der Leitstelle. In beiden Faellen werden nur diese Felder
+       angefasst, nie `publicUser`. */
+    function schlank(a) {
+      var stat = a.Station || a.station || {};
+      return {
+        status: String(a.status != null ? a.status : (a.fmsStatus != null ? a.fmsStatus : '6')),
+        name: a.rufname || (typeof stat === 'string' ? stat : stat.bosCallsign) || 'Unbekannt',
+        muster: a.muster || stat.aircraft || '',
+        lat: a.lat != null ? a.lat : a.posLat,
+        lon: a.lon != null ? a.lon : a.posLng
+      };
+    }
+
+    /* --- Zeichnen --- */
+    var FARBE = FMS, HELL = FMS_TX;
+
+    function zeichne(liste) {
+      while (gLfz.firstChild) gLfz.removeChild(gLfz.firstChild);
+      if (!liste.length) {
+        var leer = el('text', { x: P.breite / 2, y: P.hoehe / 2 }, 'lk-leer');
+        leer.textContent = 'Gerade ist niemand in der Luft.';
+        gLfz.appendChild(leer);
+        return;
+      }
+      liste.forEach(function (a) {
+        if (a.lat == null || a.lon == null) return;
+        var q = proj(a.lon, a.lat);
+        if (q[0] < 0 || q[1] < 0 || q[0] > P.breite || q[1] > P.hoehe) return;
+
+        var g = el('g', {}, 'lk-tag');
+        var bg = FARBE[a.status] || 'rgb(85,85,85)';
+        var tx = HELL[a.status] || 'rgb(153,153,153)';
+
+        /* Erst setzen, dann messen -- die Breite haengt am Text. */
+        var nr = el('text', { fill: tx, x: 0, y: 0 }, 'lk-nr');
+        nr.textContent = a.status;
+        var nm = el('text', { x: 0, y: 0 }, 'lk-nm');
+        nm.textContent = a.name;
+        g.appendChild(nr); g.appendChild(nm);
+        gLfz.appendChild(g);
+
+        var wNr = nr.getComputedTextLength(), wNm = nm.getComputedTextLength();
+        var pad = 8, luecke = 7, hoehe = 22;
+        var breite = pad + wNr + luecke + wNm + pad;
+
+        /* Ins Bild drehen, wenn rechts oder unten kein Platz mehr ist. */
+        var rechts = q[0] < P.breite - breite - 20, unten = q[1] < P.hoehe - hoehe - 20;
+        var ox = rechts ? q[0] : q[0] - breite;
+        var oy = unten ? q[1] : q[1] - hoehe;
+
+        var kasten = el('rect', { x: ox, y: oy, width: breite, height: hoehe, fill: bg });
+        g.insertBefore(kasten, nr);
+
+        /* Eckklammer wie im Lagebild: sie zeigt auf die Position. */
+        var cx = rechts ? ox : ox + breite - 16, cy = unten ? oy : oy + hoehe - 16;
+        g.insertBefore(el('rect', { x: rechts ? ox : ox + breite - 3, y: cy,
+                                    width: 3, height: 16, fill: tx }), nr);
+        g.insertBefore(el('rect', { x: cx, y: unten ? oy : oy + hoehe - 3,
+                                    width: 16, height: 3, fill: tx }), nr);
+
+        nr.setAttribute('x', ox + pad); nr.setAttribute('y', oy + hoehe / 2);
+        nm.setAttribute('x', ox + pad + wNr + luecke); nm.setAttribute('y', oy + hoehe / 2);
+
+        var titel = el('title');
+        titel.textContent = a.name + ' \u2014 Status ' + a.status + (a.muster ? ', ' + a.muster : '');
+        g.appendChild(titel);
+      });
+    }
+
+    /* --- Liste --- */
+    var kopf = document.getElementById('l-kopf');
+    var alter = document.getElementById('l-alter');
+    var liste = document.getElementById('l-liste');
+
+    function schreibe(daten, stand) {
+      if (!daten) {
+        kopf.textContent = 'Live-Daten nicht abrufbar';
+        alter.textContent = '';
+        liste.innerHTML = '<div class="l-hinweis"><b>Das Netz siehst du trotzdem.</b>' +
+          'Die Karte zeigt alle ' + KARTE.stationen.length + ' Stationen. Wer gerade ' +
+          'fliegt, steht im <a href="https://ops.virtualairrescue.com/tracker" ' +
+          'rel="noopener">Tracker</a>.</div>';
+        zeichne([]);
+        return;
+      }
+      kopf.textContent = daten.length
+        ? 'Online \u00b7 ' + daten.length + (daten.length === 1 ? ' Luftfahrzeug' : ' Luftfahrzeuge')
+        : 'Gerade niemand in der Luft';
+      alter.textContent = stand;
+      liste.innerHTML = daten.map(function (a) {
+        return '<div class="lrow"><span class="num" style="background:' +
+          (FARBE[a.status] || 'rgb(85,85,85)') + '">' + a.status + '</span><div>' +
+          '<div class="nm">' + esc(a.name) + '</div>' +
+          '<div class="sub">Status ' + esc(a.status) +
+          (a.muster ? ' \u00b7 <b>' + esc(a.muster) + '</b>' : '') + '</div></div></div>';
+      }).join('') || '<div class="l-hinweis">Die Stationen sind besetzt, sobald sich jemand ' +
+        'anmeldet. Bis dahin zeigt die Karte nur das Netz.</div>';
+      zeichne(daten);
+    }
+
+    function esc(t) {
+      return String(t).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+
+    function uhrzeit() {
+      var d = new Date();
+      return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    }
+
+    /* --- Abruf --- */
+    var laeuft = false, timer = 0, sichtbar = true, gemerkt = null;
+
+    function versuch(quelle) {
+      var ab = new AbortController();
+      var kappe = setTimeout(function () { ab.abort(); }, 8000);
+      return fetch(quelle, { signal: ab.signal, mode: 'cors', credentials: 'omit' })
+        .then(function (r) {
+          clearTimeout(kappe);
+          if (!r.ok) throw new Error(r.status);
+          return r.json();
+        })
+        .then(function (j) {
+          var arr = Array.isArray(j) ? j : (j && j.data) || [];
+          if (!Array.isArray(arr)) throw new Error('unerwartete Antwort');
+          return arr;
+        }, function (e) { clearTimeout(kappe); throw e; });
+    }
+
+    function hole() {
+      if (laeuft || !sichtbar || document.hidden) return;
+      laeuft = true;
+      var kette = gemerkt ? [gemerkt] : LIVE_QUELLEN.slice();
+      (function naechste() {
+        if (!kette.length) {
+          /* Alle durch. Falls eine gemerkte Quelle ausgefallen ist, beim
+             naechsten Mal wieder alle probieren. */
+          gemerkt = null;
+          schreibe(null);
+          laeuft = false;
+          return;
+        }
+        var q = kette.shift();
+        versuch(q).then(function (arr) {
+          gemerkt = q;
+          /* Dieselbe Regel wie in der Wissensdatenbank: Test- und
+             Platzhalterstationen gehoeren nicht auf die oeffentliche Seite.
+             Im Bestand stehen `NICHT NUTZEN ARA 3` und `Christoph Dev 1/2`. */
+          var echt = arr.map(schlank).filter(function (a) {
+            return !/NICHT NUTZEN|DEV[ ]*[0-9]|(^|[ ])Test([ ]|$)/i.test(a.name);
+          });
+          schreibe(echt, 'Stand ' + uhrzeit());
+          laeuft = false;
+        }, naechste);
+      })();
+    }
+
+    /* Nur abrufen, solange der Abschnitt zu sehen ist. Eine Seite, die im
+       Hintergrund alle 30 Sekunden fragt, ist unhoeflich. */
+    var abschnitt = document.getElementById('live');
+    if (window.IntersectionObserver && abschnitt) {
+      new IntersectionObserver(function (e) {
+        sichtbar = e[0].isIntersecting;
+        if (sichtbar) hole();
+      }, { rootMargin: '200px' }).observe(abschnitt);
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) hole();
+    });
+
+    zeichne([]);
+    hole();
+    timer = setInterval(hole, LIVE_TAKT);
+  })();
+
+  requestAnimationFrame(draw);
+})();
+</script>
