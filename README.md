@@ -12,7 +12,8 @@ eingebettet. Die SVG ist immer der Master, PNGs entstehen aus ihr, nie umgekehrt
     profilbilder/  Grundfassung, 11 Sondereditionen, 5 davon animiert, Vorlage
     reel/          6 Overlays für das Einsatz-Tagebuch plus leere Vorlage
     vorlagen/      22 Formate für Social Media, Video und Stream, dazu 18
-                   Event-Vorlagen (`event_*`)
+                   Event-Vorlagen und Event-Banner (`event_*`)
+    EVENT-IDEEN.md zwölf Eventformate mit der Vorlage, die sie trägt
     herleitung/    Foto, Entwurf, heutiges Logo, sechs Falschanwendungen
     karte/         Lagebild und Livekarte in RescueTrack-Anmutung
     png/           512 · 256 · 128 · 64 · 32 · 16
@@ -209,6 +210,34 @@ steht groß, das Datum als Marke daneben.
 Neu bauen, mit eigenen Bildern:
 
     python werkzeug/events.py --fotos <ordner>
+
+### Event-Banner
+
+`werkzeug/event_banner.py` erzeugt drei weitere Bauarten, die aus den bisherigen
+Aushängen stammen:
+
+**Gebietskarte** — ein Bundesland oder Land als Silhouette, darin die Stationen
+als Marker. Die Umrisse liegen in `werkzeug/gebiete.json`, **22 Gebiete**: alle
+sechzehn Bundesländer sowie DE, AT, CH, NL, LU und IT. Neu erzeugen:
+
+    python werkzeug/gebiete.py     # lädt 38 MB von Natural Earth
+
+Die Zuordnung Station → Gebiet läuft über eine Punktprobe im Polygon, nicht über
+ein umschließendes Rechteck: die Rechtecke von Bayern und Baden-Württemberg
+überlappen sich beträchtlich. Ab etwa vierzig Stationen auf engem Raum fallen
+die Nummern weg — beschriftete Kreise überdecken sich dort gegenseitig, und die
+Nummer liest ohnehin niemand mehr.
+
+**Treffpunkt** — Zulu und lokal nebeneinander, fester Platz fürs Partnerlogo.
+Auf dem flachen Discord-Titelbild entfällt das Partnerfeld: Foto, Feld, zwei
+Zeiten, Datumsmarke und Schlagzeile passen auf 320 Zeilen nicht nebeneinander,
+und ein zusammengedrücktes Bild ist schlechter als keines.
+
+**Reihe** — ein Schriftzug für eine benannte Eventreihe, ohne Foto. Der Versatz
+zwischen den beiden Wörtern kommt aus dem Markenwinkel; Schlagschatten und
+Leuchten stehen im Brandbook unter den Falschanwendungen.
+
+Was es damit anzufangen gibt, steht in [`EVENT-IDEEN.md`](EVENT-IDEEN.md).
 
 Jede Zeile wird auf ihre verfügbare Breite geprüft und notfalls verkleinert.
 Ohne das lief bei 1080 Breite die zweite Schlagzeile aus dem Bild

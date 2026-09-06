@@ -178,6 +178,25 @@ EVENTS = [
      "Plakat &middot; Serie", "Instagram"),
 ]
 
+BANNER = [
+    ("vorlagen/event_gebiet_bw_discord_ankuendigung_flaeche.svg",
+     "Gebiet &middot; Fl&auml;che", "Silhouette und Stationsmarker"),
+    ("vorlagen/event_gebiet_bw_discord_ankuendigung_foto.svg",
+     "Gebiet &middot; Foto", "Bild in die Form geschnitten"),
+    ("vorlagen/event_gebiet_at_discord_ankuendigung_flaeche.svg",
+     "Gebiet &middot; dicht", "ab 40 Stationen ohne Nummern"),
+    ("vorlagen/event_treffpunkt_discord_ankuendigung.svg",
+     "Treffpunkt", "Zulu und lokal, Partnerfeld"),
+    ("vorlagen/event_reihe_discord_ankuendigung.svg",
+     "Reihe", "Schriftzug statt Foto"),
+    ("vorlagen/event_reihe_discord_ankuendigung_invers.svg",
+     "Reihe invers", "auf Gold"),
+    ("vorlagen/event_gebiet_bw_instagram_flaeche.svg",
+     "Gebiet 4:5", "Karte oben, Text darunter"),
+    ("vorlagen/event_treffpunkt_instagram.svg",
+     "Treffpunkt 4:5", "Bild oben, Angaben darunter"),
+]
+
 REEL = [("reel/tb_1_alarmierung.svg", "1 &middot; Alarmierung", "Einsatz geht ein"),
         ("reel/tb_2_ausruecken.svg", "2 &middot; Ausr&uuml;cken", "Start"),
         ("reel/tb_3_ankommen.svg", "3 &middot; Ankommen", "Einsatzstelle"),
@@ -288,6 +307,7 @@ rep = {
     "{{PB}}": grid(PB, "g6", "plain"),
     "{{VORLAGEN}}": grid(VORLAGEN, "g4", "plain"),
     "{{EVENTS}}": grid(EVENTS, "g4", "plain"),
+    "{{BANNER}}": grid(BANNER, "g4", "plain"),
     "{{REEL}}": grid(REEL, "g4", "plain"),
     "{{KARTE}}": grid(KARTE, "g3", "plain"),
     "{{EVO}}": grid(EVO, "g2", "plain"),
