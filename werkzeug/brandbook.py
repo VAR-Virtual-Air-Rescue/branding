@@ -152,30 +152,20 @@ VORLAGEN = [
 # nach Machart, nicht nach Format -- wer eine Ankuendigung schreibt, waehlt
 # zuerst, wie sie aussehen soll.
 EVENTS = [
-    ("vorlagen/event_discord_titel_wiederkehrend_a_depesche.svg",
-     "Depesche &middot; Serie", "Discord-Titelbild 800&times;320"),
-    ("vorlagen/event_discord_titel_special_a_depesche.svg",
-     "Depesche &middot; Special", "Discord-Titelbild"),
-    ("vorlagen/event_discord_titel_wiederkehrend_b_bild.svg",
-     "Bild &middot; Serie", "Discord-Titelbild"),
-    ("vorlagen/event_discord_titel_special_c_plakat.svg",
-     "Plakat &middot; Special", "Discord-Titelbild"),
-    ("vorlagen/event_discord_ankuendigung_special_a_depesche.svg",
-     "Depesche &middot; Special", "Ank&uuml;ndigung 1200&times;630"),
-    ("vorlagen/event_discord_ankuendigung_wiederkehrend_b_bild.svg",
-     "Bild &middot; Serie", "Ank&uuml;ndigung"),
-    ("vorlagen/event_discord_ankuendigung_special_c_plakat.svg",
-     "Plakat &middot; Special", "Ank&uuml;ndigung"),
-    ("vorlagen/event_discord_ankuendigung_wiederkehrend_c_plakat.svg",
-     "Plakat &middot; Serie", "Ank&uuml;ndigung"),
+    # Sechs statt zwoelf: drei Macharten mal zwei Anlassarten. Dass es jede in
+    # drei Zuschnitten gibt, steht im Text -- abgebildet erklaert es nichts.
+    ("vorlagen/event_instagram_wiederkehrend_a_depesche.svg",
+     "Depesche &middot; Serie", "viele Angaben, kein Bild"),
     ("vorlagen/event_instagram_special_a_depesche.svg",
-     "Depesche &middot; Special", "Instagram 1080&times;1350"),
+     "Depesche &middot; Special", "dieselbe Machart, anderer Anlass"),
+    ("vorlagen/event_discord_ankuendigung_wiederkehrend_b_bild.svg",
+     "Bild &middot; Serie", "Stimmung, wenig Text"),
     ("vorlagen/event_instagram_special_b_bild.svg",
-     "Bild &middot; Special", "Instagram"),
-    ("vorlagen/event_instagram_wiederkehrend_b_bild.svg",
-     "Bild &middot; Serie", "Instagram"),
-    ("vorlagen/event_instagram_wiederkehrend_c_plakat.svg",
-     "Plakat &middot; Serie", "Instagram"),
+     "Bild &middot; Special", "Schlagzeile gross, Datum daneben"),
+    ("vorlagen/event_discord_titel_wiederkehrend_c_plakat.svg",
+     "Plakat &middot; Serie", "der Wochentag traegt"),
+    ("vorlagen/event_instagram_special_c_plakat.svg",
+     "Plakat &middot; Special", "das Datum traegt"),
 ]
 
 # Ein Banner je Anlass -- acht Signaturen nebeneinander. Der Abschnitt lebt
@@ -211,12 +201,6 @@ BANNER = [
      "Treffpunkt", "Zulu und lokal, Partnerfeld"),
     ("vorlagen/event_reihe_discord_ankuendigung.svg",
      "Reihe", "Schriftzug statt Foto"),
-    ("vorlagen/event_reihe_discord_ankuendigung_invers.svg",
-     "Reihe invers", "auf Gold"),
-    ("vorlagen/event_gebiet_bw_instagram_flaeche.svg",
-     "Gebiet 4:5", "Karte oben, Text darunter"),
-    ("vorlagen/event_treffpunkt_instagram.svg",
-     "Treffpunkt 4:5", "Bild oben, Angaben darunter"),
 ]
 
 REEL = [("reel/tb_1_alarmierung.svg", "1 &middot; Alarmierung", "Einsatz geht ein"),
@@ -260,7 +244,7 @@ KONTRAST = [("Ivory auf Stratos", "18,37", "Flie&szlig;text, &Uuml;berschriften,
             ("Galliano auf Ivory", "2,27", "nur Fl&auml;chen und Linien, <b>keine Schrift</b>", "no")]
 BESTAND = [
     ("logo/", count("logo"),
-     "Hauptfassung, Signet, Zweitfassung, Zweifeld, hell, einfarbig, R1&ndash;R5"),
+     "Hauptfassung, Signet, Zweitfassung, Zweifeld, hell, einfarbig positiv und negativ"),
     ("lockup/", count("lockup"), "waagerecht und senkrecht, je positiv und negativ"),
     ("icon/", count("icon"), "App-Icon und zwei Monogramme f&uuml;r alles unter 32&#8239;px"),
     ("profilbilder/", count("profilbilder"),
@@ -269,7 +253,7 @@ BESTAND = [
     ("vorlagen/", count("vorlagen"), "Social Media, Video, Stream, Veranstaltungen"),
     ("karte/", count("karte"), "Lagebild, Livekarte, Spur"),
     ("herleitung/", count("herleitung"),
-     "Entwurf, Vorg&auml;ngerfassung, f&uuml;nf Falschanwendungen"),
+     "Foto, Entwurf, Vorg&auml;ngerfassung, f&uuml;nf Falschanwendungen"),
     ("png/", n_png, "512 &middot; 256 &middot; 128 &middot; 64 &middot; 32 &middot; 16 plus f&uuml;nf Vorlagen"),
     ("werkzeug/", n_wz, "Skripte, mit denen sich alles neu erzeugen l&auml;sst"),
     ("website/", "&mdash;", "der Onepager als Anschauungsst&uuml;ck"),
@@ -310,7 +294,8 @@ TOKENS = """:root {
 NAV = [("marke", "Die Marke"), ("zeichen", "Zeichen"), ("fassungen", "Fassungen"),
        ("groessen", "Gr&ouml;&szlig;en"), ("untergrund", "Untergr&uuml;nde"),
        ("farbe", "Farbe"), ("typografie", "Typografie"), ("kante", "Die Kante"),
-       ("profilbilder", "Profilbilder"), ("vorlagen", "Vorlagen"), ("reel", "Reel"),
+       ("profilbilder", "Profilbilder"), ("vorlagen", "Vorlagen"),
+       ("veranstaltungen", "Veranstaltungen"), ("reel", "Reel"),
        ("karte", "Karte"), ("regeln", "Regeln"), ("tokens", "Tokens"),
        ("material", "Material"), ("nutzung", "Nutzung")]
 
