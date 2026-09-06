@@ -178,6 +178,28 @@ EVENTS = [
      "Plakat &middot; Serie", "Instagram"),
 ]
 
+# Ein Banner je Anlass -- acht Signaturen nebeneinander. Der Abschnitt lebt
+# davon, dass man sie zusammen sieht: einzeln sagt keines etwas ueber das
+# System.
+SIGNATUREN_ZEIGEN = [
+    ("vorlagen/event_gebietsabend_discord_ankuendigung.svg",
+     "Gebiet", "Stratos &middot; Raster &middot; massiv"),
+    ("vorlagen/event_overload_discord_ankuendigung.svg",
+     "Overload", "Tiefrot &middot; Puls &middot; versetzt"),
+    ("vorlagen/event_nachtflug_discord_ankuendigung.svg",
+     "Nachtflug", "Mitternacht &middot; Sterne &middot; Umriss"),
+    ("vorlagen/event_leitstellenabend_discord_ankuendigung.svg",
+     "Leitstelle", "Gold &middot; Raster &middot; massiv"),
+    ("vorlagen/event_bergrettung_discord_ankuendigung.svg",
+     "Berg", "Eisblau &middot; H&ouml;henlinien &middot; gestapelt"),
+    ("vorlagen/event_sternflug_discord_ankuendigung.svg",
+     "Sternflug", "Moos &middot; Strahlen &middot; gestapelt"),
+    ("vorlagen/event_24stunden_discord_ankuendigung.svg",
+     "24 Stunden", "Stratos &middot; Stundenband &middot; gestapelt"),
+    ("vorlagen/event_herbstnacht_discord_ankuendigung.svg",
+     "Herbst", "K&uuml;rbis &middot; Streuung &middot; massiv"),
+]
+
 BANNER = [
     ("vorlagen/event_gebiet_bw_discord_ankuendigung_flaeche.svg",
      "Gebiet &middot; Fl&auml;che", "Silhouette und Stationsmarker"),
@@ -308,6 +330,7 @@ rep = {
     "{{VORLAGEN}}": grid(VORLAGEN, "g4", "plain"),
     "{{EVENTS}}": grid(EVENTS, "g4", "plain"),
     "{{BANNER}}": grid(BANNER, "g4", "plain"),
+    "{{SIGNATUREN}}": grid(SIGNATUREN_ZEIGEN, "g4", "plain"),
     "{{REEL}}": grid(REEL, "g4", "plain"),
     "{{KARTE}}": grid(KARTE, "g3", "plain"),
     "{{EVO}}": grid(EVO, "g2", "plain"),

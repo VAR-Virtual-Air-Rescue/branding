@@ -133,6 +133,29 @@ Reihe abschließt.
 
 ---
 
+## Jeder Anlass hat sein Gesicht
+
+Zu den meisten Formaten oben gehört eine **Signatur** in `werkzeug/signatur.py`
+— Grundfarbe, Akzent, Untergrund, Titelsatz. Fertig gebaut sind acht:
+
+| Anlass | Grund | Untergrund | Satz |
+|---|---|---|---|
+| Gebietsabend | Stratos | Raster | massiv |
+| VAR Overload | Tiefrot | Puls | versetzt |
+| Nachtflug | Mitternacht | Sterne | Umriss |
+| Leitstellenabend | Gold | Raster | massiv |
+| Bergrettung | Eisblau | Höhenlinien | gestapelt |
+| Sternflug | Moos | Strahlen | gestapelt |
+| 24 Stunden | Stratos | Stundenband | gestapelt |
+| Herbstnachtschicht | Kürbis | Streuung | massiv |
+
+Eine neue Signatur ist ein Eintrag in `SIGNATUREN` — vier Farben und zwei
+Namen. Sie wird beim Bauen nachgerechnet und fliegt raus, wenn sie die
+Lesbarkeit nicht schafft.
+
+**Fest bleibt:** die gekippte Kante und die Absenderleiste in Stratos, Gold und
+Ivory. Daran erkennt man VAR, egal wie bunt es darüber zugeht.
+
 ## Was für alle gilt
 
 **Zulu ist verbindlich, lokal ist freundlich.** Beide Zeiten nennen. Die

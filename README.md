@@ -237,6 +237,38 @@ und ein zusammengedrücktes Bild ist schlechter als keines.
 zwischen den beiden Wörtern kommt aus dem Markenwinkel; Schlagschatten und
 Leuchten stehen im Brandbook unter den Falschanwendungen.
 
+### Jedes Event mit eigenem Gesicht
+
+Drei Termine untereinander im Kanal müssen unterscheidbar sein — sonst sind es
+drei gleiche Kacheln. `werkzeug/signatur.py` gibt jedem Anlass eine
+**Signatur**, `werkzeug/event_sig.py` baut daraus die Banner:
+
+    python werkzeug/event_sig.py [--fotos <ordner>]
+
+Es ist kein Freibrief, sondern ein Vertrag — **fester Rahmen, variabler
+Innenraum**:
+
+| | |
+|---|---|
+| **fest** | die gekippte Kante · die Absenderleiste in Stratos, Gold und Ivory · Uniform in Versalien |
+| **variabel** | Grund und Akzent · Untergrund (Raster, Sterne, Puls, Höhenlinien, Strahlen, Stundenband, Streuung) · Titelsatz (massiv, versetzt, Umriss, gestapelt) |
+
+Dass die Grundfarbe wechseln darf, wird hier nicht erfunden: die Profilbilder
+machen es seit jeher so — Halloween ist orange, Weihnachten rot, und der
+Hubschrauber bleibt in allen Gold.
+
+**Die Absenderleiste färbt nicht mit.** Sie ist der Teil, an dem man VAR
+erkennt; ein Rahmen, der mitwechselt, ist keiner. Als sie es noch tat, war bei
+zwei Signaturen die Rubrik unsichtbar, weil Akzent und Leiste dieselbe Farbe
+hatten.
+
+`pruefe_signaturen()` rechnet jede Kombination nach — Schrift auf Grund 4,5:1,
+Akzent auf Grund 3:1 — und `event_sig.py` bricht ab, wenn eine durchfällt. Ohne
+das wäre das Signatursystem eine Einladung, sich eine hübsche Farbe auszusuchen
+und die Lesbarkeit zu verlieren; genau der Fehler, der die Niederlande-Edition
+unlesbar gemacht hat. Er hat sofort zugeschlagen: das erste Kürbisorange trug
+die Schrift mit 3,5:1 nicht.
+
 Was es damit anzufangen gibt, steht in [`EVENT-IDEEN.md`](EVENT-IDEEN.md).
 
 Jede Zeile wird auf ihre verfügbare Breite geprüft und notfalls verkleinert.
