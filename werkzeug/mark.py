@@ -92,17 +92,6 @@ def heli_on_edge(w, cx, edge_y, fill, cut=26, bar=13, bar_col=IVORY, oid=""):
                f'fill="{bar_col}"/></g>')
     return heli, bar_svg, oy
 
-def rotor(rr, sw, col, blades=2, blade=0.40, rot=None, cap="round"):
-    """Rotorkreis als unterbrochener Ring."""
-    rot = ANG - 47 if rot is None else rot
-    U = 2 * math.pi * rr
-    on = U * blade
-    off = U * (1 - blades * blade) / blades
-    return (f'<circle cx="{C}" cy="{C}" r="{rr:.2f}" fill="none" stroke="{col}" '
-            f'stroke-width="{sw}" stroke-linecap="{cap}" '
-            f'stroke-dasharray="{on:.1f} {off:.1f}" transform="rotate({rot:.1f} {C} {C})"/>')
-
-
 # --- Wortmarke: mitgekippt und bis an den Kreisrand ------------------------
 import re as _re
 _VP = None
@@ -355,48 +344,6 @@ MARKS["n2_ivory"]   = mark(heli_col=IVORY, bar_col=GALLIANO, cid="n2")
 MARKS["n3_zweifeld"]= mark(heli_col=IVORY, bar_col=IVORY, lower=GALLIANO,
                            word_col=STRATOS, cid="n3")
 MARKS["n4_signet"]  = mark(with_word=False, heli_w=442, edge=318, cid="n4")  # tief, s. EDGE_LEER
-
-# --- Rotorfassungen -------------------------------------------------------
-def rotor_mark(cid, ring_r=234, sw=20, ring_col=GALLIANO, heli_col=GALLIANO,
-               bar_col=IVORY, bg=STRATOS, heli_w=344, edge=EDGE_LEER, blades=2,
-               blade=0.40, with_word=False, word_col=IVORY, word_y=404, word_w=190,
-               inner_r=None, cap="round"):
-    inner_r = inner_r if inner_r is not None else R
-    heli, barsvg, _ = heli_on_edge(heli_w, C, edge + CUT, heli_col, CUT, BAR, bar_col)
-    body = f'<circle cx="{C}" cy="{C}" r="{inner_r}" fill="{bg}"/>' + heli + barsvg
-    if with_word:
-        body += word_max(word_col, edge + CUT + BAR + FUGE, rad=inner_r)
-    return svg(disc(body, cid, inner_r) + rotor(ring_r, sw, ring_col, blades, blade, cap=cap))
-
-# R1  Ring aussen, Heli auf der Kante, Wortmarke darunter
-# R1 traegt die Wortmarke, also Kante durch die Mitte des inneren Kreises
-MARKS["r1_rotor"] = rotor_mark("r1", ring_r=236, sw=19, inner_r=216, heli_w=267,
-                               edge=EDGE, with_word=True)
-# R2  Zwei Rotorblaetter, kein gefuellter Innenkreis -- offene Fassung
-MARKS["r2_offen"] = rotor_mark("r2", ring_r=238, sw=17, inner_r=222, heli_w=326,
-                               edge=300, blades=2, blade=0.44)
-# R3  Drei Blaetter, engerer Ring, Heli gross
-MARKS["r3_dreiblatt"] = rotor_mark("r3", ring_r=240, sw=15, inner_r=226, heli_w=346,
-                                   edge=304, blades=3, blade=0.27)
-# R4  Rotorbogen statt Ring: nur der Blattschlag ueber dem Heli
-def r4(cid="r4"):
-    heli, barsvg, _ = heli_on_edge(360, C, 292 + CUT, GALLIANO, CUT, BAR, IVORY)
-    import math as _m
-    rr, sw = 214, 16
-    U = 2 * _m.pi * rr
-    arc = (f'<circle cx="{C}" cy="{C}" r="{rr}" fill="none" stroke="{GALLIANO}" '
-           f'stroke-width="{sw}" stroke-linecap="round" '
-           f'stroke-dasharray="{U*0.40:.1f} {U:.1f}" '
-           f'transform="rotate({ANG-196:.1f} {C} {C})"/>')
-    inner = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
-             + arc + heli + barsvg)
-    return svg(disc(inner, cid))
-MARKS["r4_bogen"] = r4()
-
-# R5  Rotor als voller Ring in Ivory, Heli und Kante in Gold
-MARKS["r5_ivory_ring"] = rotor_mark("r5", ring_r=236, sw=18, ring_col=IVORY,
-                                    heli_col=GALLIANO, bar_col=IVORY, inner_r=208,
-                                    heli_w=306, edge=292, blades=2, blade=0.43)
 
 # --- Ableitungen ----------------------------------------------------------
 MARKS["n1_mono_negativ"] = mark(heli_col=IVORY, bar_col=IVORY, cid="mn")

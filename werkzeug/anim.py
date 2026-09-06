@@ -9,7 +9,7 @@ import math, os
 from mark import (STRATOS, GALLIANO, IVORY, C, R, S, ANG, svg, disc,
                   heli_on_edge, word_max, uid, EDGE, CUT, BAR, FUGE)
 from editions import (feld, oben, flaeche, streifen, muster, E,
-                      STERN, KUERBIS, FLEDER, KNOCHEN, RAKETE, PRIDE)
+                      STERN, KUERBIS, FLEDER, KNOCHEN, PRIDE)
 
 KANTE_Y = EDGE + CUT
 NACHT   = "#1A0E22"

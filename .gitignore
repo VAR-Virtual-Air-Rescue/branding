@@ -13,3 +13,13 @@ werkzeug/neu/
 werkzeug/tpl/
 werkzeug/tpl_fotos/
 werkzeug/out/
+
+# Uniform ist lizenzpflichtig. Zum Bauen muessen die Schnitte hier liegen --
+# veroeffentlicht werden duerfen sie nicht. Die Regel steht hier, damit ein
+# `git add -A` sie nicht doch einsammelt.
+werkzeug/fonts/*.ttf
+werkzeug/fonts/*.otf
+werkzeug/fonts/*.woff2
+website/schrift/
+werkzeug/node_modules/
+werkzeug/package-lock.json

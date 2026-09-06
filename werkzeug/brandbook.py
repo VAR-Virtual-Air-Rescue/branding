@@ -99,11 +99,6 @@ UNTERGRUND = [
     ("logo/VAR_logo_mono_positiv.svg", "Auf Gold", "einfarbig positiv", "gold"),
     ("logo/VAR_logo.svg", "Auf einem Foto", "ohne Kasten, ohne Schatten", "foto"),
 ]
-ROTOR = [("logo/VAR_r1_rotor.svg", "R1", "Rotor angedeutet"),
-         ("logo/VAR_r2_offen.svg", "R2", "offener Kreis"),
-         ("logo/VAR_r3_dreiblatt.svg", "R3", "Dreiblatt"),
-         ("logo/VAR_r4_bogen.svg", "R4", "Bogen"),
-         ("logo/VAR_r5_ivory_ring.svg", "R5", "Ring in Ivory")]
 ICONS = [("icon/icon_kante.svg", "App-Icon", "unter 32&#8239;px"),
          ("icon/icon_monogramm.svg", "Monogramm", "VAR als Buchstaben"),
          ("icon/icon_monogramm_gold.svg", "Monogramm Gold", "auf Stratos")]
@@ -128,7 +123,6 @@ PB = [("profilbilder/pb_standard.svg", "Standard", "Grundfassung"),
       ("profilbilder/pb_nacht.svg", "Nachtflug", "stehend"),
       ("profilbilder/pb_nacht_anim.svg", "Nachtflug", "animiert"),
       ("profilbilder/pb_jubilaeum.svg", "Jubil&auml;um", "Jahreszahl einsetzbar"),
-      ("profilbilder/pb_trauer.svg", "Trauer", "Flor, gedeckt"),
       ("profilbilder/pb_vorlage.svg", "Vorlage", "leeres unteres Feld")]
 VORLAGEN = [
     ("vorlagen/ig_4x5_foto.svg", "Instagram Beitrag", "1080&times;1350"),
@@ -259,7 +253,6 @@ rep = {
     "{{NAV}}": "".join('<a href="#%s">%s</a>' % (a, b) for a, b in NAV),
     "{{FASSUNGEN}}": grid(FASSUNGEN, "g4"),
     "{{UNTERGRUND}}": grid(UNTERGRUND, "g4"),
-    "{{ROTOR}}": grid(ROTOR, "g5", "navy"),
     "{{ICONS}}": grid(ICONS, "g5", "plain"),
     "{{LOCKUPS}}": grid(LOCKUPS, "g2"),
     "{{PB}}": grid(PB, "g6", "plain"),

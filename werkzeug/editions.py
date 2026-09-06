@@ -28,15 +28,35 @@ def feld(inhalt):
             f'<g clip-path="url(#{cid})"><g transform="rotate({ANG:.3f} {C} {C})">'
             f'<g transform="translate(0,{KANTE_Y})">{inhalt}</g></g></g>')
 
-def streifen(farben):
+def streifen(farben, gewichte=None):
     """Streifen fuellen genau das sichtbare untere Feld.
 
     Vorher liefen sie ueber die Kreisunterkante hinaus -- bei drei Farben landete
     der dritte Streifen komplett ausserhalb des Zeichens.
+
+    `gewichte` macht die Hoehen ungleich, und das ist seit dem Umbau des Zeichens
+    noetig: die Wortmarke laeuft jetzt bis in den Rahmen und liegt damit auf
+    *allen* Streifen. Bei der niederlaendischen Flagge gibt es keine
+    Schriftfarbe, die auf Rot, Weiss und Blau zugleich traegt --
+
+        Stratos  auf Rot 2,8   auf Weiss 18,4   auf Blau 1,6
+        Ivory    auf Rot 5,4   auf Weiss  1,0   auf Blau 8,9
+
+    -- also muss die Farbe, die keine traegt, so schmal werden, dass sie nur
+    noch die Fuge zwischen den beiden anderen ist. Gemessen wurde das, nicht
+    geschaetzt: gleich hohe Streifen lassen 46 % der Buchstabenflaeche unter
+    3:1 verschwinden, die gewaehlten Hoehen 7 %.
     """
-    h = (S - KANTE_Y + 34) / len(farben)
-    return "".join(f'<rect x="{-S}" y="{i*h:.2f}" width="{S*3}" height="{h+0.6:.2f}" '
-                   f'fill="{c}"/>' for i, c in enumerate(farben))
+    gewichte = gewichte or [1] * len(farben)
+    hoehe = S - KANTE_Y + 34
+    summe = float(sum(gewichte))
+    y, out = 0.0, []
+    for c, g in zip(farben, gewichte):
+        h = hoehe * g / summe
+        out.append(f'<rect x="{-S}" y="{y:.2f}" width="{S*3}" height="{h+0.6:.2f}" '
+                   f'fill="{c}"/>')
+        y += h
+    return "".join(out)
 
 def flaeche(farbe):
     return f'<rect x="{-S}" y="0" width="{S*3}" height="{S*2}" fill="{farbe}"/>'
@@ -144,7 +164,10 @@ E["pb_halloween"] = edition(
     bg="#1A0E22")
 
 # Nationalfeiertage
-E["pb_einheit"] = edition(streifen(DE), IVORY, IVORY)
+# Gold traegt kein Ivory (2,3:1). Der Streifen wird deshalb schmaler, damit die
+# Fuesse der Buchstaben ueberwiegend auf Rot stehen: 9 % unsichtbare Flaeche
+# werden so zu 3 %.
+E["pb_einheit"] = edition(streifen(DE, [40, 36, 24]), IVORY, IVORY)
 E["pb_at"]      = edition(streifen(AT), IVORY, STRATOS)
 # Schweiz -- Bergkette mit Matterhorn, die Flagge steckt in der Silhouette
 BERGE = (
@@ -201,26 +224,57 @@ E["pb_nacht"] = edition(
     obenmuster=muster([STERN], 70, 11), bg="#04091A")
 
 # --- weitere Anlaesse -----------------------------------------------------
-RAKETE = ('<g stroke="#F5D76E" stroke-width="1.8" fill="none" opacity=".9">'
-          '<path d="M0,0 L0,-14 M0,0 L12,-8 M0,0 L-12,-8 M0,0 L9,7 M0,0 L-9,7 '
-          'M0,0 L0,13 M0,0 L14,2 M0,0 L-14,2"/></g>'
-          '<circle r="2.4" fill="#FFFFFC"/>')
+def burst(r=80, n=16, sw=6, farbe="#F5D76E", innen="#FFFFFC"):
+    """Eine Feuerwerkskugel: Strahlen nach aussen, Funkenpunkte an den Spitzen.
+
+    Grosszuegig dimensioniert, und das ist der ganze Punkt. Die alte Fassung
+    streute sechsundzwanzig Raketen von je 28 Einheiten Breite in den Himmel --
+    bei einem Profilbild von 40 px sind das zwei Pixel, also nichts. Silvester
+    war dadurch von der Grundfassung nicht zu unterscheiden, und ein Anlass, den
+    man nicht erkennt, ist keiner.
+
+    Drei grosse Kugeln statt sechsundzwanzig kleiner: bei 40 px bleiben davon
+    Formen uebrig, die man als Feuerwerk liest.
+    """
+    import math as _m
+    strahlen, funken = [], []
+    for i in range(n):
+        a = 2 * _m.pi * i / n
+        dx, dy = _m.cos(a), _m.sin(a)
+        # Jeder zweite Strahl kuerzer -- eine Kugel mit lauter gleich langen
+        # Strahlen sieht aus wie ein Zahnrad.
+        rr = r if i % 2 == 0 else r * 0.62
+        strahlen.append(f'M{dx*r*0.16:.1f},{dy*r*0.16:.1f} L{dx*rr:.1f},{dy*rr:.1f}')
+        funken.append(f'<circle cx="{dx*rr:.1f}" cy="{dy*rr:.1f}" r="{sw*0.62:.1f}"/>')
+    return (f'<g stroke="{farbe}" stroke-width="{sw}" stroke-linecap="round" '
+            f'fill="none"><path d="{" ".join(strahlen)}"/></g>'
+            f'<g fill="{farbe}">{"".join(funken)}</g>'
+            f'<circle r="{sw*0.9:.1f}" fill="{innen}"/>')
+
+
+def feuerwerk_himmel():
+    """Drei Kugeln, dazu ein paar Funken. Sie stehen ueber dem Rotor, nicht
+    dahinter -- der Hubschrauber reicht bis dicht an den Rand, und alles unter
+    y=150 verschwaende hinter der Kabine."""
+    return (f'<g transform="translate(118,104)">{burst(78, 16, 6.5)}</g>'
+            f'<g transform="translate(360,72)" opacity=".95">'
+            f'{burst(58, 12, 5.5, "#FFFFFC", "#F5D76E")}</g>'
+            f'<g transform="translate(268,168)" opacity=".75">'
+            f'{burst(44, 12, 4.5)}</g>'
+            + muster([STERN], 26, 21))
+
+
 E["pb_silvester"] = edition(
     flaeche("#12204A"), "#F5D76E", IVORY,
-    obenmuster=muster([RAKETE, STERN], 26, 21), bg="#070E24")
+    obenmuster=feuerwerk_himmel(), bg="#070E24")
 
-# Trauerfassung -- fuer Gedenktage und Ausnahmen. Kein Gold, kein Muster.
-def _trauer():
-    h, b, _ = heli_on_edge(444, C, KANTE_Y, "#9AA0AE", CUT, BAR, "#5C6270")
-    return svg(disc(f'<circle cx="{C}" cy="{C}" r="{R}" fill="#121722"/>'
-                    + feld(flaeche("#1B212E")) + h + b
-                    + word_max("#9AA0AE", KANTE_Y + BAR + FUGE)
-                    + f'<rect x="{-S}" y="{S*0.60:.0f}" width="{S*3}" height="26" '
-                      f'fill="#0A0D14" transform="rotate({ANG:.3f} {C} {C})"/>', uid("t")))
-E["pb_trauer"] = _trauer()
 
 # Niederlande -- Lifeliner-Stationen
-E["pb_nl"] = edition(streifen(["#AE1C28", "#FFFFFC", "#21468B"]), IVORY, STRATOS)
+# Stratos verschwand im Blau -- 46 % der Buchstabenflaeche lagen unter 3:1.
+# Ivory traegt auf Rot und Blau; das Weiss dazwischen bleibt als schmale Fuge
+# stehen, damit die Flagge erkennbar bleibt, ohne die Schrift zu schlucken.
+E["pb_nl"] = edition(streifen(["#AE1C28", "#FFFFFC", "#21468B"], [48, 4, 48]),
+                     IVORY, IVORY)
 
 # Jubilaeum
 E["pb_jubilaeum"] = edition(

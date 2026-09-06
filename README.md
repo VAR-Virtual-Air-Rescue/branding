@@ -6,11 +6,10 @@ gemeint ist: <https://branding.virtualairrescue.com>
 Alles sind echte Vektoren — der Hubschrauber ist gezeichnet, nicht als PNG
 eingebettet. Die SVG ist immer der Master, PNGs entstehen aus ihr, nie umgekehrt.
 
-    logo/          Hauptfassung, Signet, Zweitfassung, Zweifeld, hell, einfarbig,
-                   dazu fünf Rotorfassungen R1–R5
+    logo/          Hauptfassung, Signet, Zweitfassung, Zweifeld, hell, einfarbig
     lockup/        waagerecht und senkrecht, je positiv und negativ
     icon/          App-Icons für alles unter 32 px
-    profilbilder/  Grundfassung, 12 Sondereditionen, 5 davon animiert, Vorlage
+    profilbilder/  Grundfassung, 11 Sondereditionen, 5 davon animiert, Vorlage
     reel/          6 Overlays für das Einsatz-Tagebuch plus leere Vorlage
     vorlagen/      22 Formate für Social Media, Video und Veranstaltungen
     herleitung/    Foto, Entwurf, heutiges Logo, sechs Falschanwendungen
@@ -108,7 +107,7 @@ Fassung, die von einer schon im Badge-Kreis sitzenden Grafik abgenommen war: Fu�
 V und Bein des R fehlten, rund sieben Prozent der Fläche. Neu abgenommen wird sie mit
 `werkzeug/trace_var.py` aus `werkzeug/quellen/var_wortmarke.png`.
 
-Ohne Wortmarke bleibt sie **tief**: Signet, Rotorfassungen R2–R5 und App-Icon
+Ohne Wortmarke bleibt sie **tief**: Signet und App-Icon
 würden sonst eine leere Hälfte zeigen und den Hubschrauber verkleinern, der dort
 allein trägt. Beide Höhen stehen als `EDGE` und `EDGE_LEER` in `werkzeug/mark.py`;
 Profilbilder und Animationen leiten ihre Kante daraus ab.
