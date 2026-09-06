@@ -68,6 +68,17 @@ code,.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
   padding:6px 9px; border-radius:3px;
 }
 .rail nav a:hover{color:var(--ink); background:var(--sunk)}
+.konto{margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12.5px}
+.konto[hidden]{display:none}
+.konto img{width:24px; height:24px; border-radius:50%; object-fit:cover; background:var(--sunk)}
+.konto a{color:var(--dim); text-decoration:none; padding:6px 9px; border-radius:3px;
+  border:1px solid var(--line); white-space:nowrap}
+.konto a:hover{color:var(--ink); border-color:var(--edge)}
+.konto .wer{color:var(--ink); font-weight:600}
+@media (min-width:1120px){
+  .konto{margin-left:0; margin-top:12px; padding-top:14px;
+    border-top:1px solid var(--line); flex-wrap:wrap}
+}
 @media (min-width:1120px){
   .rail{
     position:sticky; top:0; height:100vh; border-bottom:0;
@@ -224,6 +235,7 @@ footer code{color:var(--ink)}
     {{SIGNET}}
     <div class="rail-name">Virtual Air Rescue<small>Brandbook</small></div>
     <nav aria-label="Abschnitte">{{NAV}}</nav>
+    <div class="konto" id="konto" hidden></div>
   </div>
 </aside>
 
@@ -656,6 +668,32 @@ footer code{color:var(--ink)}
 </div>
 
 <script>
+// Anmeldezustand. Alles hier ist Anzeige -- die Entscheidung, wer wohin darf,
+// faellt in nginx und im Anmeldedienst, nicht im Browser.
+(function(){
+  var kasten = document.getElementById('konto');
+  if (!kasten || !location.protocol.startsWith('http')) return;
+  fetch('/api/auth/me', { credentials: 'same-origin' })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      if (!d || !d.angemeldet) return;   // Nicht angemeldet: kein Knopf.
+      var teile = [];
+      if (d.bild) {
+        var img = document.createElement('img');
+        img.src = d.bild; img.alt = ''; img.loading = 'lazy';
+        teile.push(img);
+      }
+      var wer = document.createElement('span');
+      wer.className = 'wer';
+      wer.textContent = d.vorname || d.name || '';
+      var zu = document.createElement('a');
+      zu.href = '/konto/'; zu.textContent = 'Konto';
+      kasten.replaceChildren.apply(kasten, teile.concat([wer, zu]));
+      kasten.hidden = false;
+    })
+    .catch(function(){ /* kein Server im Ruecken -- dann eben nichts. */ });
+})();
+
 (function(){
   var btn = document.getElementById('anim'),
       lbl = document.getElementById('animlbl'),

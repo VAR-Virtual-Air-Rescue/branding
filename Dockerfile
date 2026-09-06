@@ -40,6 +40,10 @@ COPY README.md    /var/www/branding/README.md
 # Der Onepager als Anschauungsstueck.
 COPY website/ /var/www/branding/website/
 
+# Die Kontoseite. Sie liegt hinter `auth_request` -- nginx laesst sie nur an
+# Angemeldete heraus.
+COPY konto/ /var/www/branding/konto/
+
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # nginx:alpine bringt einen eigenen Healthcheck nicht mit; Traefik nimmt einen

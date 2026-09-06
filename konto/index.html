@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Konto &middot; VAR Branding</title>
+<style>
+:root{
+  --stratos:#00113A; --galliano:#D5A507; --ivory:#FFFFFC;
+  --bg:#050B1C; --surface:#0B1631; --line:#1E2E52; --ink:#E7EAF3; --dim:#8E97AE;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;
+  background:var(--bg);color:var(--ink);
+  font:15px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased}
+main{width:min(520px,100%)}
+
+/* Dieselbe Kante wie im Zeichen -- gekippt ist nur sie, was darunter steht,
+   steht gerade. */
+.kante{height:5px;background:var(--galliano);transform:rotate(-3.2746682deg);
+  transform-origin:left center;margin-bottom:26px}
+
+h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
+.kick{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--galliano);font-weight:600;margin-bottom:8px}
+p{color:var(--dim);margin:0 0 20px}
+
+.karte{background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:20px;display:flex;gap:16px;align-items:center;margin:0 0 18px}
+.karte img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;
+  background:var(--line)}
+.karte .platzhalter{width:56px;height:56px;border-radius:50%;flex:none;
+  background:var(--stratos);display:grid;place-items:center;color:var(--galliano);
+  font-weight:800;letter-spacing:.06em}
+.name{font-weight:600;font-size:16px}
+.zeile{color:var(--dim);font-size:13px;
+  font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+
+.reihe{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+a.knopf,button{font:inherit;font-weight:600;font-size:13.5px;padding:9px 16px;
+  border-radius:3px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block}
+a.knopf:hover,button:hover{border-color:var(--galliano)}
+button.aus{background:none}
+:where(a,button):focus-visible{outline:2px solid var(--galliano);outline-offset:3px}
+.laedt{color:var(--dim)}
+</style>
+</head>
+<body>
+<main>
+  <div class="kante"></div>
+  <div class="kick">Konto</div>
+  <h1>Angemeldet über den VAR-Hub</h1>
+  <p>Diese Seite ist nur mit der Berechtigung <code>LOGIN_BRANDING</code>
+     erreichbar. Das Brandbook selbst ist offen.</p>
+
+  <div class="karte" id="karte"><span class="laedt">Wird geladen …</span></div>
+
+  <div class="reihe">
+    <a class="knopf" href="/">Zum Brandbook</a>
+    <!-- Abmelden als Formular, nicht als Link: eine Abmeldung, die ein fremdes
+         Bild auslösen kann, ist keine. -->
+    <form method="post" action="/api/auth/logout" style="margin:0">
+      <button class="aus" type="submit">Abmelden</button>
+    </form>
+  </div>
+</main>
+
+<script>
+// Die Anzeige kommt aus der eigenen Sitzung, nicht aus dem Hub. Hier steht
+// nichts Schützenswertes: Name, Bild, CID — dasselbe, was auf jedem Beitrag
+// dieser Person steht. Das Hub-Token liegt serverseitig und kommt hier nie an.
+(async () => {
+  const karte = document.getElementById('karte');
+  try {
+    const r = await fetch('/api/auth/me', { credentials: 'same-origin' });
+    if (!r.ok) { location.href = '/api/auth/login?ziel=/konto/'; return; }
+    const d = await r.json();
+
+    const initialen = (d.name || 'VAR').split(/\s+/).slice(0, 2)
+      .map(w => w[0]).join('').toUpperCase();
+    const bild = d.bild
+      ? Object.assign(document.createElement('img'),
+          { src: d.bild, alt: '', loading: 'lazy' })
+      : Object.assign(document.createElement('div'),
+          { className: 'platzhalter', textContent: initialen });
+
+    const text = document.createElement('div');
+    const name = document.createElement('div');
+    name.className = 'name';
+    name.textContent = d.name || 'Unbekannt';
+    text.appendChild(name);
+
+    const bis = new Date(d.gueltigBis * 1000)
+      .toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
+    const zeile = document.createElement('div');
+    zeile.className = 'zeile';
+    zeile.textContent =
+      (d.vatsimCid ? 'VATSIM ' + d.vatsimCid + ' · ' : '') + 'Sitzung bis ' + bis;
+    text.appendChild(zeile);
+
+    karte.replaceChildren(bild, text);
+  } catch {
+    karte.textContent = 'Die Sitzung konnte nicht geladen werden.';
+  }
+})();
+</script>
+</body>
+</html>

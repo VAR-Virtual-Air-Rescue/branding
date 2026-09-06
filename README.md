@@ -19,6 +19,8 @@ eingebettet. Die SVG ist immer der Master, PNGs entstehen aus ihr, nie umgekehrt
     werkzeug/      Skripte, mit denen sich alles neu erzeugen lässt
     brandbook/     das gebaute Brandbook — eine Datei, lädt nichts nach
     website/       der Onepager virtualairrescue.com als Anschauungsstück
+    auth/          Anmeldung über den VAR-Hub (eigener Dienst, eigenes Bild)
+    konto/         die einzige geschützte Seite
 
 ## Die Kante in den Vorlagen
 
@@ -143,10 +145,15 @@ Datei falsch da, und niemand merkt es.
 
 ## Betrieb
 
-Das Brandbook läuft unter `branding.virtualairrescue.com` in einem Container
+Das Brandbook läuft unter `branding.virtualairrescue.com` in zwei Containern
 hinter dem bestehenden Traefik:
 
+    cp .env.example .env      # Zugangsdaten eintragen
     docker compose up -d --build
+
+`nginx` liefert aus und hängt im Traefik. `branding-auth` spricht mit dem Hub
+und hält das `client_secret`; er hat **keinen** Host-Port und **kein**
+Traefik-Netz — nur nginx erreicht ihn.
 
 Der Container baut das Buch selbst — so passen die gezählten Zahlen zum Stand
 des Images und nicht zum Stand des Rechners, auf dem zuletzt jemand das Skript
@@ -176,6 +183,22 @@ ein öffentliches Repository. Das fällt kaum auf:
 
 Wer die Lizenz hat, legt die Dateien unter `werkzeug/fonts/` beziehungsweise
 `website/schrift/` ab und baut neu.
+
+
+## Anmeldung
+
+Das Brandbook ist offen — die Anmeldung ist kein Tor davor, sondern der Zugang
+zum internen Bereich (bisher nur `/konto/`). Sie läuft über den VAR-Hub und
+verlangt die Berechtigung `LOGIN_BRANDING`.
+
+Wie es funktioniert, was daran nicht Standard ist und wie man weitere Bereiche
+schützt, steht in [`auth/README.md`](auth/README.md).
+
+    node --test auth/    # 14 Prüfungen gegen einen nachgebauten Hub
+
+**Die Zugangsdaten gehören in `.env`, nicht ins Repository.** Es ist
+öffentlich: ein einmal gepushtes Geheimnis ist verbrannt, auch wenn der nächste
+Commit es wieder entfernt — es steht dann immer noch in der Historie.
 
 ## Nutzung
 

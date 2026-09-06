@@ -16,3 +16,12 @@ werkzeug/tpl/
 werkzeug/tpl_fotos/
 werkzeug/out/
 *.pyc
+
+# Der Anmeldedienst hat sein eigenes Bild (auth/Dockerfile) und gehoert nicht
+# in das des Auslieferers.
+auth/
+
+# Zugangsdaten haben in keinem Bild etwas zu suchen.
+.env
+.env.*
+!.env.example

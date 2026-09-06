@@ -1,6 +1,11 @@
 # Das Brandbook unter branding.virtualairrescue.com.
 #
+#     cp .env.example .env    und die echten Werte eintragen
 #     docker compose up -d --build
+#
+# Zwei Dienste: nginx liefert aus, der Anmeldedienst spricht mit dem Hub. Nur
+# nginx haengt im Traefik -- der Anmeldedienst ist von aussen nicht erreichbar
+# und braucht deshalb weder Labels noch Zertifikat.
 #
 # Traefik laeuft ausserhalb dieses Stacks und bringt sein Netz selbst mit --
 # deshalb `external: true`. Ist es nicht da, bricht `up` mit einer klaren
@@ -9,6 +14,9 @@
 networks:
   traefik:
     external: true
+  # Nur zwischen nginx und Anmeldedienst. Kein Zugang von aussen.
+  intern:
+    driver: bridge
 
 services:
   branding:
@@ -20,6 +28,10 @@ services:
     restart: unless-stopped
     networks:
       - traefik
+      - intern
+    depends_on:
+      branding-auth:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -27,3 +39,24 @@ services:
       - "traefik.http.routers.branding.entrypoints=websecure"
       - "traefik.http.routers.branding.tls.certresolver=le"
       - "traefik.http.services.branding.loadbalancer.server.port=80"
+
+  branding-auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    image: var-branding-auth:latest
+    container_name: var-branding-auth
+    restart: unless-stopped
+    networks:
+      - intern
+    # Kein `ports:`. Der Dienst haelt das client_secret und stellt Sitzungen
+    # aus; er hat auf dem Host nichts zu suchen.
+    env_file:
+      - .env
+    environment:
+      # Aus der .env kommen die Geheimnisse. Was hier steht, gehoert zum Stack
+      # und nicht in eine Datei, die jeder anders ausfuellt.
+      PORT: "8080"
+      BRANDING_BASE_URL: "${BRANDING_BASE_URL:-https://branding.virtualairrescue.com}"
+    # `traefik.enable=false` ist hier nicht noetig -- der Dienst haengt gar
+    # nicht im Traefik-Netz.
