@@ -75,16 +75,26 @@ Hub-Anmeldung bestehen bleibt.
 
 ## Was geschützt ist
 
-Standardmäßig nur `/konto/`. **Das Brandbook bleibt offen** — es ist als
-öffentliches Dokument gebaut.
+**Alles.** Brandbook, Markenordner, Vorlagen, der Onepager, die Kontoseite —
+`branding.virtualairrescue.com` gibt ohne Anmeldung nichts heraus.
 
-Weitere Bereiche schützt man in der `nginx.conf`, nicht hier:
+Das steht in der `nginx.conf` auf **Server-Ebene**, nicht in einzelnen
+`location`-Blöcken:
 
-    location /intern/ {
-      auth_request /_pruefe;
-      error_page 401 = @anmelden;
-      try_files $uri $uri/ =404;
-    }
+    auth_request /_pruefe;
+    error_page 401 = @anmelden;
+
+Der Unterschied ist der Punkt: so gilt das Tor auch für jeden Block, den jemand
+später hinzufügt. Schreibt man es in die Blöcke einzeln, ist der nächste offen,
+und niemand merkt es — ein Tor, das man vergessen kann, ist keines.
+
+Genau drei Dinge sind ausgenommen, jedes mit `auth_request off`:
+
+| Ausnahme | Warum |
+|---|---|
+| `/api/auth/` | sonst bräuchte man eine Anmeldung, um sich anmelden zu können |
+| `/_pruefe` | die Prüfung würde sich selbst prüfen |
+| `/robots.txt` | Suchmaschinen können sich nicht anmelden |
 
 Der Vorteil gegenüber einer Prüfung im Seitenskript: die Datei geht gar nicht
 erst hinaus.

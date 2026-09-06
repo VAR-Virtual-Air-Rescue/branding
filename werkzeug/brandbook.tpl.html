@@ -251,6 +251,11 @@ footer code{color:var(--ink)}
   dieser Seite ist die Originaldatei, nicht ein Abbild davon &mdash;
   <a href="#material">alles zum Herunterladen</a>.</p>
 
+  <p style="color:var(--dim); max-width:62ch; margin:14px 0 0; font-size:13.5px">Diese
+  Seite steht hinter der Anmeldung am VAR-Hub. Du liest sie, weil dein Konto die
+  Berechtigung <code>LOGIN_BRANDING</code> hat &mdash; behandle das Material
+  entsprechend.</p>
+
   <div class="facts">
     <div><div class="n">{{NSVG}}</div><div class="l">Vektordateien</div></div>
     <div><div class="n">{{NPNG}}</div><div class="l">Rasterfassungen</div></div>
@@ -597,7 +602,7 @@ footer code{color:var(--ink)}
 <section id="material">
   <div class="head">
     <div class="kick">Material</div>
-    <h2>Alles liegt offen im Repository</h2>
+    <h2>Alles liegt auf dieser Seite</h2>
     <p>Die SVG ist immer der Master &mdash; PNGs entstehen aus ihr, nie umgekehrt. Wer
     eine Fassung braucht, die es noch nicht gibt, erzeugt sie neu, statt eine
     vorhandene zu skalieren oder umzuf&auml;rben.</p>
@@ -609,12 +614,13 @@ footer code{color:var(--ink)}
 
   <h3>So kommt man dran</h3>
   <div class="rules">
-    <div><h4>Ganzes Paket</h4>
-      <p class="v">git clone</p>
-      <p><a href="https://github.com/VAR-Virtual-Air-Rescue/branding">github.com/VAR-Virtual-Air-Rescue/branding</a></p></div>
     <div><h4>Einzelne Datei</h4>
-      <p>Im Repository &ouml;ffnen und <b>Raw</b> speichern. SVG-Dateien lassen sich
-      direkt in Illustrator, Figma und Affinity &ouml;ffnen.</p></div>
+      <p>Jeder Ordner oben ist hier begehbar &mdash; etwa
+      <code><a href="/vorlagen/">/vorlagen/</a></code>. SVG-Dateien lassen sich direkt
+      in Illustrator, Figma und Affinity &ouml;ffnen.</p></div>
+    <div><h4>Ganzes Paket</h4>
+      <p>Liegt im Repository <code>VAR-Virtual-Air-Rescue/branding</code>. Zugriff
+      &uuml;ber das Team.</p></div>
     <div><h4>Neu erzeugen</h4>
       <p class="v">python werkzeug/build.py</p>
       <p>Erzeugt Logos, Lockups, Icons, Profilbilder und Rasterfassungen aus denselben
@@ -631,12 +637,16 @@ footer code{color:var(--ink)}
   <div class="head">
     <div class="kick">Nutzung</div>
     <h2>Was damit erlaubt ist</h2>
-    <p>Das Material liegt offen, damit Mitglieder, Partner und Presse es richtig
-    verwenden k&ouml;nnen &mdash; nicht, damit es frei wird.</p>
+    <p>Dieses Material ist nicht ver&ouml;ffentlicht. Es liegt hinter der Anmeldung,
+    damit Mitglieder und Partner es richtig verwenden k&ouml;nnen &mdash; wer es
+    weitergibt, gibt auch diese Regeln mit weiter.</p>
   </div>
   <div class="rules">
     <div><h4>Erlaubt</h4><p>Auf VAR verweisen: Mitglieder und Stationen, befreundete
       Virtual Airlines, Berichte, Videos und Streams &uuml;ber unsere Eins&auml;tze.</p></div>
+    <div><h4>Weitergabe</h4><p>Fertige Grafiken ja &mdash; das ist ihr Zweck. Den
+      Zugang zu dieser Seite nicht: wer das Material braucht, bekommt ein eigenes
+      Konto.</p></div>
     <div><h4>Unver&auml;ndert</h4><p>Farben, Proportionen, Anschnitt und Winkel bleiben,
       wie sie sind. Wer eine andere Fassung braucht &mdash; hell, einfarbig, ohne
       Wortmarke &mdash; findet sie meist schon hier.</p></div>
@@ -669,14 +679,17 @@ footer code{color:var(--ink)}
 
 <script>
 // Anmeldezustand. Alles hier ist Anzeige -- die Entscheidung, wer wohin darf,
-// faellt in nginx und im Anmeldedienst, nicht im Browser.
+// faellt in nginx und im Anmeldedienst, nicht im Browser. Wer diese Seite
+// ueberhaupt sieht, ist angemeldet; der Abruf kann trotzdem ins Leere gehen,
+// wenn das Buch als einzelne Datei weitergegeben und per Doppelklick geoeffnet
+// wird. Dann bleibt der Bereich eben leer.
 (function(){
   var kasten = document.getElementById('konto');
   if (!kasten || !location.protocol.startsWith('http')) return;
   fetch('/api/auth/me', { credentials: 'same-origin' })
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(d){
-      if (!d || !d.angemeldet) return;   // Nicht angemeldet: kein Knopf.
+      if (!d || !d.angemeldet) return;   // Kein Server im Ruecken: kein Knopf.
       var teile = [];
       if (d.bild) {
         var img = document.createElement('img');

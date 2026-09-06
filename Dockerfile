@@ -44,6 +44,10 @@ COPY website/ /var/www/branding/website/
 # Angemeldete heraus.
 COPY konto/ /var/www/branding/konto/
 
+# Die einzige Datei, die ohne Anmeldung herausgeht. Suchmaschinen koennen sich
+# nicht anmelden; ohne sie bekaemen sie eine Weiterleitung zum Hub.
+COPY robots.txt /var/www/branding/robots.txt
+
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # nginx:alpine bringt einen eigenen Healthcheck nicht mit; Traefik nimmt einen

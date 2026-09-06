@@ -187,9 +187,16 @@ Wer die Lizenz hat, legt die Dateien unter `werkzeug/fonts/` beziehungsweise
 
 ## Anmeldung
 
-Das Brandbook ist offen — die Anmeldung ist kein Tor davor, sondern der Zugang
-zum internen Bereich (bisher nur `/konto/`). Sie läuft über den VAR-Hub und
-verlangt die Berechtigung `LOGIN_BRANDING`.
+`branding.virtualairrescue.com` liegt **vollständig** hinter der Anmeldung —
+Brandbook, Markenordner, Vorlagen, alles. Sie läuft über den VAR-Hub und
+verlangt die Berechtigung `LOGIN_BRANDING`; geprüft wird zusätzlich, dass das
+Konto nicht gesperrt und nicht gelöscht ist und die E-Mail-Adresse bestätigt
+wurde.
+
+> **Das Repository ist davon unberührt.** Es ist öffentlich, und dieselben
+> Dateien sind dort ohne Anmeldung abrufbar. Wer das Material wirklich
+> zurückhalten will, muss das Repository auf privat stellen — die Anmeldung vor
+> der Seite allein tut das nicht.
 
 Wie es funktioniert, was daran nicht Standard ist und wie man weitere Bereiche
 schützt, steht in [`auth/README.md`](auth/README.md).

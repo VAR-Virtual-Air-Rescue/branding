@@ -5,9 +5,12 @@
 //
 // Damit laesst sich der Anmeldeweg im Browser durchgehen, ohne einen Container
 // zu bauen. Er bildet dieselben drei Dinge ab wie die nginx.conf: statische
-// Dateien ausliefern, /api/auth/ an den Dienst geben und /konto/ nur an
-// Angemeldete. Mehr nicht -- gzip, MIME-Tabelle und Verzeichnisuebersicht
+// Dateien ausliefern, /api/auth/ an den Dienst geben und **alles uebrige** nur
+// an Angemeldete. Mehr nicht -- gzip, MIME-Tabelle und Verzeichnisuebersicht
 // bleiben Sache von nginx.
+//
+// Das Tor muss hier genauso streng sein wie dort. Ein Pruefstand, der mehr
+// durchlaesst als der Betrieb, prueft das Falsche.
 //
 // **Nicht fuer den Betrieb.** Hier steht keine Absicherung, die ueber das
 // hinausgeht, was zum Ausprobieren noetig ist.
@@ -82,17 +85,20 @@ createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const pfad = url.pathname;
 
+  // Die beiden Ausnahmen -- wie in der nginx.conf und aus demselben Grund:
+  // ohne sie braeuchte man eine Anmeldung, um sich anmelden zu koennen.
   if (pfad.startsWith("/api/auth/")) return durchreichen(req, res, pfad + url.search);
+  if (pfad === "/robots.txt") return datei(res, "/robots.txt");
 
-  if (pfad.startsWith("/konto")) {
-    if (!(await angemeldet(req))) {
-      res.writeHead(302, { Location: "/api/auth/login?ziel=" + encodeURIComponent(pfad) });
-      return res.end();
-    }
-    return datei(res, pfad === "/konto" ? "/konto/index.html" : pfad);
+  if (!(await angemeldet(req))) {
+    res.writeHead(302, {
+      Location: "/api/auth/login?ziel=" + encodeURIComponent(pfad + url.search),
+    });
+    return res.end();
   }
 
   if (pfad === "/") return datei(res, "/brandbook/index.html");
+  if (pfad === "/konto") return datei(res, "/konto/index.html");
   return datei(res, pfad);
 }).listen(PORT, () => {
   console.log(`Pruefstand auf http://localhost:${PORT}  (Dienst: ${DIENST})`);

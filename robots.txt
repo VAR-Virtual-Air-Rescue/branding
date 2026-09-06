@@ -1,0 +1,5 @@
+# branding.virtualairrescue.com liegt vollstaendig hinter der Anmeldung.
+# Es gibt hier nichts zu erfassen -- jeder Abruf endet in einer Weiterleitung
+# zum VAR-Hub.
+User-agent: *
+Disallow: /
