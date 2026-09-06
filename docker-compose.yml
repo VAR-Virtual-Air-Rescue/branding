@@ -1,0 +1,29 @@
+# Das Brandbook unter branding.virtualairrescue.com.
+#
+#     docker compose up -d --build
+#
+# Traefik laeuft ausserhalb dieses Stacks und bringt sein Netz selbst mit --
+# deshalb `external: true`. Ist es nicht da, bricht `up` mit einer klaren
+# Meldung ab; das ist besser, als ein Netz gleichen Namens neu anzulegen und
+# sich dann zu wundern, dass der Proxy den Container nicht findet.
+networks:
+  traefik:
+    external: true
+
+services:
+  branding:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: var-branding:latest
+    container_name: var-branding
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.branding.rule=Host(`branding.virtualairrescue.com`)"
+      - "traefik.http.routers.branding.entrypoints=websecure"
+      - "traefik.http.routers.branding.tls.certresolver=le"
+      - "traefik.http.services.branding.loadbalancer.server.port=80"

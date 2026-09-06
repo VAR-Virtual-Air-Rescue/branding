@@ -1,0 +1,18 @@
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Das Buch wird im Container neu gebaut -- eine mitkopierte Fassung waere nur
+# eine zweite Wahrheit im Image.
+brandbook/
+
+# Werkstattreste, die im Bild nichts zu suchen haben.
+**/__pycache__/
+**/node_modules/
+werkzeug/neu/
+werkzeug/tpl/
+werkzeug/tpl_fotos/
+werkzeug/out/
+*.pyc

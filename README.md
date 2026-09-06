@@ -1,8 +1,10 @@
-# brand
+# Virtual Air Rescue — Markenpaket
 
-Alles echte Vektoren. Im Gegensatz zum `branding`-Repository, dessen SVG-Dateien
-den Hubschrauber als eingebettetes PNG enthalten (3708 × 1201 px als Base64,
-406 KB je Datei).
+Das vollständige Material der Marke, dazu das **Brandbook**, das erklärt, wie es
+gemeint ist: <https://branding.virtualairrescue.com>
+
+Alles sind echte Vektoren — der Hubschrauber ist gezeichnet, nicht als PNG
+eingebettet. Die SVG ist immer der Master, PNGs entstehen aus ihr, nie umgekehrt.
 
     logo/          Hauptfassung, Signet, Zweitfassung, Zweifeld, hell, einfarbig,
                    dazu fünf Rotorfassungen R1–R5
@@ -15,6 +17,8 @@ den Hubschrauber als eingebettetes PNG enthalten (3708 × 1201 px als Base64,
     karte/         Lagebild und Livekarte in RescueTrack-Anmutung
     png/           512 · 256 · 128 · 64 · 32 · 16
     werkzeug/      Skripte, mit denen sich alles neu erzeugen lässt
+    brandbook/     das gebaute Brandbook — eine Datei, lädt nichts nach
+    website/       der Onepager virtualairrescue.com als Anschauungsstück
 
 ## Die Kante in den Vorlagen
 
@@ -124,3 +128,58 @@ Hauptfassung ab 96 px bzw. 22 mm im Druck. Signet ab 40 px. Darunter gilt
 ausschließlich das App-Icon — der Hubschrauber ist 3,1 : 1 breit und im runden
 Beschnitt unter 100 px kaum noch zu erkennen. Schutzraum rundherum: ein Viertel
 des Durchmessers.
+
+## Das Brandbook bauen
+
+    python werkzeug/brandbook.py brandbook/index.html
+
+Heraus kommt **eine** HTML-Datei mit allen 89 Grafiken darin. Sie lädt nichts
+nach — keine Schrift, kein Skript, kein Bild von einem fremden Server — und
+funktioniert deshalb auch offline und per Doppelklick.
+
+Die Zahlen im Buch (wie viele Dateien in welchem Ordner) werden beim Bauen
+**gezählt**, nicht gepflegt. Eine gepflegte Zahl steht nach der ersten neuen
+Datei falsch da, und niemand merkt es.
+
+## Betrieb
+
+Das Brandbook läuft unter `branding.virtualairrescue.com` in einem Container
+hinter dem bestehenden Traefik:
+
+    docker compose up -d --build
+
+Der Container baut das Buch selbst — so passen die gezählten Zahlen zum Stand
+des Images und nicht zum Stand des Rechners, auf dem zuletzt jemand das Skript
+laufen liess. Neben dem Buch liefert er die Markenordner direkt aus, mit
+Verzeichnisübersicht:
+
+    branding.virtualairrescue.com/logo/VAR_logo.svg
+    branding.virtualairrescue.com/vorlagen/
+    branding.virtualairrescue.com/website/
+
+Das Traefik-Netz wird nicht angelegt, sondern erwartet (`external: true`).
+Fehlt es, bricht `up` mit einer klaren Meldung ab — besser, als ein Netz
+gleichen Namens anzulegen und sich zu wundern, dass der Proxy nichts findet.
+
+## Uniform liegt nicht hier
+
+Die Hausschrift ist lizenzpflichtig; die Schriftdateien gehören deshalb nicht in
+ein öffentliches Repository. Das fällt kaum auf:
+
+* In **Logos, Vorlagen und Profilbildern** steckt die Frage gar nicht — dort ist
+  jeder Buchstabe bereits ein Pfad.
+* Die **Schriftproben** im Brandbook liegen als Umrisse in
+  `werkzeug/schriftproben.html`. Eine Schriftprobe, kein Schriftschnitt.
+* **Brandbook und Website** fallen auf `system-ui` zurück. Weil Uniform eine
+  neutrale Grotesk ist, trägt die Systemschrift dieselbe Anmutung; für den Ton
+  sorgen ohnehin Versalien und Laufweite.
+
+Wer die Lizenz hat, legt die Dateien unter `werkzeug/fonts/` beziehungsweise
+`website/schrift/` ab und baut neu.
+
+## Nutzung
+
+Der Inhalt dieses Repositorys steht unter GPL-3.0 — das betrifft die Dateien und
+die Skripte. Das Zeichen selbst ist die Kennzeichnung von Virtual Air Rescue;
+eine Softwarelizenz ist keine Erlaubnis, fremde Kennzeichen als eigene zu
+führen. Was im Einzelnen erlaubt ist, steht im Brandbook unter *Nutzung*.
