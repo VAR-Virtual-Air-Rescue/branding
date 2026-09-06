@@ -1,0 +1,667 @@
+<title>VAR Brandbook</title>
+
+<style>
+/* ------------------------------------------------ Tokens: dunkel zuerst */
+:root{
+  --stratos:#00113A; --galliano:#D5A507; --ivory:#FFFFFC; --signal:#2B6EFF;
+
+  --bg:#050B1C; --surface:#0B1631; --sunk:#12203F; --line:#1E2E52;
+  --ink:#E7EAF3; --dim:#8E97AE; --edge:var(--galliano); --gold-ink:var(--galliano);
+  --chiprim:rgba(255,255,252,.14);
+  --shadow:0 1px 0 rgba(255,255,252,.04), 0 18px 40px -28px rgba(0,0,0,.9);
+  --sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#FFFFFC; --surface:#FFFFFF; --sunk:#F1F0EA; --line:#DCDAD0;
+    --ink:#00113A; --dim:#5C6478; --gold-ink:#8F6C04;
+    --chiprim:rgba(0,17,58,.16);
+    --shadow:0 1px 0 rgba(0,17,58,.03), 0 14px 34px -26px rgba(0,17,58,.45);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#FFFFFC; --surface:#FFFFFF; --sunk:#F1F0EA; --line:#DCDAD0;
+  --ink:#00113A; --dim:#5C6478; --gold-ink:#8F6C04;
+  --chiprim:rgba(0,17,58,.16);
+  --shadow:0 1px 0 rgba(0,17,58,.03), 0 14px 34px -26px rgba(0,17,58,.45);
+}
+:root[data-theme="dark"]{
+  --bg:#050B1C; --surface:#0B1631; --sunk:#12203F; --line:#1E2E52;
+  --ink:#E7EAF3; --dim:#8E97AE; --gold-ink:var(--galliano);
+  --chiprim:rgba(255,255,252,.14);
+  --shadow:0 1px 0 rgba(255,255,252,.04), 0 18px 40px -28px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--signal)}
+:where(a,button,summary):focus-visible{
+  outline:2px solid var(--galliano); outline-offset:3px; border-radius:2px;
+}
+h1,h2,h3{text-wrap:balance; margin:0}
+code,.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* ------------------------------------------------ Gerüst */
+.shell{display:grid; grid-template-columns:1fr; min-height:100vh}
+@media (min-width:1120px){
+  .shell{grid-template-columns:228px 1fr}
+}
+
+/* Schiene */
+.rail{
+  border-bottom:1px solid var(--line); background:var(--surface);
+  position:sticky; top:0; z-index:20;
+}
+.rail-in{display:flex; align-items:center; gap:14px; padding:12px 20px; flex-wrap:wrap}
+.rail-mark{width:34px; height:34px; flex:none; border-radius:50%}
+.rail-name{font-weight:800; letter-spacing:.14em; font-size:12px; text-transform:uppercase}
+.rail-name small{display:block; font-weight:500; letter-spacing:.04em;
+  text-transform:none; color:var(--dim); font-size:11px}
+.rail nav{display:flex; gap:2px; overflow-x:auto; scrollbar-width:thin; margin-left:auto}
+.rail nav a{
+  color:var(--dim); text-decoration:none; font-size:12.5px; white-space:nowrap;
+  padding:6px 9px; border-radius:3px;
+}
+.rail nav a:hover{color:var(--ink); background:var(--sunk)}
+@media (min-width:1120px){
+  .rail{
+    position:sticky; top:0; height:100vh; border-bottom:0;
+    border-right:1px solid var(--line); overflow-y:auto;
+  }
+  .rail-in{flex-direction:column; align-items:stretch; gap:18px; padding:26px 20px}
+  .rail-mark{width:52px; height:52px}
+  .rail nav{flex-direction:column; margin-left:0; overflow:visible; gap:1px}
+  .rail nav a{padding:7px 10px; font-size:13px}
+}
+
+main{min-width:0; padding:0 20px 80px; max-width:1180px}
+@media (min-width:760px){ main{padding:0 34px 90px} }
+
+/* ------------------------------------------------ Kopf */
+.hero{padding:44px 0 34px; border-bottom:1px solid var(--line)}
+.hero-lockup{width:min(430px,100%); height:auto; display:block}
+:root:not([data-theme="dark"]) .hero-lockup{
+  background:var(--stratos); border-radius:4px; padding:10px 16px 10px 4px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .hero-lockup{background:none; padding:0}
+}
+:root[data-theme="dark"] .hero-lockup{background:none; padding:0}
+.hero p{max-width:62ch; color:var(--dim); margin:22px 0 0; font-size:16px}
+.hero p b{color:var(--ink); font-weight:600}
+
+.facts{display:flex; flex-wrap:wrap; gap:0; margin-top:30px;
+  border-top:3px solid var(--edge); background:var(--sunk); border-radius:0 0 3px 3px}
+.facts div{padding:14px 20px; flex:1 1 130px; border-right:1px solid var(--line)}
+.facts div:last-child{border-right:0}
+.facts .n{font-family:var(--mono); font-size:23px; font-weight:600; letter-spacing:-.02em}
+.facts .l{font-size:11.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--dim); margin-top:2px}
+
+/* ------------------------------------------------ Panels */
+section{padding-top:52px; scroll-margin-top:110px}
+@media (min-width:1120px){ section{scroll-margin-top:26px} }
+.head{border-top:3px solid var(--edge); padding-top:16px; margin-bottom:8px}
+.kick{font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold-ink);
+  font-weight:600; margin-bottom:6px}
+.head h2{font-size:clamp(21px,2.6vw,27px); font-weight:800; letter-spacing:-.02em}
+.head p{color:var(--dim); max-width:66ch; margin:10px 0 0}
+h3{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim);
+  font-weight:600; margin:34px 0 14px}
+
+/* Kacheln */
+.grid{display:grid; gap:14px; margin-top:20px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fill,minmax(178px,1fr))}
+.g5{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.g6{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}
+
+.tile{margin:0; background:var(--surface); border:1px solid var(--line);
+  border-radius:3px; overflow:hidden; box-shadow:var(--shadow)}
+.stage{display:flex; align-items:center; justify-content:center; padding:16px}
+.stage.navy{background:var(--stratos)}
+.stage.ivory{background:var(--ivory); box-shadow:inset 0 0 0 1px var(--chiprim)}
+.stage.gold{background:var(--galliano)}
+.stage.foto{background:#0A1020 center/cover no-repeat}
+.stage.foto{background-image:url({{FOTO}})}
+.stage svg{display:block; width:100%; height:auto; max-height:250px}
+.g6 .stage,.g5 .stage{padding:12px}
+.tile figcaption{padding:9px 12px 11px; border-top:1px solid var(--line); background:var(--sunk)}
+.tile b{display:block; font-size:12.5px; font-weight:600}
+.tile span{display:block; font-size:11.5px; color:var(--dim); margin-top:1px}
+.tile.dont .stage{position:relative}
+.tile.dont figcaption{background:color-mix(in srgb, #E5484D 10%, var(--sunk))}
+.tile.dont b::before{content:"\00d7  "; color:#E5484D; font-weight:800}
+
+/* Zeichen-Aufmacher */
+.mark{display:grid; gap:26px; align-items:center; margin-top:24px;
+  grid-template-columns:1fr}
+@media (min-width:680px){ .mark{grid-template-columns:230px 1fr} }
+.mark .disc{background:var(--sunk); border:1px solid var(--line); border-radius:3px; padding:20px}
+.mark .disc svg{display:block; width:100%; height:auto}
+.rules{display:grid; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:3px;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.rules div{background:var(--surface); padding:14px 16px}
+.rules h4{margin:0 0 4px; font-size:13px; font-weight:600}
+.rules p{margin:0; font-size:13px; color:var(--dim)}
+.rules .v{font-family:var(--mono); color:var(--gold-ink); font-size:13px}
+
+/* Vorher / Jetzt */
+.ba{display:grid; gap:14px; align-items:center; margin-top:18px;
+  grid-template-columns:1fr auto 1fr}
+.ba figure{margin:0; background:var(--surface); border:1px solid var(--line);
+  border-radius:3px; overflow:hidden; box-shadow:var(--shadow); min-width:0}
+.ba figcaption{padding:9px 12px 11px; border-top:1px solid var(--line); background:var(--sunk)}
+.ba b{display:block; font-size:12.5px; font-weight:600}
+.ba span{display:block; font-size:11.5px; color:var(--dim); margin-top:1px}
+.ba .arrow{color:var(--gold-ink); font-size:22px; line-height:1}
+.ba .stage svg{width:auto; max-width:100%; max-height:280px}
+@media (max-width:520px){
+  .ba{grid-template-columns:1fr}
+  .ba .arrow{transform:rotate(90deg); justify-self:center}
+}
+
+/* Farbe */
+.sw{background:var(--surface); border:1px solid var(--line); border-radius:3px; overflow:hidden}
+.chip{height:104px; display:flex; align-items:flex-end; padding:10px 12px; font-weight:800;
+  font-size:13px; box-shadow:inset 0 0 0 1px var(--chiprim)}
+.sw.st .chip{height:64px}
+.sw .meta{padding:11px 13px 14px; border-top:1px solid var(--line); background:var(--sunk)}
+.sw .nm{font-weight:600; font-size:13.5px}
+.sw .hx{font-family:var(--mono); font-size:12.5px; color:var(--gold-ink); margin:1px 0 6px}
+.sw p{margin:0; font-size:12.5px; color:var(--dim); line-height:1.45}
+
+/* Tabellen */
+.scroll{overflow-x:auto; margin-top:18px; border:1px solid var(--line); border-radius:3px}
+table{border-collapse:collapse; width:100%; min-width:520px; font-size:13.5px}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--line)}
+th{background:var(--sunk); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim); font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+.dot{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:8px;
+  vertical-align:1px}
+.dot.ok{background:#2FA96B} .dot.warn{background:#E5920A} .dot.no{background:#E5484D}
+
+/* Typografie */
+.type{border:1px solid var(--line); border-radius:3px; overflow:hidden; margin-top:20px}
+.tr{display:flex; align-items:center; gap:20px; padding:16px 18px;
+  border-bottom:1px solid var(--line); background:var(--surface); flex-wrap:wrap}
+.tr:last-child{border-bottom:0}
+.tr .lbl{flex:0 0 150px; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim)}
+.spec{min-width:0; overflow-x:auto; color:var(--ink)}
+.spec svg{height:var(--h); width:auto; display:block; max-width:none}
+
+/* Tokens */
+pre{margin:20px 0 0; padding:18px 20px; background:var(--sunk); border:1px solid var(--line);
+  border-top:3px solid var(--edge); border-radius:0 0 3px 3px; overflow-x:auto;
+  font-family:var(--mono); font-size:12.5px; line-height:1.65; color:var(--ink)}
+
+/* Steuerung */
+.ctl{display:inline-flex; align-items:center; gap:7px; margin-top:16px; padding:7px 13px;
+  background:var(--sunk); border:1px solid var(--line); border-radius:3px; color:var(--ink);
+  font:inherit; font-size:12.5px; cursor:pointer}
+.ctl:hover{border-color:var(--galliano)}
+.ctl .led{width:7px; height:7px; border-radius:50%; background:#2FA96B}
+.ctl[aria-pressed="true"] .led{background:var(--dim)}
+
+footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line);
+  color:var(--dim); font-size:12.5px}
+footer code{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+</style>
+
+<div class="shell">
+
+<aside class="rail">
+  <div class="rail-in">
+    {{SIGNET}}
+    <div class="rail-name">Virtual Air Rescue<small>Brandbook</small></div>
+    <nav aria-label="Abschnitte">{{NAV}}</nav>
+  </div>
+</aside>
+
+<main>
+
+<header class="hero">
+  {{LOCKUP}}
+  <p><b>Virtual Air Rescue</b> fliegt Rettungshubschrauber im Flugsimulator &mdash; mit
+  eigener Leitstelle, eigenem Funk und Disponenten aus Fleisch und Blut. Dieses
+  Brandbook erkl&auml;rt das Zeichen, die Farben und die Schrift, und es gibt her, was
+  man zum Arbeiten braucht: <b>{{NSVG}} Vektordateien</b>, {{NPNG}} Rasterfassungen und
+  <b>22 fertige Vorlagen</b> f&uuml;r Social Media, Video und Stream. Jede Grafik auf
+  dieser Seite ist die Originaldatei, nicht ein Abbild davon &mdash;
+  <a href="#material">alles zum Herunterladen</a>.</p>
+
+  <div class="facts">
+    <div><div class="n">{{NSVG}}</div><div class="l">Vektordateien</div></div>
+    <div><div class="n">{{NPNG}}</div><div class="l">Rasterfassungen</div></div>
+    <div><div class="n">3</div><div class="l">Markenfarben</div></div>
+    <div><div class="n">4</div><div class="l">Schriftschnitte</div></div>
+    <div><div class="n">&minus;3,27&deg;</div><div class="l">Neigung der Kante</div></div>
+    <div><div class="n">424</div><div class="l">Breite der Wortmarke</div></div>
+  </div>
+</header>
+
+<!-- ------------------------------------------------------- Die Marke -->
+<section id="marke">
+  <div class="head">
+    <div class="kick">Die Marke</div>
+    <h2>Virtuelle Luftrettung, seit 2020</h2>
+    <p>Wir fliegen Rettungshubschrauber im Simulator &mdash; mit eigener Leitstelle,
+    eigenem Funk und Disponenten aus Fleisch und Blut. Kein Skript, keine
+    Zufallsmission: jemand alarmiert dich wirklich. Daher kommt auch, was die Marke
+    leisten muss. Sie steht selten allein auf wei&szlig;em Papier, sondern auf einem
+    Lagebild, in einer Bauchbinde, auf einem Screenshot bei Nacht.</p>
+  </div>
+
+  <h3>Drei Rollen</h3>
+  <div class="rules">
+    <div><h4>Pilot</h4><p>Meldet sich an einer Station an, der Client verbindet den
+      Simulator mit der Leitstelle. Ab dann steht das Luftfahrzeug im Lagebild &mdash;
+      und wird alarmiert.</p></div>
+    <div><h4>Disponent</h4><p>Sitzt in der Webleitstelle, nimmt Eins&auml;tze auf,
+      w&auml;hlt das n&auml;chstgelegene geeignete Rettungsmittel und f&uuml;hrt den
+      Funkverkehr.</p></div>
+    <div><h4>Crew</h4><p>HEMS&nbsp;TC, Notarzt, Au&szlig;enlandung, BOS-Funk, Status
+      &mdash; dazu Luftraumstruktur, Meteorologie und Navigation.</p></div>
+  </div>
+
+  <h3>Wie VAR klingt</h3>
+  <div class="rules">
+    <div><h4>Sachlich</h4><p>Der Ton des Rettungsdienstes: knapp, pr&auml;zise, ohne
+      Ausrufezeichen. <em>&bdquo;Status&nbsp;3, Einsatzort an&ldquo;</em> tr&auml;gt
+      mehr als jedes Adjektiv.</p></div>
+    <div><h4>Begriffe aus der Sache</h4><p>Stichwort, Funkrufname, Station, Status,
+      Prim&auml;reinsatz. Wer sie kennt, f&uuml;hlt sich angesprochen; wer nicht,
+      lernt sie hier.</p></div>
+    <div><h4>Kein Drama</h4><p>Wir bilden Luftrettung nach, wir inszenieren sie nicht.
+      Keine Blaulicht-Romantik, keine Notf&auml;lle als Unterhaltung.</p></div>
+    <div><h4>Versalien mit Ma&szlig;</h4><p>Schlagzeilen und Auszeichnungen gro&szlig;,
+      Flie&szlig;text gemischt. Ein ganzer Absatz in Versalien liest sich als
+      Geschrei.</p></div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------- Zeichen -->
+<section id="zeichen">
+  <div class="head">
+    <div class="kick">Das Zeichen</div>
+    <h2>Ein Hubschrauber auf der Kante eines Dachlandeplatzes</h2>
+    <p>Er steht nicht im Kreis, er wird von der Kante angeschnitten &mdash; so lag es
+    schon im Ursprungsentwurf. Die Kante ist um 3,27&deg; gekippt; das ist die gemessene
+    untere St&uuml;tzh&uuml;lle der Zeichnung, nicht ein gew&auml;hlter Winkel. Die
+    Wortmarke beschneidet ein <em>konzentrischer</em> Kreis.</p>
+  </div>
+
+  <div class="mark">
+    <div class="disc">{{HERO_LOGO}}</div>
+    <div class="rules">
+      <div><h4>Neigung</h4><p class="v">&minus;3,2746681&deg;</p>
+        <p>gemessen, festgehalten in <code>werkzeug/tilt.json</code></p></div>
+      <div><h4>Beschnitt</h4><p>Konzentrischer Kreis &uuml;ber der Wortmarke &mdash;
+        nicht auf einen Ber&uuml;hrpunkt optimiert.</p></div>
+      <div><h4>Sondereditionen</h4><p>Der Hubschrauber bleibt <b>immer</b> Gold.
+        Ver&auml;ndert wird nur das untere Feld.</p></div>
+    </div>
+  </div>
+
+  <h3>Wo die Kante liegt</h3>
+  <p style="color:var(--dim); margin:0; max-width:66ch; font-size:13.5px">Steht eine
+  Wortmarke unter der Kante, l&auml;uft sie <b style="color:var(--ink)">durch den
+  Mittelpunkt</b> &mdash; sie ist dann ein Durchmesser, die l&auml;ngste Sehne, die der
+  Kreis hergibt. Himmel und Feld sind gleich hoch, und VAR bekommt die H&auml;lfte des
+  Zeichens statt eines Drittels.</p>
+
+
+
+  <div class="rules" style="margin-top:16px">
+    <div><h4>Mit Wortmarke</h4><p class="v">EDGE = 226</p>
+      <p>Oberkante des Balkens auf 256 &mdash; der Kreismitte. Hauptfassung,
+      Zweitfassung, Zweifeld, R1 und alle Profilbilder.</p></div>
+    <div><h4>Ohne Wortmarke</h4><p class="v">EDGE_LEER = 300</p>
+      <p>Signet, R2&ndash;R5 und App-Icon bleiben tief. Die Mitte g&auml;be dort nur eine
+      leere H&auml;lfte her und verkleinerte den Hubschrauber, der dort allein tr&auml;gt.</p></div>
+    <div><h4>Gr&ouml;&szlig;e der Wortmarke</h4><p class="v">82,8 % des Durchmessers</p>
+      <p>Am Ursprungslogo gemessen, nicht gew&auml;hlt. VAR wird damit 424.</p></div>
+    <div><h4>Verl&auml;ngerte F&uuml;&szlig;e</h4><p class="v">entlang der Kanten</p>
+      <p>Die St&auml;mme sind geneigt und verj&uuml;ngen sich nach unten &mdash; das Bein
+      des A um 0,41 je Einheit. Senkrecht verl&auml;ngert bek&auml;me jeder Fu&szlig;
+      einen Knick.</p></div>
+    <div><h4>Fuge zur Kante</h4><p class="v">= Balkenst&auml;rke</p>
+      <p>Ohne sie verschmelzen die flachen Oberkanten von V und R mit dem Balken. Die
+      Kante misst sich an sich selbst, statt eine gegriffene Zahl zu tragen.</p></div>
+    <div><h4>Der Satz dahinter</h4><p>Nicht &bdquo;die Kante liegt in der Mitte&ldquo;,
+      sondern: sie liegt so tief, wie das, was unter ihr steht, es verlangt.</p></div>
+  </div>
+
+  <h3>Herleitung</h3>
+  {{EVO}}
+</section>
+
+<!-- ------------------------------------------------------- Fassungen -->
+<section id="fassungen">
+  <div class="head">
+    <div class="kick">Fassungen</div>
+    <h2>Sieben Fassungen, f&uuml;nf Rotorstudien, drei Icons</h2>
+    <p>Die Hauptfassung deckt fast alles ab. Das Signet tritt an, wo die Wortmarke
+    nicht mehr lesbar w&auml;re, das App-Icon dort, wo auch das Signet aufgibt.</p>
+  </div>
+  {{FASSUNGEN}}
+
+  <h3>Rotorstudien R1&ndash;R5</h3>
+  {{ROTOR}}
+
+  <h3>Icons unter 32&#8239;px</h3>
+  {{ICONS}}
+
+  <h3>Sperrungen</h3>
+  {{LOCKUPS}}
+</section>
+
+<!-- ------------------------------------------------------- Größen -->
+<section id="groessen">
+  <div class="head">
+    <div class="kick">Gr&ouml;&szlig;en und Schutzraum</div>
+    <h2>Der Hubschrauber ist 3,1&#8202;:&#8202;1 breit</h2>
+    <p>Im runden Beschnitt ist er unter 100&#8239;px kaum noch zu erkennen. Deshalb
+    l&ouml;st unterhalb der Grenzen jeweils die n&auml;chstkleinere Fassung ab.</p>
+  </div>
+  <div class="rules" style="margin-top:20px">
+    <div><h4>Hauptfassung</h4><p class="v">ab 96&#8239;px &middot; 22&#8239;mm</p>
+      <p>mit Wortmarke, alle gedruckten Anwendungen</p></div>
+    <div><h4>Signet</h4><p class="v">ab 40&#8239;px</p>
+      <p>ohne Wortmarke, Avatare und Marker</p></div>
+    <div><h4>App-Icon</h4><p class="v">unter 40&#8239;px</p>
+      <p>ausschlie&szlig;lich, alles andere zerf&auml;llt</p></div>
+    <div><h4>Schutzraum</h4><p class="v">&frac14; des Durchmessers</p>
+      <p>rundherum frei, auch zum Bildrand</p></div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------- Untergründe -->
+<section id="untergrund">
+  <div class="head">
+    <div class="kick">Untergr&uuml;nde</div>
+    <h2>Das Zeichen bringt seinen Grund mit</h2>
+    <p>Es steht in einem geschlossenen Kreis &mdash; deshalb l&auml;sst es sich fast
+    &uuml;berall absetzen, auch auf einem Foto. Die einzige Frage ist, ob der Kreisrand
+    sich noch vom Untergrund l&ouml;st. Tut er das nicht, wechselt man die Fassung,
+    nicht die Farbe.</p>
+  </div>
+  {{UNTERGRUND}}
+  <div class="rules" style="margin-top:16px">
+    <div><h4>Auf Fotos</h4><p>Direkt aufsetzen, ohne Kasten und ohne Schatten. Wird es
+      unruhig, hilft ein Scrim &mdash; ein Verlauf im Bild, keine Box um das
+      Zeichen.</p></div>
+    <div><h4>Auf Gold</h4><p>Die einfarbig positive Fassung. Die Hauptfassung auf Gold
+      hie&szlig;e Gold auf Gold: der Hubschrauber verschw&auml;nde.</p></div>
+    <div><h4>Auf Fremdfarben</h4><p>Nur die einfarbigen Fassungen. Der Stratos-Kreis auf
+      einer fremden Marke wirkt wie ein Aufkleber.</p></div>
+    <div><h4>Schutzraum gilt immer</h4><p>Ein Viertel des Durchmessers rundum frei
+      &mdash; auch zum Bildrand, auch auf einem Foto.</p></div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------- Farbe -->
+<section id="farbe">
+  <div class="head">
+    <div class="kick">Farbe</div>
+    <h2>Drei Markenfarben. Mehr nicht.</h2>
+    <p>Die alte Palette f&uuml;hrte sechs T&ouml;ne, davon zwei Paare, die das Auge nicht
+    trennen kann. Persian Blue und Blue Charcoal sind entfallen. Was bleibt, sind drei
+    Farben mit klaren Rollen &mdash; und ein Blau, das ausschlie&szlig;lich in der
+    Oberfl&auml;che arbeitet und nie im Logo auftaucht.</p>
+  </div>
+  <div class="grid g3">{{MARKE}}</div>
+
+  <h3>Statusfarben der Leitstelle</h3>
+  <p style="color:var(--dim); margin:0; max-width:66ch; font-size:13.5px">Diese T&ouml;ne
+  geh&ouml;ren nicht zur Marke, sondern zur Bedienung &mdash; bewusst von Gold getrennt,
+  damit ein Einsatzstatus nie mit einer Markenfl&auml;che verwechselt wird.</p>
+  <div class="grid g4" style="margin-top:14px">{{STATUS}}</div>
+
+  <h3>Was zusammen darf</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Kombination</th><th>Kontrast</th><th>Erlaubt f&uuml;r</th></tr></thead>
+    <tbody>{{KONTRAST}}</tbody>
+  </table></div>
+</section>
+
+<!-- ------------------------------------------------------- Typografie -->
+<section id="typografie">
+  <div class="head">
+    <div class="kick">Typografie</div>
+    <h2>Uniform, in Versalien, mit Luft</h2>
+    <p>Uniform ist gesetzt. &Uuml;berschriften und Auszeichnungen laufen in Versalien mit
+    offener Laufweite &mdash; der Ton, den Beh&ouml;rden- und Rettungsdienstkommunikation
+    tr&auml;gt. Flie&szlig;text darf gemischt laufen, sonst wird es unlesbar. Die Proben
+    unten sind in Pfade gewandelte Uniform, keine Ersatzschrift.</p>
+  </div>
+  <div class="type">{{TYPEROWS}}</div>
+  <div class="rules" style="margin-top:16px">
+    <div><h4>Laufweite</h4><p>Versalien ab 40&#8239;px: 1&#8201;%. Auszeichnungen 14&#8201;%.
+      Kleinlabels 16&ndash;18&#8201;%. Je kleiner, desto weiter.</p></div>
+    <div><h4>Zeilenabstand</h4><p>Schlagzeilen 1,0&ndash;1,05. Flie&szlig;text 1,5.
+      Nie enger als die Versalh&ouml;he.</p></div>
+    <div><h4>Ausrichtung</h4><p>Linksb&uuml;ndig, Flattersatz. Zentriert nur im senkrechten
+      Lockup und auf Veranstaltungsgrafiken.</p></div>
+    <div><h4>Ersatzschrift</h4><p><code>Inter</code>, sonst <code>system-ui</code>.
+      Nie Arial in Versalien &mdash; das kippt den Ton sofort.</p></div>
+    <div><h4>Lizenz</h4><p class="v">nicht enthalten</p>
+      <p>Uniform ist lizenzpflichtig und liegt deshalb <b>nicht</b> in diesem
+      Repository.</p></div>
+  </div>
+
+  <p style="color:var(--dim); max-width:66ch; margin:20px 0 0; font-size:13.5px">Wer
+  Uniform nicht hat, ist nicht ausgeschlossen: der Schriftstapel f&auml;llt auf
+  <code>system-ui</code> zur&uuml;ck, und weil Uniform eine neutrale Grotesk ist,
+  tr&auml;gt die Systemschrift dieselbe Anmutung. Entscheidend f&uuml;r den Ton sind
+  ohnehin <b style="color:var(--ink)">Versalien und Laufweite</b>, nicht die
+  Schnittzeichnung. In den fertigen Vorlagen und Logos steckt die Frage gar nicht: dort
+  ist jeder Buchstabe bereits ein Pfad.</p>
+</section>
+
+<!-- ------------------------------------------------------- Kante -->
+<section id="kante">
+  <div class="head">
+    <div class="kick">Das durchgehende Element</div>
+    <h2>Die Kante tr&auml;gt jede Anwendung</h2>
+    <p>Im Zeichen steht der Hubschrauber auf ihr. In jeder Vorlage kommt sie wieder: als
+    goldene Linie &uuml;ber der Absenderleiste, als Trennung zwischen Bild und Text, als
+    Oberkante eines Banners, als aktiver Reiter in der Oberfl&auml;che &mdash; und als
+    obere Linie jedes Abschnitts auf dieser Seite. Wer eine neue Vorlage baut, f&auml;ngt
+    mit der Kante an.</p>
+  </div>
+  <div class="rules" style="margin-top:20px">
+    <div><h4>St&auml;rke</h4><p class="v">0,5&#8201;% &ndash; 1,2&#8201;%</p>
+      <p>der k&uuml;rzeren Kantenl&auml;nge. Nie unter 3&#8239;px, nie &uuml;ber 14&#8239;px.</p></div>
+    <div><h4>Farbe</h4><p>Galliano auf Stratos. Ivory, wenn der Hubschrauber gold ist und
+      beide sich ber&uuml;hren. Nie zwei Kanten in zwei Farben.</p></div>
+    <div><h4>Lage</h4><p>Immer waagerecht, immer randabfallend. Sie ist eine Kante &mdash;
+      kein Rahmen und kein Unterstrich.</p></div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------- Profilbilder -->
+<section id="profilbilder">
+  <div class="head">
+    <div class="kick">Profilbilder</div>
+    <h2>Eine Grundfassung, zw&ouml;lf Sondereditionen</h2>
+    <p>Die Regel steckte schon in den bestehenden Logos: der Hubschrauber bleibt Gold,
+    ver&auml;ndert wird das untere Feld, oben bei Bedarf ein Muster. F&uuml;nf Editionen
+    sind animiert.</p>
+  </div>
+  <button class="ctl" id="anim" aria-pressed="false">
+    <span class="led"></span><span id="animlbl">Animationen laufen</span>
+  </button>
+  {{PB}}
+</section>
+
+<!-- ------------------------------------------------------- Vorlagen -->
+<section id="vorlagen">
+  <div class="head">
+    <div class="kick">Vorlagen</div>
+    <h2>Zweiundzwanzig Formate &mdash; alle auf der gekippten Kante</h2>
+    <p>Der Balken war hier bis August 2026 waagerecht; damit fehlte ausgerechnet das
+    Element, an dem die Marke zu erkennen ist. Jetzt l&auml;uft er in jedem Format im
+    selben Winkel randabfallend durch und tr&auml;gt darunter den Absender. Der Aufbau
+    wiederholt das Zeichen im Gro&szlig;en: oben das Bild wie der Himmel, darunter die
+    Kante, darunter die Fl&auml;che mit dem Absender wie die Wortmarke. Ein Beitrag ist
+    dadurch auch dann als VAR-Beitrag zu erkennen, wenn das Logo klein ist oder gar
+    nicht im Bild steht.</p>
+  </div>
+  {{VORLAGEN}}
+</section>
+
+<!-- ------------------------------------------------------- Reel -->
+<section id="reel">
+  <div class="head">
+    <div class="kick">Reel-Baukasten</div>
+    <h2>Das Einsatz-Tagebuch in sechs Karten</h2>
+    <p>Ein Einsatz von der Alarmierung bis zur R&uuml;ckmeldung &bdquo;einsatzklar&ldquo;.
+    Die leere Vorlage nimmt eigene Beschriftungen auf.</p>
+  </div>
+  {{REEL}}
+</section>
+
+<!-- ------------------------------------------------------- Karte -->
+<section id="karte">
+  <div class="head">
+    <div class="kick">Karte</div>
+    <h2>Das Tag <em>ist</em> das Luftfahrzeug</h2>
+    <p>An RescueTrack angelehnt: die Eckklammer zeigt auf die Position, es gibt kein
+    zus&auml;tzliches Symbol. Farben kommen aus <code>FMS_STATUS_COLORS</code>, die Spur
+    liegt auf <code>#46b7a3</code>.</p>
+  </div>
+  {{KARTE}}
+</section>
+
+<!-- ------------------------------------------------------- Regeln -->
+<section id="regeln">
+  <div class="head">
+    <div class="kick">Falschanwendung</div>
+    <h2>F&uuml;nf Dinge, die das Zeichen zerst&ouml;ren</h2>
+    <p>Vier davon betreffen die Kante &mdash; sie ist der Teil, den man am ehesten f&uuml;r
+    Dekoration h&auml;lt.</p>
+  </div>
+  <div class="grid g5">{{DONTS}}</div>
+</section>
+
+<!-- ------------------------------------------------------- Tokens -->
+<section id="tokens">
+  <div class="head">
+    <div class="kick">&Uuml;bergabe an die Software</div>
+    <h2>Ein Satz Tokens f&uuml;r Hub und Leitstelle</h2>
+    <p>Hub und Leitstelle laufen heute auf den daisyUI-Standardthemes <code>dark</code>
+    und <code>nord</code>, dazu ein <code>rescuetrack: #46b7a3</code> in der
+    Tailwind-Konfiguration, das in keinem Style Guide steht. Der n&auml;chste Schritt ist
+    eine gemeinsame <code>tokens.css</code> in <code>packages/shared-components/</code>,
+    die beide importieren.</p>
+  </div>
+  <pre>{{TOKENS}}</pre>
+</section>
+
+<!-- ------------------------------------------------------- Bestand -->
+<!-- ------------------------------------------------------- Material -->
+<section id="material">
+  <div class="head">
+    <div class="kick">Material</div>
+    <h2>Alles liegt offen im Repository</h2>
+    <p>Die SVG ist immer der Master &mdash; PNGs entstehen aus ihr, nie umgekehrt. Wer
+    eine Fassung braucht, die es noch nicht gibt, erzeugt sie neu, statt eine
+    vorhandene zu skalieren oder umzuf&auml;rben.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Ordner</th><th>Dateien</th><th>Inhalt</th></tr></thead>
+    <tbody>{{BESTAND}}</tbody>
+  </table></div>
+
+  <h3>So kommt man dran</h3>
+  <div class="rules">
+    <div><h4>Ganzes Paket</h4>
+      <p class="v">git clone</p>
+      <p><a href="https://github.com/VAR-Virtual-Air-Rescue/branding">github.com/VAR-Virtual-Air-Rescue/branding</a></p></div>
+    <div><h4>Einzelne Datei</h4>
+      <p>Im Repository &ouml;ffnen und <b>Raw</b> speichern. SVG-Dateien lassen sich
+      direkt in Illustrator, Figma und Affinity &ouml;ffnen.</p></div>
+    <div><h4>Neu erzeugen</h4>
+      <p class="v">python werkzeug/build.py</p>
+      <p>Erzeugt Logos, Lockups, Icons, Profilbilder und Rasterfassungen aus denselben
+      Pfaddaten.</p></div>
+    <div><h4>Vorlagen f&uuml;llen</h4>
+      <p class="v">tpl_build.py --fotos</p>
+      <p>Setzt eigene Bilder in alle 22 Formate ein, statt sie einzeln zu
+      bauen.</p></div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------- Nutzung -->
+<section id="nutzung">
+  <div class="head">
+    <div class="kick">Nutzung</div>
+    <h2>Was damit erlaubt ist</h2>
+    <p>Das Material liegt offen, damit Mitglieder, Partner und Presse es richtig
+    verwenden k&ouml;nnen &mdash; nicht, damit es frei wird.</p>
+  </div>
+  <div class="rules">
+    <div><h4>Erlaubt</h4><p>Auf VAR verweisen: Mitglieder und Stationen, befreundete
+      Virtual Airlines, Berichte, Videos und Streams &uuml;ber unsere Eins&auml;tze.</p></div>
+    <div><h4>Unver&auml;ndert</h4><p>Farben, Proportionen, Anschnitt und Winkel bleiben,
+      wie sie sind. Wer eine andere Fassung braucht &mdash; hell, einfarbig, ohne
+      Wortmarke &mdash; findet sie meist schon hier.</p></div>
+    <div><h4>Nicht erlaubt</h4><p>Als eigenes Zeichen f&uuml;hren, in ein anderes Logo
+      einbauen, oder so einsetzen, dass es nach einer Zusammenarbeit aussieht, die es
+      nicht gibt.</p></div>
+    <div><h4>Im Zweifel</h4><p>Fragen. Eine kurze Nachricht ist schneller beantwortet,
+      als eine Grafik zur&uuml;ckgezogen ist.</p></div>
+  </div>
+
+  <p style="color:var(--dim); max-width:66ch; margin:20px 0 0; font-size:13.5px">Der
+  Inhalt dieses Repositorys steht unter <b style="color:var(--ink)">GPL&#8209;3.0</b>.
+  Das betrifft die Dateien und die Skripte. Das Zeichen selbst ist die Kennzeichnung
+  von Virtual Air Rescue &mdash; eine Softwarelizenz ist keine Erlaubnis, fremde
+  Kennzeichen als eigene zu f&uuml;hren. Die beiden Dinge stehen nebeneinander, sie
+  ersetzen einander nicht.</p>
+</section>
+
+<footer>
+  <b>VAR Brandbook</b> &middot; Virtual Air Rescue &mdash; virtuelle Luftrettung im
+  Flugsimulator. Jede Grafik auf dieser Seite ist die Originaldatei aus dem
+  Markenpaket, inline eingebettet; die Seite l&auml;dt nichts nach und funktioniert
+  offline. Quelle und Downloads:
+  <a href="https://github.com/VAR-Virtual-Air-Rescue/branding">github.com/VAR-Virtual-Air-Rescue/branding</a> &middot;
+  <a href="https://virtualairrescue.com">virtualairrescue.com</a>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('anim'),
+      lbl = document.getElementById('animlbl'),
+      paused = false;
+
+  function svgs(){ return document.querySelectorAll('#profilbilder svg'); }
+  function apply(){
+    svgs().forEach(function(s){
+      if (typeof s.pauseAnimations !== 'function') return;
+      paused ? s.pauseAnimations() : s.unpauseAnimations();
+    });
+    btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    lbl.textContent = paused ? 'Animationen angehalten' : 'Animationen laufen';
+  }
+  btn.addEventListener('click', function(){ paused = !paused; apply(); });
+
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
+    paused = true; apply();
+  }
+})();
+</script>
