@@ -328,6 +328,11 @@ _schimmer = (f'<g transform="rotate({ANG:.3f} {C} {C})">'
              f'fill="#8FC0FF" opacity=".85">'
              f'<animate attributeName="x" from="-170" to="{S+20}" dur="3.4s" '
              f'repeatCount="indefinite"/></rect></g>')
+# Jubilaeum -- die Kerze ploppt auf, wird angezuendet, brennt und tropft.
+# Derselbe Aufbau wie die stehende Fassung, nur mit bewegter Kerze.
+from editions import _jubilaeum
+A["pb_jubilaeum_anim"] = _jubilaeum(bewegt=True)
+
 A["pb_nacht_anim"] = bewegt(
     "#04091A", GALLIANO, "#2B6EFF", IVORY, _himmel,
     feld(flaeche("#0A1836")) + _schimmer)

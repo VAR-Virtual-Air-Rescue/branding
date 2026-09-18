@@ -9,14 +9,15 @@ eingebettet. Die SVG ist immer der Master, PNGs entstehen aus ihr, nie umgekehrt
     logo/          Hauptfassung, Signet, Zweitfassung, Zweifeld, hell, einfarbig
     lockup/        waagerecht und senkrecht, je positiv und negativ
     icon/          App-Icons für alles unter 32 px
-    profilbilder/  Grundfassung, 11 Sondereditionen, 5 davon animiert, Vorlage
+    profilbilder/  Grundfassung, 11 Sondereditionen, 6 davon animiert, Vorlage
     reel/          6 Overlays für das Einsatz-Tagebuch plus leere Vorlage
     vorlagen/      22 Formate für Social Media, Video und Stream, dazu 18
                    Event-Vorlagen und Event-Banner (`event_*`)
     EVENT-IDEEN.md zwölf Eventformate mit der Vorlage, die sie trägt
     herleitung/    Foto, Entwurf, heutiges Logo, sechs Falschanwendungen
     karte/         Lagebild und Livekarte in RescueTrack-Anmutung
-    png/           512 · 256 · 128 · 64 · 32 · 16
+    png/           512 · 256 · 128 · 64 · 32 · 16, dazu das bewegte
+                   Jubiläumsbild als GIF und APNG für Discord
     werkzeug/      Skripte, mit denen sich alles neu erzeugen lässt
     brandbook/     das gebaute Brandbook — eine Datei, lädt nichts nach
     website/       der Onepager virtualairrescue.com als Anschauungsstück
@@ -168,6 +169,23 @@ Verzeichnisübersicht:
 Das Traefik-Netz wird nicht angelegt, sondern erwartet (`external: true`).
 Fehlt es, bricht `up` mit einer klaren Meldung ab — besser, als ein Netz
 gleichen Namens anzulegen und sich zu wundern, dass der Proxy nichts findet.
+
+
+## Bewegte Fassungen für Discord
+
+Die animierten Profilbilder sind SMIL und laufen im Browser. Discord nimmt für
+Serverbilder und Avatare **GIF**, für Sticker und Emoji APNG — kein SVG.
+`werkzeug/bilder.mjs` rendert die Bildfolge über Chromium:
+
+    node werkzeug/bilder.mjs profilbilder/pb_jubilaeum_anim.svg ordner 512 20 9
+    ffmpeg -framerate 20 -i ordner/b%04d.png -vf "split[a][b];[a]palettegen=reserve_transparent=1[p];[b][p]paletteuse=alpha_threshold=128" -loop 0 aus.gif
+
+Die Zeit wird dabei **gesetzt, nicht abgewartet**: `setCurrentTime(t)` springt
+die Animation exakt an die Stelle. Sonst hingen die Bilder an der Rechenlast
+beim Aufnehmen, und die Schleife hätte am Ende eine andere Länge als am Anfang.
+
+Playwright kommt aus dem Nachbarrepo `social-studio` — dort ist es installiert,
+hier nicht.
 
 ## Uniform liegt nicht hier
 

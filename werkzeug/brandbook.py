@@ -68,7 +68,7 @@ def count(folder, ext=".svg"):
 ORDNER = ["logo", "lockup", "icon", "profilbilder", "reel", "vorlagen",
           "karte", "herleitung"]
 n_svg = sum(count(d) for d in ORDNER)
-n_png = count("png", ".png")
+n_png = count("png", ".png") + count("png", ".gif") + count("png", ".apng")
 n_wz = len([f for f in os.listdir(HIER) if f.endswith(".py")])
 
 # --- Schriftproben: Umrisse, kein Schriftschnitt --------------------------
@@ -122,7 +122,8 @@ PB = [("profilbilder/pb_standard.svg", "Standard", "Grundfassung"),
       ("profilbilder/pb_halloween_anim.svg", "Halloween", "animiert"),
       ("profilbilder/pb_nacht.svg", "Nachtflug", "stehend"),
       ("profilbilder/pb_nacht_anim.svg", "Nachtflug", "animiert"),
-      ("profilbilder/pb_jubilaeum.svg", "Jubil&auml;um", "Jahreszahl einsetzbar"),
+      ("profilbilder/pb_jubilaeum.svg", "Jubil&auml;um", "die Ziffer als Kerze"),
+      ("profilbilder/pb_jubilaeum_anim.svg", "Jubil&auml;um", "animiert: ploppt, brennt, tropft"),
       ("profilbilder/pb_vorlage.svg", "Vorlage", "leeres unteres Feld")]
 VORLAGEN = [
     ("vorlagen/ig_4x5_foto.svg", "Instagram Beitrag", "1080&times;1350"),
@@ -248,13 +249,13 @@ BESTAND = [
     ("lockup/", count("lockup"), "waagerecht und senkrecht, je positiv und negativ"),
     ("icon/", count("icon"), "App-Icon und zwei Monogramme f&uuml;r alles unter 32&#8239;px"),
     ("profilbilder/", count("profilbilder"),
-     "Grundfassung, zw&ouml;lf Sondereditionen, f&uuml;nf davon animiert, Vorlage"),
+     "Grundfassung, elf Sondereditionen, sechs davon animiert, Vorlage"),
     ("reel/", count("reel"), "sechs Overlays f&uuml;r das Einsatz-Tagebuch plus leere Vorlage"),
     ("vorlagen/", count("vorlagen"), "Social Media, Video, Stream, Veranstaltungen"),
     ("karte/", count("karte"), "Lagebild, Livekarte, Spur"),
     ("herleitung/", count("herleitung"),
      "Foto, Entwurf, Vorg&auml;ngerfassung, f&uuml;nf Falschanwendungen"),
-    ("png/", n_png, "512 &middot; 256 &middot; 128 &middot; 64 &middot; 32 &middot; 16 plus f&uuml;nf Vorlagen"),
+    ("png/", n_png, "512 &middot; 256 &middot; 128 &middot; 64 &middot; 32 &middot; 16, f&uuml;nf Vorlagen, das bewegte Jubil&auml;umsbild als GIF und APNG"),
     ("werkzeug/", n_wz, "Skripte, mit denen sich alles neu erzeugen l&auml;sst"),
     ("website/", "&mdash;", "der Onepager als Anschauungsst&uuml;ck"),
 ]
