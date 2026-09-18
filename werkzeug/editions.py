@@ -286,7 +286,7 @@ E["pb_nl"] = edition(streifen(["#AE1C28", "#FFFFFC", "#21468B"], [48, 4, 48]),
 # des Banners zerfaellt bei 128 px zur Schraffur, s. jubilaeum.py).
 #
 # Welches Jahr, steht in JUBILAEUM_JAHR; die bewegte Fassung nimmt dasselbe.
-from jubilaeum import docht_und_flamme, ziffer
+from jubilaeum import docht_und_flamme, ziffer, konfetti
 JUBILAEUM_JAHR = "2"
 
 def _jubilaeum(bewegt=False):
@@ -298,6 +298,7 @@ def _jubilaeum(bewegt=False):
             + oben(muster([STERN], 40, 33) + ziffer(JUBILAEUM_JAHR, bewegt))
             + feld(flaeche(GALLIANO)) + heli + barsvg
             + docht_und_flamme(bewegt)
+            + konfetti(bewegt)
             + word_max(STRATOS, KANTE_Y + BAR + FUGE))
     return svg(disc(body, uid("j")))
 

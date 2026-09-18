@@ -213,3 +213,79 @@ def ziffer(jahr="2", bewegt=False):
     z, b = linien_zwei(ZIFFER_H, ZIFFER_FARBE, ZIFFER_LINIEN, zeichnen=(2.0, 3.8))
     aus = _anim("opacity", [(0, 1), (8.55, 1), (8.9, 0), (DAUER, 0)])
     return f'<g transform="translate({ZIFFER_X},{ZIFFER_Y})">{aus}{z}</g>' 
+
+
+# =========================================================================
+#  Konfetti -- ein Ausbruch aus der Kerze, sobald die Zwei steht
+# =========================================================================
+KONFETTI_FARBEN = [GALLIANO, IVORY, WARM, GLUT]
+
+
+def _flugbahn(vx, vy, dauer, g=300.0, n=8):
+    """Wurfparabel als Stuetzpunkte: (t, 'x y'). Schwerkraft in Einheiten/s^2."""
+    out = []
+    for i in range(n + 1):
+        t = dauer * i / n
+        out.append((t, f"{vx * t:.1f} {vy * t + 0.5 * g * t * t:.1f}"))
+    return out
+
+
+def konfetti(bewegt=False, x=ROTORKOPF[0], y=ROTORKOPF[1] - 30, n=56, seed=11):
+    """Konfetti aus der Kerze. Ursprung knapp ueber dem Rotorkopf.
+
+    Stehend: ein paar Teile, die in der Luft haengen -- damit die stehende
+    Fassung zur bewegten passt, aber ohne den Himmel zuzustellen.
+
+    Bewegt: bei 3,9 s, gleich nachdem sich die Zwei gezeichnet hat, platzt der
+    Ausbruch. Jedes Teil hat seine eigene Wurfparabel, dreht sich dabei und
+    verblasst im letzten Drittel -- sonst laege am Ende Konfetti auf der
+    Wortmarke. Ein zweiter, kleinerer Ausbruch bei 6,4 s haelt die Schleife
+    lebendig, bis alles bei 8,6 s abbaut.
+    """
+    r = random.Random(seed)
+    teile = []
+
+    def teil(i):
+        farbe = KONFETTI_FARBEN[i % len(KONFETTI_FARBEN)]
+        if i % 3 == 0:
+            return f'<circle r="{r.uniform(3.0, 4.6):.1f}" fill="{farbe}"/>'
+        w, h = r.uniform(7, 11), r.uniform(4, 6)
+        return f'<rect x="{-w/2:.1f}" y="{-h/2:.1f}" width="{w:.1f}" height="{h:.1f}" fill="{farbe}"/>'
+
+    if not bewegt:
+        for i in range(10):
+            a = math.radians(r.uniform(-150, -30))
+            d = r.uniform(70, 150)
+            px, py = x + math.cos(a) * d, y + math.sin(a) * d * 0.8
+            teile.append(f'<g transform="translate({px:.1f},{py:.1f}) rotate({r.uniform(0,360):.0f})" '
+                         f'opacity=".85">{teil(i)}</g>')
+        return "".join(teile)
+
+    def ausbruch(t0, anzahl, kraft, seed2):
+        rr = random.Random(seed2)
+        out = []
+        for i in range(anzahl):
+            # Faecher nach oben: Winkel zwischen 200 und 340 Grad (SVG-y zeigt
+            # nach unten, also sind negative Sinuswerte "oben").
+            a = math.radians(rr.uniform(190, 350))
+            v = rr.uniform(0.55, 1.0) * kraft
+            vx, vy = math.cos(a) * v, math.sin(a) * v
+            flug = rr.uniform(2.2, 3.0)
+            bahn = [(0, "0 0"), (t0, "0 0")] + [(t0 + t, p) for t, p in _flugbahn(vx, vy, flug)]
+            bahn += [(DAUER, bahn[-1][1])]
+            lauf = _anim(None, bahn, typ="translate")
+            dreh = _anim(None, [(0, "0"), (t0, "0"), (t0 + flug, f"{rr.uniform(-720, 720):.0f}"),
+                                (DAUER, f"{rr.uniform(-720, 720):.0f}")], typ="rotate", additiv=True)
+            sicht = _anim("opacity", [(0, 0), (t0, 0), (t0 + .04, 1), (t0 + flug * .65, 1),
+                                      (t0 + flug, 0), (DAUER, 0)])
+            # Beim Abschuss kurz groesser -- der Knall.
+            pop = _anim(None, [(0, "1 1"), (t0, "1.6 1.6"), (t0 + .25, "1 1"), (DAUER, "1 1")],
+                        typ="scale", additiv=True)
+            out.append(f'<g opacity="0">{sicht}<g>{lauf}{dreh}{pop}{teil(i)}</g></g>')
+        return "".join(out)
+
+    return (f'<g transform="translate({x},{y})">'
+            # Mit 560 Einheiten/s war das Konfetti nach vier Zehnteln oben aus dem
+            # Kreis heraus; bei 230 steigt es rund neunzig Einheiten, treibt seitlich
+            # durch den Himmel und faellt am Hubschrauber vorbei.
+            f'{ausbruch(3.9, n, 230, seed)}{ausbruch(6.3, n // 2, 190, seed + 1)}</g>')
