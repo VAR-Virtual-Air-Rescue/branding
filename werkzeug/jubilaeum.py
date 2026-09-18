@@ -11,16 +11,17 @@ den beiden Blaettern, und der Hubschrauber wird damit selbst zur Kerze. Die
 Ziffer kommt dazu, sobald die Flamme steht -- links oben im Himmel, hinter
 allem, so gross, wie der Kreis dort zulaesst.
 
-**Welche Zwei.** Das Anniversary-Banner (werkzeug/overload.py in var-v3) hat
-zwei: die Linien-2 aus fuenf parallelen Baendern, und als Alternative die
-Block-2 in Uniform Black. Auf dem Banner traegt die Linien-2 -- bei 640 px
-Hoehe. Im Profilbild ist die Ziffer bei 128 px rund 22 px hoch; fuenf Linien
-mit vier Luecken sind dann je ein Pixel, und die Zwei wird zur Schraffur.
-Gemessen, nicht geschaetzt: `zweien_probe.png`. Deshalb die Block-2 -- sie ist
-Teil desselben Satzes, nur die Fassung, die in klein traegt.
+**Welche Zwei.** Die Linien-2 des Anniversary-Banners -- mit drei Linien statt
+fuenf und in Ivory statt Gold. Beides ist gemessen, nicht gewaehlt
+(linien2_probe.png, k3_farbe.png): bei 128 px, in denen Discord ein Servericon
+zeigt, ist die Ziffer 50 px hoch und ihr Band neun Pixel breit. Fuenf Linien
+mit vier Luecken sind dann je ein Pixel, eine Flaeche mit Textur; drei bleiben
+Linien. Und Gold hinter dem goldenen Hubschrauber wird zum Knaeuel -- Ivory
+loest die Ziffer vom Zeichen.
 
-Die Linien-2 steht trotzdem hier, portiert aus overload.py: fuer den Fall, dass
-das Motiv einmal gross gebraucht wird (Banner, Videowand, Kanalbild).
+So gross passt sie nur hinter den Hubschrauber. Das geht, weil die Linien-2
+offen ist: das Zeichen liegt davor und bleibt lesbar, die Spirale steht frei im
+Himmel, Ausleger und Rotorblatt laufen durch den Fuss.
 """
 import math, random
 
@@ -66,17 +67,36 @@ def zwei_pfad(kante=False):
     return "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts), W
 
 
-def linien_zwei(h, farbe=GALLIANO, linien=5, cid=None):
-    """Die Linien-2, `h` hoch, Ursprung links oben. Liefert (svg, breite)."""
+def _pfadlaenge(d):
+    pts = [tuple(map(float, q.split(","))) for q in d[1:].split(" L")]
+    return sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts, pts[1:]))
+
+
+def linien_zwei(h, farbe=GALLIANO, linien=5, cid=None, zeichnen=None):
+    """Die Linien-2, `h` hoch, Ursprung links oben. Liefert (svg, breite).
+
+    `zeichnen=(t0, t1)` laesst die Zwei sich zwischen t0 und t1 zeichnen -- von
+    der Spiralmitte nach aussen bis zum Fuss. Das geht ueber `stroke-dashoffset`
+    auf den Maskenlinien: alle teilen sich denselben Pfad, also zieht dieselbe
+    Animation alle Baender gleichzeitig nach, mit ihren Luecken.
+    """
     cid = cid or uid("zw")
     d, W = zwei_pfad()
     sc = h / 1000
     t = W / (2 * linien - 1)
+    L = _pfadlaenge(d) + 2 * W        # etwas Reserve fuer die Kappen
     masken, w = [], W
     for i in range(2 * linien - 1):
+        strich = ""
+        if zeichnen:
+            t0, t1 = zeichnen
+            strich = (f' stroke-dasharray="{L:.0f}"><animate attributeName="stroke-dashoffset" '
+                      f'values="{L:.0f};{L:.0f};0;0" keyTimes="0;{t0/DAUER:.4f};{t1/DAUER:.4f};1" '
+                      f'dur="{DAUER}s" repeatCount="indefinite" calcMode="spline" '
+                      f'keySplines="0 0 1 1;0.3 0 0.4 1;0 0 1 1"/></path')
         masken.append(f'<path d="{d}" fill="none" stroke="{"white" if i % 2 == 0 else "black"}" '
                       f'stroke-width="{w:.2f}" stroke-linecap="butt" stroke-linejoin="miter" '
-                      f'stroke-miterlimit="4"/>')
+                      f'stroke-miterlimit="4"' + (strich + ">" if strich else "/>"))
         w -= 2 * t
     return (f'<defs><mask id="{cid}" maskUnits="userSpaceOnUse" x="-200" y="-200" width="1400" '
             f'height="1400">{"".join(masken)}</mask></defs>'
@@ -136,13 +156,15 @@ ROTORKOPF = (268, 149)
 
 def docht_und_flamme(bewegt=False, x=ROTORKOPF[0], y=ROTORKOPF[1]):
     """Docht auf dem Rotorkopf, Flamme darueber. Ursprung: Fuss des Dochts."""
-    dh = 16                    # Dochthoehe
-    fh, fw = 46, 12            # Flamme
+    dh = 20                    # Dochthoehe
+    # Die Flamme ist das, woran man die Kerze erkennt -- bei 46 Einheiten war
+    # sie im 128-px-Servericon elf Pixel hoch und ging unter. Jetzt doppelt.
+    fh, fw = 84, 21            # Flamme
     docht = (f'<line x1="0" y1="0" x2="0" y2="{-dh}" stroke="{DOCHT}" '
-             f'stroke-width="3.2" stroke-linecap="round"/>')
+             f'stroke-width="4.2" stroke-linecap="round"/>')
     if not bewegt:
         return (f'<g transform="translate({x},{y})">{docht}'
-                f'<g transform="translate(0,{-dh})"><circle r="30" fill="{GLUT}" opacity=".16"/>'
+                f'<g transform="translate(0,{-dh})"><circle r="52" fill="{GLUT}" opacity=".16"/>'
                 f'{_flamme(fh, fw)}</g></g>')
 
     # Docht waechst aus der Nabe, dann Zuendblitz, dann Flackern, am Ende aus.
@@ -156,36 +178,38 @@ def docht_und_flamme(bewegt=False, x=ROTORKOPF[0], y=ROTORKOPF[1]):
             + [(8.6, 0), (DAUER, 0)])
     fl_skew = _anim(None, [(t, f"{v}") for t, v in neig], typ="skewX", additiv=True)
     blitz = _anim("opacity", [(0, 0), (0.92, 0), (1.0, .6), (1.26, 0), (DAUER, 0)])
-    blitz_r = _anim("r", [(0, 2), (0.92, 2), (1.26, 52), (DAUER, 52)])
+    blitz_r = _anim("r", [(0, 2), (0.92, 2), (1.26, 80), (DAUER, 80)])
     schein = _anim("opacity", [(0, 0), (1.05, 0), (1.35, .16)]
                    + [(t, round(.16 + (v - 1) * .5, 3)) for t, v in _flackern(1.45, 8.5, 1, .06, .19, seed=2)]
                    + [(8.6, .16), (8.85, 0), (DAUER, 0)])
     return (f'<g transform="translate({x},{y})"><g>{docht_a}{docht}</g>'
             f'<g transform="translate(0,{-dh})">'
-            f'<circle r="30" fill="{GLUT}" opacity="0">{schein}</circle>'
+            f'<circle r="52" fill="{GLUT}" opacity="0">{schein}</circle>'
             f'<circle r="2" fill="{WARM}" opacity="0">{blitz}{blitz_r}</circle>'
             f'<g>{fl_scale}{fl_skew}{_flamme(fh, fw)}</g></g></g>')
 
 
 # =========================================================================
-#  Die Ziffer im Himmel
+#  Die Ziffer im Himmel -- die Linien-2, gross, hinter dem Hubschrauber
 # =========================================================================
-# Links oben, ueber dem linken Rotorblatt. Der Kreis laesst dort ein Feld von
-# rund 90 Einheiten Hoehe zu, bevor die Zeichnung ihn oben beschneidet.
-# Bei x=84 lag die obere linke Ecke der Ziffer bei y=42 -- der Kreis beginnt
-# dort erst bei y=66, die Rundung schnitt die Zwei an. Bei x=102 ist oben
-# Platz ab y=50; die rechte untere Ecke bleibt ueber dem linken Rotorblatt.
-ZIFFER_X, ZIFFER_Y, ZIFFER_H = 102, 50, 90
+# Drei Linien statt fuenf. Bei 128 px, in denen Discord ein Servericon zeigt,
+# ist eine Ziffer von 200 Einheiten 50 px hoch; das Band ist dann 9 px breit.
+# Mit fuenf Linien sind das je ein Pixel Linie und Luecke -- eine Flaeche mit
+# Textur. Mit dreien bleiben die Linien Linien. Angesehen in linien2_probe.png.
+#
+# So gross passt sie nur hinter den Hubschrauber. Das geht, weil die Linien-2
+# offen ist: das Zeichen liegt davor und bleibt lesbar, die Spirale steht frei
+# im Himmel, und Ausleger und Rotorblatt laufen durch den Fuss.
+ZIFFER_X, ZIFFER_Y, ZIFFER_H, ZIFFER_LINIEN = 82, 46, 200, 3
+ZIFFER_FARBE = IVORY
 
 
 def ziffer(jahr="2", bewegt=False):
-    z, b = block_zwei(ZIFFER_H, GALLIANO, jahr)
-    # Ursprung der Skalierung: die Mitte der Ziffer, damit sie aus sich selbst
-    # heraus aufploppt und nicht aus einer Ecke.
-    mx, my = ZIFFER_X + b / 2, ZIFFER_Y + ZIFFER_H / 2
     if not bewegt:
+        z, b = linien_zwei(ZIFFER_H, ZIFFER_FARBE, ZIFFER_LINIEN)
         return f'<g transform="translate({ZIFFER_X},{ZIFFER_Y})">{z}</g>'
-    pop = _anim(None, [(0, "0 0"), (2.0, "0 0"), (2.35, "1.16 1.16"), (2.5, "0.95 0.95"),
-                       (2.65, "1 1"), (8.6, "1 1"), (8.95, "0 0"), (DAUER, "0 0")], typ="scale")
-    return (f'<g transform="translate({mx:.1f},{my:.1f})"><g>{pop}'
-            f'<g transform="translate({-b/2:.1f},{-ZIFFER_H/2:.1f})">{z}</g></g></g>')
+    # Sobald die Flamme steht, zeichnet sich die Zwei: 2,0 bis 3,8 s von der
+    # Spiralmitte nach aussen. Am Ende blendet sie aus statt sich zurueckzuziehen.
+    z, b = linien_zwei(ZIFFER_H, ZIFFER_FARBE, ZIFFER_LINIEN, zeichnen=(2.0, 3.8))
+    aus = _anim("opacity", [(0, 1), (8.55, 1), (8.9, 0), (DAUER, 0)])
+    return f'<g transform="translate({ZIFFER_X},{ZIFFER_Y})">{aus}{z}</g>' 
