@@ -276,27 +276,25 @@ E["pb_silvester"] = edition(
 E["pb_nl"] = edition(streifen(["#AE1C28", "#FFFFFC", "#21468B"], [48, 4, 48]),
                      IVORY, IVORY)
 
-# Jubilaeum -- die Ziffer als Kerze, links auf der Kante, vor dem Heckausleger.
+# Jubilaeum -- der Hubschrauber ist die Kerze.
 #
-# Oben in der Mitte war sie zuerst, und dort blieb sie klein: ueber dem Rotor
-# sind 126 Einheiten Himmel, und die Flamme stiess an den Kreisrand. Links
-# steht sie auf der Kante wie auf einem Tisch, doppelt so gross, und verdeckt
-# dabei nur den duennen Ausleger -- an derselben Stelle, an die auch die
-# Schweizer Bergkette ausgewichen ist. Sie steht deshalb *vor* dem Hubschrauber
-# und nicht im Muster dahinter: hinten liefe der Rotor als Strich durch die
-# Ziffer.
+# Der Docht sitzt auf dem Rotorkopf, die Flamme brennt zwischen den Blaettern.
+# Nichts steht vor dem Hubschrauber: der erste Anlauf stellte eine Ziffernkerze
+# links auf die Kante und verdeckte damit den Heckausleger -- das Zeichen wird
+# von der Kante angeschnitten und von sonst nichts. Die Ziffer steht links oben
+# im Himmel, hinter allem, als Block-2 aus dem Anniversary-Satz (die Linien-2
+# des Banners zerfaellt bei 128 px zur Schraffur, s. jubilaeum.py).
 #
 # Welches Jahr, steht in JUBILAEUM_JAHR; die bewegte Fassung nimmt dasselbe.
-from kerze import kerze
+from jubilaeum import docht_und_flamme, ziffer
 JUBILAEUM_JAHR = "2"
-KERZE_X, KERZE_Y, KERZE_GR = 120, 254, 170
 
 def _jubilaeum(bewegt=False):
     heli, barsvg, _ = heli_on_edge(444, C, KANTE_Y, GALLIANO, CUT, BAR, STRATOS)
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
-            + oben(muster([STERN], 40, 33))
+            + oben(muster([STERN], 40, 33) + ziffer(JUBILAEUM_JAHR, bewegt))
             + feld(flaeche(GALLIANO)) + heli + barsvg
-            + kerze(JUBILAEUM_JAHR, KERZE_GR, KERZE_X, KERZE_Y, bewegt=bewegt)
+            + docht_und_flamme(bewegt)
             + word_max(STRATOS, KANTE_Y + BAR + FUGE))
     return svg(disc(body, uid("j")))
 

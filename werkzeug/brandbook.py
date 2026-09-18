@@ -122,8 +122,8 @@ PB = [("profilbilder/pb_standard.svg", "Standard", "Grundfassung"),
       ("profilbilder/pb_halloween_anim.svg", "Halloween", "animiert"),
       ("profilbilder/pb_nacht.svg", "Nachtflug", "stehend"),
       ("profilbilder/pb_nacht_anim.svg", "Nachtflug", "animiert"),
-      ("profilbilder/pb_jubilaeum.svg", "Jubil&auml;um", "die Ziffer als Kerze"),
-      ("profilbilder/pb_jubilaeum_anim.svg", "Jubil&auml;um", "animiert: ploppt, brennt, tropft"),
+      ("profilbilder/pb_jubilaeum.svg", "Jubil&auml;um", "der Hubschrauber als Kerze"),
+      ("profilbilder/pb_jubilaeum_anim.svg", "Jubil&auml;um", "animiert: Docht, Flamme, Ziffer"),
       ("profilbilder/pb_vorlage.svg", "Vorlage", "leeres unteres Feld")]
 VORLAGEN = [
     ("vorlagen/ig_4x5_foto.svg", "Instagram Beitrag", "1080&times;1350"),
