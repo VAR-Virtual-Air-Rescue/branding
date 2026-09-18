@@ -290,7 +290,10 @@ from jubilaeum import docht_und_flamme, ziffer
 JUBILAEUM_JAHR = "2"
 
 def _jubilaeum(bewegt=False):
-    heli, barsvg, _ = heli_on_edge(444, C, KANTE_Y, GALLIANO, CUT, BAR, STRATOS)
+    # Balken in Ivory wie in der Grundfassung und im Zweifeld-Zeichen. Die alte
+    # Jubilaeums-Edition hatte ihn in Stratos -- auf dem Goldfeld war das eine
+    # blaue Linie, und die gehoert dort nicht hin.
+    heli, barsvg, _ = heli_on_edge(444, C, KANTE_Y, GALLIANO, CUT, BAR, IVORY)
     body = (f'<circle cx="{C}" cy="{C}" r="{R}" fill="{STRATOS}"/>'
             + oben(muster([STERN], 40, 33) + ziffer(JUBILAEUM_JAHR, bewegt))
             + feld(flaeche(GALLIANO)) + heli + barsvg
